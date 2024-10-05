@@ -1,18 +1,9 @@
-/*
- * @Descripttion:
- * @version: 1.0
- * @Author: Hesin
- * @Date: 2024-09-30 18:57:10
- * @LastEditors: Hesin
- * @LastEditTime: 2024-10-02 12:01:12
- */
-import Heros from "@/components/Heros";
-import Nav from "@/components/Nav";
-import Link from "next/link";
+
 import Image from "next/image";
 import { Tabs } from "@/components/ui/tabs";
 import Header from "@/components/Header";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/check-box";
 
 const nftData = [
   {
@@ -127,11 +118,21 @@ const Browsing = () => {
       <div className="max-w-[80%] w-full">
         <div className="h-[20rem] md:h-[40rem] [perspective:1000px] relative b flex flex-col max-w-5xl mx-auto w-full  items-start justify-start my-40">
           <div className="w-15 absolute right-0 z-20 flex max-w-sm items-center space-x-2">
+            <div className="flex items-center space-x-2">
+              <Checkbox id="terms" />
+              <label
+                htmlFor="terms"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Own
+              </label>
+            </div>
             <Input />
             <button className="px-4 py-2 rounded-md border border-white-300 uppercase bg-white text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md">
               Search
             </button>
           </div>
+
           <Tabs tabs={tabs} />
         </div>
       </div>
@@ -153,7 +154,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
   price,
 }) => {
   return (
-    <div className="bg-white shadow-md rounded-t-lg rounded-b-md p-4 w-full max-w-sm mx-auto">
+    <div className="cursor-pointer bg-white shadow-md rounded-t-lg rounded-b-md p-4 w-full max-w-sm mx-auto">
       {/* Image Placeholder */}
       <div className="w-full h-48 bg-gray-200 rounded-t-lg flex items-center justify-center">
         <Image
@@ -166,7 +167,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
       </div>
       {/* NFT Info */}
       <div className="mt-4 text-center">
-        <h3 className="text-xl font-semibold">{title}</h3>
+        <h3 className="text-xl text-black-100 font-semibold">{title}</h3>
         <p className="text-sm text-gray-500">{creator}</p>
         <p className="text-lg font-bold text-pink-500 mt-2">{price}</p>
       </div>

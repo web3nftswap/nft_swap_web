@@ -17,4 +17,5 @@ export const routeList: RouteProp[] = [
   { name: "Home", path: "/" },
   { name: "Browsing", path: "/browsing" },
   { name: "Create", path: "/create" },
+  { name: "Consolidate", path: "/consolidate" },
 ];
