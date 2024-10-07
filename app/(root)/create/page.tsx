@@ -1,11 +1,14 @@
-/*
- * @Descripttion:
- * @version: 1.0
- * @Author: Hesin
- * @Date: 2024-09-30 18:57:47
- * @LastEditors: Hesin
- * @LastEditTime: 2024-10-05 11:32:07
- */
+"use client";
+import React, { useState, FormEvent } from "react";
+import { Textarea } from "@/components/ui/textarea";
+import { useSubstrateContext } from "@/app/SubstrateProvider";
+import {
+  web3Enable,
+  web3Accounts,
+  web3FromAddress,
+} from "@polkadot/extension-dapp";
+import { sendAndWait } from "@/utils/sendAndWait";
+
 import Header from "@/components/Header";
 import Image from "next/image";
 import {
@@ -19,7 +22,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet-box";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Keyring } from "@polkadot/api";
 
 const listMap = [
   {
@@ -40,6 +43,61 @@ const listMap = [
 ];
 
 const Create = () => {
+  const [loading, setLoading] = useState(false);
+  const { api, allAccounts } = useSubstrateContext();
+  const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    console.log("点击创建");
+    console.log("api", api);
+    if (!api) {
+      alert("请关联账户");
+      return;
+    }
+
+    setLoading(true);
+    console.log(event);
+    const formData = new FormData(event.currentTarget);
+    console.log("formData", formData);
+    // FormData to Object
+    const formDataObject = Object.fromEntries(formData.entries());
+    console.log("表单数据对象:", formDataObject);
+    // const response = await fetch('/api/api_create', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(formDataObject), // 将对象转换为 JSON 字符串
+    // });
+    // const data = await response.json();
+    // console.log(data);
+
+    // 创建 NFT 集合
+    console.log("[Call] createCollection");
+    const tx = api.tx.nftModule.createCollection(
+      formDataObject.maxnum,
+      formDataObject.collectionName
+    );
+    //当前账户
+    const currentAccount = allAccounts[0];
+    console.log(currentAccount);
+    try {
+      // 测试数据
+      const keyring = new Keyring({ type: "sr25519" });
+      const ass = [keyring.addFromUri("//Alice"), keyring.addFromUri("//Bob")];
+      const [alice, bob] = ass;
+      console.log(alice);
+
+      const hash = await sendAndWait(api, tx, alice);
+      // const hash = await sendAndWait(api, tx, currentAccount);
+      console.log(`create hash: ${hash.toHex()}`);
+    } catch (error) {
+      console.log(`create error: ${error}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <main className="relative bg-black-100 flex justify-center items-center flex-col overflow-hidden sm:px-10 px-5">
       <Header />
@@ -48,69 +106,79 @@ const Create = () => {
           <Sheet>
             <SheetTrigger asChild>
               <button className="px-4 py-2 rounded-md border font-semibold border-white-300 uppercase bg-purple-200 text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md">
-                Create
+                Add Collection
               </button>
             </SheetTrigger>
             <SheetContent
               side="left"
-              className="w-[400px] sm:w-[540px] bg-white"
+              className="w-[480px] sm:w-[540px] bg-white"
             >
               <SheetHeader>
                 <SheetTitle>Create NFT Collection</SheetTitle>
                 <SheetDescription>Make a NFT Collection</SheetDescription>
               </SheetHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <label htmlFor="name" className="text-right">
-                    Name
-                  </label>
-                  <Input
-                    id="name"
-                    placeholder="Collection name"
-                    className="col-span-3"
-                  />
+              <form onSubmit={handleCreate}>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <label htmlFor="collectionName" className="text-right">
+                      Name
+                    </label>
+                    <Input
+                      id="collectionName"
+                      name="collectionName"
+                      type="text"
+                      placeholder="Collection name"
+                      className="col-span-3"
+                    />
+                  </div>
+                  {/* <div className="grid grid-cols-4 items-center gap-4">
+                    <label htmlFor="imgLink" className="text-right">
+                      Img-Link
+                    </label>
+                    <Input
+                      id="imgLink"
+                      name="imgLink"
+                      type="text"
+                      className="col-span-3"
+                      placeholder="image link"
+                    />
+                  </div> */}
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <label htmlFor="maxnum" className="text-right">
+                      MaxNum
+                    </label>
+                    <Input
+                      id="maxnum"
+                      name="maxnum"
+                      type="number"
+                      className="col-span-3"
+                      placeholder="max num"
+                    />
+                  </div>
+                  {/* <div className="grid grid-cols-4 items-center gap-4">
+                    <label htmlFor="desc" className="text-right">
+                      Desc
+                    </label>
+                    <Textarea
+                      id="desc"
+                      name="desc"
+                      className="col-span-3"
+                      placeholder="Type your desc here."
+                    />
+                  </div> */}
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <label htmlFor="img" className="text-right">
-                    Img-Link
-                  </label>
-                  <Input
-                    id="img"
-                    className="col-span-3"
-                    placeholder="image link"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <label htmlFor="img" className="text-right">
-                    Max-Num
-                  </label>
-                  <Input
-                    id="num"
-                    type="number"
-                    className="col-span-3"
-                    placeholder="max num"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <label htmlFor="name" className="text-right">
-                    Desc
-                  </label>
-                  <Textarea
-                    className="col-span-3"
-                    placeholder="Type your desc here."
-                  />
-                </div>
-              </div>
-              <SheetFooter>
-                <SheetClose asChild>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 rounded-md border font-semibold border-white-300 uppercase bg-purple-200 text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
-                  >
-                    Create
-                  </button>
-                </SheetClose>
-              </SheetFooter>
+                <SheetFooter>
+                  <SheetClose asChild>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 rounded-md border font-semibold border-white-300 uppercase bg-purple-200 text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
+                      disabled={loading}
+                    >
+                      Create
+                    </button>
+                  </SheetClose>
+                </SheetFooter>
+              </form>
             </SheetContent>
           </Sheet>
         </div>

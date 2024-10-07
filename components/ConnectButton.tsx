@@ -29,33 +29,27 @@ const ConnectButton = () => {
     allAccounts,
     setAllAccounts,
     setExtensionEnabled,
+    initConnection,
   } = useSubstrateContext();
 
-  // Initialize connection
-  const initConnection = async () => {
-    const provider = new WsProvider(RPC_URL);
-    const _api = await ApiPromise.create({ provider, types: {} });
-    return _api;
-  };
-
   // Handle account retrieval
-  const fetchAccounts = async (extensions: any[]): Promise<any[]> => {
+  const fetchAccounts = async (
+    extensions: any[]
+  ): Promise<InjectedAccount[]> => {
     const keyring = new Keyring({ type: "sr25519" });
     if (extensions.length === 0) {
       return [keyring.addFromUri("//Alice")];
     } else {
       const allAcc = await web3Accounts();
-      setAccounts(allAcc);
+      setAllAccounts(allAcc);
       return allAcc.length > 0 ? allAcc : [keyring.addFromUri("//Alice")];
     }
   };
 
   // Handle account balance retrieval
-  const fetchBalance = async (
-    account: string,
-    _api: ApiPromise
-  ): Promise<string> => {
-    const accountInfo = await _api.query.system.account(account);
+  const fetchBalance = async (account: string): Promise<string> => {
+    if (!api) return "";
+    const accountInfo = await api.query.system.account(account);
     return accountInfo.data.free.toString();
   };
 
@@ -71,7 +65,7 @@ const ConnectButton = () => {
       }
 
       const curAllAccounts = await fetchAccounts(extensions);
-      const bal = await fetchBalance(curAllAccounts[0].address, _api);
+      const bal = await fetchBalance(curAllAccounts[0].address);
 
       setAllAccounts(curAllAccounts);
       setApi(_api);

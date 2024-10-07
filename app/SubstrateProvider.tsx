@@ -1,11 +1,13 @@
+// api/SubstrateProvider.tsx
 "use client";
 
-import React, { createContext, useState, ReactNode } from "react";
-import { ApiPromise } from "@polkadot/api";
+import React, { createContext, useState, ReactNode, useEffect } from "react";
+import { ApiPromise, WsProvider } from "@polkadot/api";
 import {
   InjectedExtension,
   InjectedAccount,
 } from "@polkadot/extension-inject/types";
+const RPC_URL = "ws://127.0.0.1:9944";
 
 interface SubstrateContextProps {
   api: ApiPromise | undefined;
@@ -18,12 +20,13 @@ interface SubstrateContextProps {
   setAllAccounts: React.Dispatch<React.SetStateAction<InjectedAccount[]>>;
   extensionEnabled: boolean;
   setExtensionEnabled: React.Dispatch<React.SetStateAction<boolean>>;
-  nfts: any[]; // 可以根据需要调整类型
+  nfts: any[];
   setNfts: React.Dispatch<React.SetStateAction<any[]>>;
-  recvOffer: any[]; // 可以根据需要调整类型
+  recvOffer: any[];
   setRecvOffer: React.Dispatch<React.SetStateAction<any[]>>;
-  issuedOffer: any[]; // 可以根据需要调整类型
+  issuedOffer: any[];
   setIssuedOffer: React.Dispatch<React.SetStateAction<any[]>>;
+  initConnection: () => Promise<ApiPromise>; 
 }
 
 const SubstrateContext = createContext<SubstrateContextProps | undefined>(
@@ -46,7 +49,14 @@ export const SubstrateProvider: React.FC<SubstrateProviderProps> = ({
   const [nfts, setNfts] = useState<any[]>([]);
   const [recvOffer, setRecvOffer] = useState<any[]>([]);
   const [issuedOffer, setIssuedOffer] = useState<any[]>([]);
-
+  
+  const initConnection = async () => {
+    const provider = new WsProvider(RPC_URL);
+    const _api = await ApiPromise.create({ provider, types: {} });
+    setApi(_api);
+    return _api;
+  };
+  
   const value = {
     api,
     setApi,
@@ -62,6 +72,7 @@ export const SubstrateProvider: React.FC<SubstrateProviderProps> = ({
     setRecvOffer,
     issuedOffer,
     setIssuedOffer,
+    initConnection,
   };
 
   return (
