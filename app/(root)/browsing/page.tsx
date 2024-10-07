@@ -117,7 +117,7 @@ const Browsing = () => {
 
       <div className="max-w-[80%] w-full">
         <div className="h-[20rem] md:h-[40rem] [perspective:1000px] relative b flex flex-col max-w-5xl mx-auto w-full  items-start justify-start my-40">
-          <div className="w-15 absolute right-0 z-20 flex max-w-sm items-center space-x-2">
+          <div className="w-15 absolute right-0 z-20 custom-top flex max-w-sm items-center space-x-2 ">
             <div className="flex items-center space-x-2">
               <Checkbox id="terms" />
               <label

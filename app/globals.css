@@ -79,6 +79,12 @@
   button {
     @apply active:outline-none;
   }
+
+  @media (max-width: 900px) {
+    .custom-top {
+      top: 3rem;
+    }
+  }
 }
 
 @layer utilities {
