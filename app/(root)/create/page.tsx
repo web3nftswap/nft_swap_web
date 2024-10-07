@@ -44,7 +44,8 @@ const listMap = [
 
 const Create = () => {
   const [loading, setLoading] = useState(false);
-  const { api, allAccounts } = useSubstrateContext();
+  const { api, allAccounts, injector, extensionEnabled } =
+    useSubstrateContext();
   const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -82,14 +83,20 @@ const Create = () => {
     const currentAccount = allAccounts[0];
     console.log(currentAccount);
     try {
-      // 测试数据
-      const keyring = new Keyring({ type: "sr25519" });
-      const ass = [keyring.addFromUri("//Alice"), keyring.addFromUri("//Bob")];
-      const [alice, bob] = ass;
-      console.log(alice);
+      //// 测试数据
+      //const keyring = new Keyring({ type: "sr25519" });
+      //const ass = [keyring.addFromUri("//Alice"), keyring.addFromUri("//Bob")];
+      //const [alice, bob] = ass;
+      //console.log(alice);
 
-      const hash = await sendAndWait(api, tx, alice);
-      // const hash = await sendAndWait(api, tx, currentAccount);
+      //const hash = await sendAndWait(api, tx, alice, false, undefined);
+      const hash = await sendAndWait(
+        api,
+        tx,
+        currentAccount,
+        extensionEnabled,
+        injector
+      );
       console.log(`create hash: ${hash.toHex()}`);
     } catch (error) {
       console.log(`create error: ${error}`);
