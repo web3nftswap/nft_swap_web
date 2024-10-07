@@ -32,6 +32,16 @@ const ConnectButton = () => {
     initConnection,
   } = useSubstrateContext();
 
+  // 在组件加载时检查
+  useEffect(() => {
+    const savedAccount = localStorage.getItem("connectedAccount");
+    if (savedAccount) {
+      setAccountAddr(savedAccount);
+      setButtonText("Disconnect");
+      setIsConnect(true);
+    }
+  }, []);
+
   // Handle account retrieval
   const fetchAccounts = async (
     extensions: any[]
@@ -78,6 +88,8 @@ const ConnectButton = () => {
       const _injector = await web3FromAddress(curAllAccounts[0].address);
       setInjector(_injector);
       setExtensionEnabled(true);
+
+      localStorage.setItem("connectedAccount", curAllAccounts[0].address);
     } else if (buttonText === "Disconnect") {
       setAllAccounts([]);
       setApi(undefined);
@@ -86,6 +98,8 @@ const ConnectButton = () => {
       setAccountBal("");
       setAccountAddr("");
       setDropdownVisible(false);
+      // 删除连接的账户信息
+      localStorage.removeItem("connectedAccount");
     }
   };
 
@@ -93,7 +107,7 @@ const ConnectButton = () => {
   const displayAddress = (address: string) => {
     return address ? (
       <>
-        <span className="text-purple-200">Ox:</span>
+        <span className="text-purple-200">Add:</span>
         {address.slice(0, 6)}...{address.slice(-4)}
       </>
     ) : (

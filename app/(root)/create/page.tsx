@@ -138,7 +138,7 @@ const Create = () => {
                       className="col-span-3"
                     />
                   </div>
-                  {/* <div className="grid grid-cols-4 items-center gap-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
                     <label htmlFor="imgLink" className="text-right">
                       Img-Link
                     </label>
@@ -149,7 +149,7 @@ const Create = () => {
                       className="col-span-3"
                       placeholder="image link"
                     />
-                  </div> */}
+                  </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <label htmlFor="maxnum" className="text-right">
                       MaxNum
@@ -162,7 +162,7 @@ const Create = () => {
                       placeholder="max num"
                     />
                   </div>
-                  {/* <div className="grid grid-cols-4 items-center gap-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
                     <label htmlFor="desc" className="text-right">
                       Desc
                     </label>
@@ -172,7 +172,7 @@ const Create = () => {
                       className="col-span-3"
                       placeholder="Type your desc here."
                     />
-                  </div> */}
+                  </div>
                 </div>
                 <SheetFooter>
                   <SheetClose asChild>
