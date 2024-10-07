@@ -27,18 +27,21 @@ import { Keyring } from "@polkadot/api";
 const listMap = [
   {
     title: "title1",
-    img: "https://app.nftmart.io/static/media/010.2a151c7e.png",
+    img: "https://app.nftmart.io/static/media/007.16d68919.png",
     desc: "desc",
+    num: 5,
   },
   {
     title: "title2",
-    img: "https://app.nftmart.io/static/media/010.2a151c7e.png",
+    img: "https://app.nftmart.io/static/media/007.16d68919.png",
     desc: "desc",
+    num: 5,
   },
   {
     title: "title3",
-    img: "https://app.nftmart.io/static/media/010.2a151c7e.png",
+    img: "https://app.nftmart.io/static/media/007.16d68919.png",
     desc: "desc",
+    num: 5,
   },
 ];
 
@@ -204,11 +207,13 @@ export default Create;
 const ListBox = ({ item }) => {
   return (
     <li className="flex justify-between gap-x-6 py-5">
-      <div className="flex min-w-0 gap-x-4">
+      <div className="flex gap-x-4">
         <Image
           className="h-12 w-12 flex-none rounded-full bg-gray-50"
-          src={item.src}
+          src={item.img}
           alt=""
+          width={48} 
+          height={48}
         />
         <div className="min-w-0 flex-auto">
           <p className="text-5 font-semibold leading-6 text-gray-200">
@@ -223,7 +228,7 @@ const ListBox = ({ item }) => {
         {/* <p className="text-sm leading-6 text-gray-200">Co-Founder / CEO</p> */}
         {/* <p className="mt-1 text-xs leading-5 text-gray-500">Last seen</p> */}
         <button className="px-2 py-2 rounded-md border border-white-100 font-medium bg-purple-200 text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md">
-          mint
+          mint <span className="text-purple-900 font-semibold">({item.num})</span>
         </button>
       </div>
     </li>
