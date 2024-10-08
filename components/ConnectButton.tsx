@@ -42,6 +42,7 @@ const ConnectButton = () => {
       setButtonText("Disconnect");
       setIsConnect(true);
     }
+    
   }, []);
 
   // Handle account retrieval

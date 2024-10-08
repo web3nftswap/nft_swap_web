@@ -1,11 +1,4 @@
-/*
- * @Descripttion:
- * @version: 1.0
- * @Author: Hesin
- * @Date: 2024-10-05 11:38:06
- * @LastEditors: Hesin
- * @LastEditTime: 2024-10-08 11:20:35
- */
+
 // api/SubstrateProvider.tsx
 "use client";
 
@@ -35,8 +28,8 @@ interface SubstrateContextProps {
   issuedOffer: any[];
   setIssuedOffer: React.Dispatch<React.SetStateAction<any[]>>;
   initConnection: () => Promise<ApiPromise>;
-  pending: boolean; 
-  setPending: React.Dispatch<React.SetStateAction<boolean>>; 
+  pending: boolean;
+  setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SubstrateContext = createContext<SubstrateContextProps | undefined>(
@@ -67,7 +60,12 @@ export const SubstrateProvider: React.FC<SubstrateProviderProps> = ({
     setApi(_api);
     return _api;
   };
-
+  useEffect(() => {
+    const connectedAccount = localStorage.getItem("connectedAccount");
+    if (connectedAccount && !api) {
+      initConnection(); // 如果有账户信息，初始化连接
+    }
+  }, [api]);
   const value = {
     api,
     setApi,

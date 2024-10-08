@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { useSubstrateContext } from "@/app/SubstrateProvider";
 import {
@@ -22,7 +22,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet-box";
 import { Input } from "@/components/ui/input";
-import { Keyring } from "@polkadot/api";
 
 const listMap = [
   {
@@ -49,9 +48,26 @@ const Create = () => {
   const [loading, setLoading] = useState(false);
   const { api, allAccounts, injector, extensionEnabled, setPending } =
     useSubstrateContext();
+
+  useEffect(() => {
+    const fetchCollectionIds = async () => {
+      if (!api) return; // 如果 api 尚未初始化，直接返回
+
+      try {
+        // 查询现有的 NFT 集合
+        const collectionIds = await api.query.nftModule.nftCollectionIds();
+        console.log(`collection ids: ${collectionIds}`);
+        
+      } catch (error) {
+        console.error("Error fetching collection IDs:", error);
+      }
+    };
+
+    fetchCollectionIds();
+  }, [api]); // 添加 api 作为依赖项
+
   const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
 
     console.log("点击创建");
     console.log("api", api);
@@ -67,15 +83,6 @@ const Create = () => {
     // FormData to Object
     const formDataObject = Object.fromEntries(formData.entries());
     console.log("表单数据对象:", formDataObject);
-    // const response = await fetch('/api/api_create', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(formDataObject), // 将对象转换为 JSON 字符串
-    // });
-    // const data = await response.json();
-    // console.log(data);
 
     // 创建 NFT 集合
     console.log("[Call] createCollection");
@@ -93,7 +100,6 @@ const Create = () => {
       //const [alice, bob] = ass;
       //console.log(alice);
 
-      //const hash = await sendAndWait(api, tx, alice, false, undefined);
       const hash = await sendAndWait(
         api,
         tx,
@@ -102,6 +108,10 @@ const Create = () => {
         injector
       );
       console.log(`create hash: ${hash.toHex()}`);
+      // 查询现有的 NFT 集合
+      console.log("[Query] nftCollectionIds");
+      const collectionIds = await api.query.nftModule.nftCollectionIds();
+      console.log(`collection ids: ${collectionIds}`);
     } catch (error) {
       console.log(`create error: ${error}`);
     } finally {
