@@ -51,7 +51,7 @@ interface CollectionData {
 const Create = () => {
   const [loading, setLoading] = useState(false);
   const [allDatas, setAllDatas] = useState<CollectionData[]>([]);
-  const { api, allAccounts, injector, extensionEnabled, setPending } =
+  const { api, allAccounts, injector, extensionEnabled, pending, setPending } =
     useSubstrateContext();
 
   useEffect(() => {
@@ -59,15 +59,8 @@ const Create = () => {
       if (!api) return; // 如果 api 尚未初始化，直接返回
 
       try {
-        const connectedAccount = localStorage.getItem("connectedAccount");
-        console.log(connectedAccount)
-        const nfts = await api.query.nftModule.ownedNFTs(connectedAccount);
-        console.log(`nfts: ${nfts}`);
-
         // 查询现有的 NFT 集合
         const collectionIds = await api.query.nftModule.nftCollectionIds();
-        const collectionIdsArray = JSON.parse(JSON.stringify(collectionIds));
-        console.log("collectionIdsArray", collectionIdsArray);
         getInfo(collectionIds);
       } catch (error) {
         console.error("Error fetching collection IDs:", error);
@@ -76,6 +69,8 @@ const Create = () => {
 
     fetchCollectionIds();
   }, [api]); // 添加 api 作为依赖项
+
+  // 处理获取集合列表
   const getInfo = async (collectionIds) => {
     const collectionIdsArray = JSON.parse(JSON.stringify(collectionIds));
     if (collectionIdsArray) {
@@ -110,7 +105,7 @@ const Create = () => {
       alert("请关联账户");
       return;
     }
-    setPending(true);
+
     setLoading(true);
     console.log(event);
     const formData = new FormData(event.currentTarget);
@@ -133,7 +128,6 @@ const Create = () => {
     //当前账户
     const currentAccount = allAccounts[0];
     console.log(currentAccount);
-    setPending(false);
 
     try {
       //// 测试数据
@@ -141,7 +135,8 @@ const Create = () => {
       //const ass = [keyring.addFromUri("//Alice"), keyring.addFromUri("//Bob")];
       //const [alice, bob] = ass;
       //console.log(alice);
-
+      console.log("pending", pending);
+      setPending(true);
       const hash = await sendAndWait(
         api,
         tx,
@@ -158,11 +153,14 @@ const Create = () => {
     } catch (error) {
       console.log(`create error: ${error}`);
     } finally {
+      console.log("pending", pending);
       setLoading(false);
+      setPending(false);
     }
   };
   const handleMint = async (id) => {
     console.log("[Call] mintNft");
+    setPending(true);
     console.log(id);
     let tx = api.tx.nftModule.mintNft(id, 0x0);
     //hash = await tx.signAndSend(alice);
@@ -180,6 +178,8 @@ const Create = () => {
       console.log(`mint hash: ${hash.toHex()}`);
     } catch (error) {
       console.log(`mint error: ${error}`);
+    } finally {
+      setPending(false);
     }
   };
   return (

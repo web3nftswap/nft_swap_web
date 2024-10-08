@@ -93,21 +93,31 @@ const ConnectButton = () => {
 
       localStorage.setItem("connectedAccount", curAllAccounts[0].address);
       localStorage.setItem("allAccounts", JSON.stringify(curAllAccounts));
-
     } else if (buttonText === "Disconnect") {
-      setAllAccounts([]);
-      setApi(undefined);
-      setButtonText("Connect");
-      setIsConnect(false);
-      setAccountBal("");
-      setAccountAddr("");
-      setDropdownVisible(false);
-      // 删除连接的账户信息
-      localStorage.removeItem("connectedAccount");
-      localStorage.removeItem("allAccounts");
+      // setAllAccounts([]);
+      // setApi(undefined);
+      // setButtonText("Connect");
+      // setIsConnect(false);
+      // setAccountBal("");
+      // setAccountAddr("");
+      // setDropdownVisible(false);
+      // // 删除连接的账户信息
+      // localStorage.removeItem("connectedAccount");
+      // localStorage.removeItem("allAccounts");
     }
   };
-
+  const handleDisConnect = () => {
+    setAllAccounts([]);
+    setApi(undefined);
+    setButtonText("Connect");
+    setIsConnect(false);
+    setAccountBal("");
+    setAccountAddr("");
+    setDropdownVisible(false);
+    // 删除连接的账户信息
+    localStorage.removeItem("connectedAccount");
+    localStorage.removeItem("allAccounts");
+  };
   // Shorten account address
   const displayAddress = (address: string) => {
     return address ? (
@@ -151,7 +161,7 @@ const ConnectButton = () => {
           >
             <div className="flex flex-col space-y-4 text-sm">
               <HoveredLi>Switch Account</HoveredLi>
-              <HoveredLi onClick={() => handleConnect()}>
+              <HoveredLi onClick={() => handleDisConnect()}>
                 <span className="text-red-400 hover:font-semibold ">
                   Disconnect
                 </span>{" "}
