@@ -47,10 +47,11 @@ const listMap = [
 
 const Create = () => {
   const [loading, setLoading] = useState(false);
-  const { api, allAccounts, injector, extensionEnabled } =
+  const { api, allAccounts, injector, extensionEnabled, setPending } =
     useSubstrateContext();
   const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
 
     console.log("点击创建");
     console.log("api", api);
@@ -212,7 +213,7 @@ const ListBox = ({ item }) => {
           className="h-12 w-12 flex-none rounded-full bg-gray-50"
           src={item.img}
           alt=""
-          width={48} 
+          width={48}
           height={48}
         />
         <div className="min-w-0 flex-auto">
@@ -228,7 +229,8 @@ const ListBox = ({ item }) => {
         {/* <p className="text-sm leading-6 text-gray-200">Co-Founder / CEO</p> */}
         {/* <p className="mt-1 text-xs leading-5 text-gray-500">Last seen</p> */}
         <button className="px-2 py-2 rounded-md border border-white-100 font-medium bg-purple-200 text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md">
-          mint <span className="text-purple-900 font-semibold">({item.num})</span>
+          mint{" "}
+          <span className="text-purple-900 font-semibold">({item.num})</span>
         </button>
       </div>
     </li>

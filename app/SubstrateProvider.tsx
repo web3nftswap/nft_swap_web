@@ -1,3 +1,11 @@
+/*
+ * @Descripttion:
+ * @version: 1.0
+ * @Author: Hesin
+ * @Date: 2024-10-05 11:38:06
+ * @LastEditors: Hesin
+ * @LastEditTime: 2024-10-08 11:20:35
+ */
 // api/SubstrateProvider.tsx
 "use client";
 
@@ -26,7 +34,9 @@ interface SubstrateContextProps {
   setRecvOffer: React.Dispatch<React.SetStateAction<any[]>>;
   issuedOffer: any[];
   setIssuedOffer: React.Dispatch<React.SetStateAction<any[]>>;
-  initConnection: () => Promise<ApiPromise>; 
+  initConnection: () => Promise<ApiPromise>;
+  pending: boolean; 
+  setPending: React.Dispatch<React.SetStateAction<boolean>>; 
 }
 
 const SubstrateContext = createContext<SubstrateContextProps | undefined>(
@@ -49,14 +59,15 @@ export const SubstrateProvider: React.FC<SubstrateProviderProps> = ({
   const [nfts, setNfts] = useState<any[]>([]);
   const [recvOffer, setRecvOffer] = useState<any[]>([]);
   const [issuedOffer, setIssuedOffer] = useState<any[]>([]);
-  
+  const [pending, setPending] = useState<boolean>(false);
+
   const initConnection = async () => {
     const provider = new WsProvider(RPC_URL);
     const _api = await ApiPromise.create({ provider, types: {} });
     setApi(_api);
     return _api;
   };
-  
+
   const value = {
     api,
     setApi,
@@ -73,6 +84,8 @@ export const SubstrateProvider: React.FC<SubstrateProviderProps> = ({
     issuedOffer,
     setIssuedOffer,
     initConnection,
+    pending,
+    setPending,
   };
 
   return (
