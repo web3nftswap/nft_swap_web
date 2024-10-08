@@ -42,7 +42,6 @@ const ConnectButton = () => {
       setButtonText("Disconnect");
       setIsConnect(true);
     }
-    
   }, []);
 
   // Handle account retrieval
@@ -93,6 +92,8 @@ const ConnectButton = () => {
       setExtensionEnabled(true);
 
       localStorage.setItem("connectedAccount", curAllAccounts[0].address);
+      localStorage.setItem("allAccounts", JSON.stringify(curAllAccounts));
+
     } else if (buttonText === "Disconnect") {
       setAllAccounts([]);
       setApi(undefined);
@@ -103,6 +104,7 @@ const ConnectButton = () => {
       setDropdownVisible(false);
       // 删除连接的账户信息
       localStorage.removeItem("connectedAccount");
+      localStorage.removeItem("allAccounts");
     }
   };
 
@@ -117,6 +119,7 @@ const ConnectButton = () => {
       ""
     );
   };
+  useEffect(() => {}, [pending]);
 
   return (
     <div>

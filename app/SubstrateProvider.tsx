@@ -64,6 +64,9 @@ export const SubstrateProvider: React.FC<SubstrateProviderProps> = ({
     const connectedAccount = localStorage.getItem("connectedAccount");
     if (connectedAccount && !api) {
       initConnection(); // 如果有账户信息，初始化连接
+      const allCs = localStorage.getItem("allAccounts")
+      setAllAccounts(JSON.parse(allCs));
+
     }
   }, [api]);
   const value = {

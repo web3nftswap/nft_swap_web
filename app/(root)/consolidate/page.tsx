@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/check-box";
 import { useEffect, useState } from "react";
+import { useSubstrateContext } from "@/app/SubstrateProvider";
 
 const nftData = [
   {
@@ -35,10 +36,31 @@ const nftData = [
 
 const Consolidate = () => {
   const [mergeBtn, setmergeBtn] = useState(false);
+  const [datas, setdatas] = useState([]);
+  const { api, allAccounts, injector, extensionEnabled, setPending } =
+    useSubstrateContext();
+
   useEffect(() => {
     console.log("mergeBtn", mergeBtn);
   }, [mergeBtn, setmergeBtn]);
+  useEffect(() => {
+    const fetchCollectionIds = async () => {
+      if (!api) return; // 如果 api 尚未初始化，直接返回
 
+      try {
+        const connectedAccount = localStorage.getItem("connectedAccount");
+        console.log(connectedAccount);
+        const nfts = await api.query.nftModule.ownedNFTs(connectedAccount);
+        const datas = JSON.parse(nfts);
+        console.log("datas", datas);
+        setdatas(datas);
+      } catch (error) {
+        console.error("Error fetching collection IDs:", error);
+      }
+    };
+
+    fetchCollectionIds();
+  }, [api]); // 添加 api 作为依赖项
   return (
     <main className="relative bg-black-100 flex justify-center items-center flex-col overflow-hidden sm:px-10 px-5">
       <Header />
@@ -61,8 +83,8 @@ const Consolidate = () => {
         </div>
         <div className="mt-40 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {/* 遍历 Art 类别下的 NFT */}
-          {nftData.map((item) => (
-            <DummyContent key={item.id} {...item} />
+          {datas.map((item, idx) => (
+            <DummyContent key={item.id} item={item} idx={idx} />
           ))}
         </div>
       </div>
@@ -74,23 +96,17 @@ export default Consolidate;
 
 // 定义 DummyContent 组件的 props 类型
 type DummyContentProps = {
-  title: string;
-  creator: string;
-  price: string;
-  imageUrl: string;
+  item: string[];
+  idx: string;
 };
-const DummyContent: React.FC<DummyContentProps> = ({
-  title,
-  creator,
-  price,
-  imageUrl,
-}) => {
+const DummyContent: React.FC<DummyContentProps> = ({ item, idx }) => {
+  console.log(item);
   return (
     <div className="cursor-pointer bg-white shadow-md rounded-t-lg rounded-b-md p-4 w-full max-w-sm mx-auto">
       {/* Image Placeholder */}
       <div className="w-full h-48 bg-gray-200 rounded-t-lg flex items-center justify-center">
         <Image
-          src={imageUrl}
+          src="https://app.nftmart.io/static/media/007.16d68919.png"
           alt=""
           width={100}
           height={100}
@@ -99,9 +115,11 @@ const DummyContent: React.FC<DummyContentProps> = ({
       </div>
       {/* NFT Info */}
       <div className="mt-4 text-center">
-        <h3 className="text-xl text-black-100 font-semibold">{title}</h3>
-        <p className="text-sm text-gray-500">{creator}</p>
-        <p className="text-lg font-bold text-pink-500 mt-2">{price}</p>
+        <h3 className="text-xl text-black-100 font-semibold">
+          {item[0].slice(0, 6)}...{item[0].slice(-4)}
+        </h3>
+        <p className="text-sm text-gray-500">{idx}</p>
+        <p className="text-lg font-bold text-pink-500 mt-2">{item[2]}%</p>
       </div>
     </div>
   );
