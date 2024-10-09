@@ -156,6 +156,8 @@ const Create = () => {
       console.log("pending", pending);
       setLoading(false);
       setPending(false);
+      alert('创建成功')
+
     }
   };
   const handleMint = async (id) => {
@@ -180,6 +182,7 @@ const Create = () => {
       console.log(`mint error: ${error}`);
     } finally {
       setPending(false);
+      alert('mint成功')
     }
   };
   return (
