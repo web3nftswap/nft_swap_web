@@ -1,4 +1,9 @@
 export async function sendAndWait(api, tx, signer, extensionEnabled, injector) {
+
+  console.log('sendAndWait',tx)
+  console.log('sendAndWait',signer)
+  console.log('sendAndWait',extensionEnabled)
+  console.log('sendAndWait',injector)
   return new Promise((resolve, reject) => {
     const process = ({ status, events, dispatchError }) => {
       if (dispatchError) {

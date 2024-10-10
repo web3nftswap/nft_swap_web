@@ -69,42 +69,17 @@ const ConnectButton = () => {
   const handleConnect = async () => {
     if (buttonText === "Connect" && !api) {
       const _api = await initConnection();
-      const extensions = await web3Enable("nft swap");
 
-      if (extensions.length === 0) {
-        alert("请安装 Polkadot.js 扩展！");
-        return;
-      }
+      const connectedAccount = localStorage.getItem("connectedAccount");
+      const bal = await fetchBalance(connectedAccount);
 
-      const curAllAccounts = await fetchAccounts(extensions);
-      const bal = await fetchBalance(curAllAccounts[0].address);
-
-      setAllAccounts(curAllAccounts);
-      setApi(_api);
       setButtonText("Disconnect");
       setIsConnect(true);
       setAccountBal(bal.toString());
-      setAccountAddr(curAllAccounts[0].address);
+      setAccountAddr(connectedAccount);
       setDropdownVisible(true);
-
-      const _injector = await web3FromAddress(curAllAccounts[0].address);
-      setInjector(_injector);
-      setExtensionEnabled(true);
-
-      localStorage.setItem("connectedAccount", curAllAccounts[0].address);
-      localStorage.setItem("allAccounts", JSON.stringify(curAllAccounts));
-    } else if (buttonText === "Disconnect") {
-      // setAllAccounts([]);
-      // setApi(undefined);
-      // setButtonText("Connect");
-      // setIsConnect(false);
-      // setAccountBal("");
-      // setAccountAddr("");
-      // setDropdownVisible(false);
-      // // 删除连接的账户信息
-      // localStorage.removeItem("connectedAccount");
-      // localStorage.removeItem("allAccounts");
-    }
+    
+       }
   };
   const handleDisConnect = () => {
     setAllAccounts([]);

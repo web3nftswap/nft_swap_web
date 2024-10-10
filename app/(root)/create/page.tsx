@@ -22,6 +22,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet-box";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { FaRegCircleCheck } from "react-icons/fa6";
+import { RiErrorWarningLine } from "react-icons/ri";
 
 const listMap = [
   {
@@ -51,8 +54,9 @@ interface CollectionData {
   desc: string;
 }
 const Create = () => {
-  const [loading, setLoading] = useState(false);
   const [allDatas, setAllDatas] = useState<CollectionData[]>([]);
+
+  const { toast } = useToast();
   const { api, allAccounts, injector, extensionEnabled, pending, setPending } =
     useSubstrateContext();
 
@@ -113,7 +117,6 @@ const Create = () => {
       return;
     }
 
-    setLoading(true);
     console.log(event);
     const formData = new FormData(event.currentTarget);
     console.log("formData", formData);
@@ -158,15 +161,31 @@ const Create = () => {
       getInfo(collectionIds);
     } catch (error) {
       console.log(`create error: ${error}`);
+      toast({
+        title: <div className="flex items-center">{error}</div>,
+        description: "Fail",
+        variant: "destructive",
+      });
     } finally {
       console.log("pending", pending);
-      setLoading(false);
       setPending(false);
-      alert("创建成功");
+      toast({
+        title: (
+          <div className="flex items-center">
+            <FaRegCircleCheck
+              size={30}
+              style={{ fill: "white", marginRight: "2rem" }}
+            />
+            Create Successful !!
+          </div>
+        ),
+        variant: "success",
+      });
     }
   };
   const handleMint = async (id) => {
     console.log("[Call] mintNft");
+
     setPending(true);
     console.log(id);
     let tx = api.tx.nftModule.mintNft(id, 0x0);
@@ -183,11 +202,45 @@ const Create = () => {
         injector
       );
       console.log(`mint hash: ${hash.toHex()}`);
+      // 查询现有的 NFT 集合
+      console.log("[Query] nftCollectionIds");
+      const collectionIds = await api.query.nftModule.nftCollectionIds();
+      console.log(`collection ids: ${collectionIds}`);
+      getInfo(collectionIds);
     } catch (error) {
       console.log(`mint error: ${error}`);
+      toast({
+        title: <div className="flex items-center">{error}</div>,
+        description: "Fail",
+        variant: "destructive",
+      });
+      toast({
+        title: (
+          <div className="flex items-center">
+            <FaRegCircleCheck
+              size={30}
+              style={{ fill: "white", marginRight: "2rem" }}
+            />
+            Mint Successful !!
+          </div>
+        ),
+        variant: "success",
+      });
     } finally {
       setPending(false);
-      alert("mint成功");
+
+      toast({
+        title: (
+          <div className="flex items-center">
+            <FaRegCircleCheck
+              size={30}
+              style={{ fill: "white", marginRight: "2rem" }}
+            />
+            Mint Successful !!
+          </div>
+        ),
+        variant: "success",
+      });
     }
   };
   return (
@@ -264,7 +317,7 @@ const Create = () => {
                     <button
                       type="submit"
                       className="px-4 py-2 rounded-md border font-semibold border-white-300 uppercase bg-purple-200 text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
-                      disabled={loading}
+                      disabled={pending}
                     >
                       Create
                     </button>
@@ -292,7 +345,7 @@ const ListBox = ({ item, handleMint }) => {
       <div className="flex gap-x-4">
         <Image
           className="h-12 w-12 flex-none rounded-full bg-gray-50"
-          src="https://app.nftmart.io/static/media/007.16d68919.png"
+          src={item.url}
           alt=""
           width={48}
           height={48}
@@ -310,7 +363,22 @@ const ListBox = ({ item, handleMint }) => {
         {/* <p className="text-sm leading-6 text-gray-200">Co-Founder / CEO</p> */}
         {/* <p className="mt-1 text-xs leading-5 text-gray-500">Last seen</p> */}
         <button
-          onClick={() => handleMint(item.id)}
+          onClick={() => {
+            if (item.curIndex + 1 > item.maxItem) {
+              toast({
+                title: (
+                  <div className="flex items-center">
+                    <RiErrorWarningLine
+                      size={30}
+                      style={{ fill: "white", marginRight: "2rem" }}
+                    />
+                    The maximum number of mints is exceeded
+                  </div>
+                ),
+                variant: "warning",
+              });
+            } else handleMint(item.id);
+          }}
           className="px-2 py-2 rounded-md border border-white-100 font-medium bg-purple-200 text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
         >
           mint{" "}
