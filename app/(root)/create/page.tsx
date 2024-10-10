@@ -173,7 +173,7 @@ const Create = () => {
         title: (
           <div className="flex items-center">
             <FaRegCircleCheck
-              size={30}
+              size={50}
               style={{ fill: "white", marginRight: "2rem" }}
             />
             Create Successful !!
@@ -218,7 +218,7 @@ const Create = () => {
         title: (
           <div className="flex items-center">
             <FaRegCircleCheck
-              size={30}
+              size={50}
               style={{ fill: "white", marginRight: "2rem" }}
             />
             Mint Successful !!
@@ -233,7 +233,7 @@ const Create = () => {
         title: (
           <div className="flex items-center">
             <FaRegCircleCheck
-              size={30}
+              size={50}
               style={{ fill: "white", marginRight: "2rem" }}
             />
             Mint Successful !!
@@ -369,7 +369,7 @@ const ListBox = ({ item, handleMint }) => {
                 title: (
                   <div className="flex items-center">
                     <RiErrorWarningLine
-                      size={30}
+                      size={50}
                       style={{ fill: "white", marginRight: "2rem" }}
                     />
                     The maximum number of mints is exceeded

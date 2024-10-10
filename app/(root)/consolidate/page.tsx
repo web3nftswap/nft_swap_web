@@ -131,7 +131,7 @@ const Consolidate = () => {
         title: (
           <div className="flex items-center">
             <RiErrorWarningLine
-              size={30}
+              size={50}
               style={{ fill: "white", marginRight: "2rem" }}
             />
             Collection Number must be more than 2 and less than 10
@@ -160,7 +160,7 @@ const Consolidate = () => {
           title: (
             <div className="flex items-center">
               <FaRegCircleCheck
-                size={30}
+                size={50}
                 style={{ fill: "white", marginRight: "2rem" }}
               />
               Successful !!
@@ -191,12 +191,12 @@ const Consolidate = () => {
       }
     });
     console.log("dd", dd);
-    if (dd.length > 1) {
+    if (dd.length > 1 || dd.length == 0) {
       toast({
         title: (
           <div className="flex items-center">
             <RiErrorWarningLine
-              size={30}
+              size={50}
               style={{ fill: "white", marginRight: "2rem" }}
             />
             Collection Number must be 1
@@ -224,7 +224,7 @@ const Consolidate = () => {
           title: (
             <div className="flex items-center">
               <FaRegCircleCheck
-                size={30}
+                size={50}
                 style={{ fill: "white", marginRight: "2rem" }}
               />
               Successful!
