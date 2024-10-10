@@ -46,7 +46,9 @@ const listMap = [
 interface CollectionData {
   maxItem: number;
   curIndex: number;
-  metainfo: string;
+  name: string;
+  url: string;
+  desc: string;
 }
 const Create = () => {
   const [loading, setLoading] = useState(false);
@@ -81,11 +83,16 @@ const Create = () => {
           const [maxItem, curIndex, metainfo] = JSON.parse(
             JSON.stringify(collectionInfo)
           );
+          const collectionMetaInfo = JSON.parse(
+            hexCodeToString(metainfo).slice(1)
+          );
           return {
             id,
             maxItem,
             curIndex,
-            metainfo: hexCodeToString(metainfo),
+            name: collectionMetaInfo.name,
+            url: collectionMetaInfo.url,
+            desc: collectionMetaInfo.desc,
           };
         })
       );
@@ -118,12 +125,11 @@ const Create = () => {
     console.log("[Call] createCollection");
     const tx = api.tx.nftModule.createCollection(
       formDataObject.maxnum,
-      formDataObject.collectionName
-      // JSON.stringify({
-      //   name: formDataObject.collectionName,
-      //   url: formDataObject.imgLink,
-      //   desc: formDataObject.desc,
-      // })
+      JSON.stringify({
+        name: formDataObject.collectionName,
+        url: formDataObject.imgLink,
+        desc: formDataObject.desc,
+      })
     );
     //当前账户
     const currentAccount = allAccounts[0];
@@ -156,8 +162,7 @@ const Create = () => {
       console.log("pending", pending);
       setLoading(false);
       setPending(false);
-      alert('创建成功')
-
+      alert("创建成功");
     }
   };
   const handleMint = async (id) => {
@@ -182,7 +187,7 @@ const Create = () => {
       console.log(`mint error: ${error}`);
     } finally {
       setPending(false);
-      alert('mint成功')
+      alert("mint成功");
     }
   };
   return (
@@ -294,10 +299,10 @@ const ListBox = ({ item, handleMint }) => {
         />
         <div className="min-w-0 flex-auto">
           <p className="text-5 font-semibold leading-6 text-gray-200">
-            {item.metainfo}
+            {item.name}
           </p>
           <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-            {item.metainfo}
+            {item.desc}
           </p>
         </div>
       </div>
@@ -310,7 +315,7 @@ const ListBox = ({ item, handleMint }) => {
         >
           mint{" "}
           <span className="text-purple-900 font-semibold ">
-            ({item.curIndex + 1}/{item.maxItem})
+            ({item.curIndex}/{item.maxItem})
           </span>
         </button>
       </div>
