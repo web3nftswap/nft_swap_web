@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { RiErrorWarningLine } from "react-icons/ri";
+import { Button } from "@/components/ui/button";
 
 const listMap = [
   {
@@ -379,7 +380,7 @@ const ListBox = ({ item, handleMint }) => {
       <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
         {/* <p className="text-sm leading-6 text-gray-200">Co-Founder / CEO</p> */}
         {/* <p className="mt-1 text-xs leading-5 text-gray-500">Last seen</p> */}
-        <button
+        <Button
           onClick={() => {
             if (item.curIndex + 1 > item.maxItem) {
               toast({
@@ -396,13 +397,15 @@ const ListBox = ({ item, handleMint }) => {
               });
             } else handleMint(item.id);
           }}
+          // disabled={api}
           className="px-2 py-2 rounded-md border border-white-100 font-medium bg-purple-200 text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
+          style={{ color: "#000" }}
         >
           mint{" "}
           <span className="text-purple-900 font-semibold ">
             ({item.curIndex}/{item.maxItem})
           </span>
-        </button>
+        </Button>
       </div>
     </li>
   );
