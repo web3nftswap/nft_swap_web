@@ -36,12 +36,22 @@ const ConnectButton = () => {
 
   // 在组件加载时检查
   useEffect(() => {
-    const savedAccount = localStorage.getItem("connectedAccount");
-    if (savedAccount) {
-      setAccountAddr(savedAccount);
-      setButtonText("Disconnect");
-      setIsConnect(true);
-    }
+    const init = async () => {
+      const savedAccount = localStorage.getItem("connectedAccount");
+      if (savedAccount) {
+        setAccountAddr(savedAccount);
+        setButtonText("Disconnect");
+        setIsConnect(true);
+
+        const _api = await initConnection();
+        const extensions = await web3Enable("nft swap");
+        const _injector = await web3FromAddress(savedAccount);
+        setInjector(_injector);
+        setExtensionEnabled(true);
+        console.log("injector!!!");
+      }
+    };
+    init();
   }, []);
 
   // Handle account retrieval
@@ -78,7 +88,7 @@ const ConnectButton = () => {
 
       const curAllAccounts = await fetchAccounts(extensions);
       const bal = await fetchBalance(curAllAccounts[0].address);
-      console.log("API", _api);
+
       setAllAccounts(curAllAccounts);
       setApi(_api);
       setButtonText("Disconnect");

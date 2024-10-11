@@ -2,7 +2,11 @@
 import React, { useState, FormEvent, useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { useSubstrateContext } from "@/app/SubstrateProvider";
-
+import {
+  web3Enable,
+  web3Accounts,
+  web3FromAddress,
+} from "@polkadot/extension-dapp";
 import { sendAndWait } from "@/utils/sendAndWait";
 
 import Header from "@/components/Header";
@@ -18,10 +22,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet-box";
 import { Input } from "@/components/ui/input";
+
 import { useToast } from "@/hooks/use-toast";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { RiErrorWarningLine } from "react-icons/ri";
-import { Button } from "@/components/ui/button";
 
 const listMap = [
   {
@@ -51,12 +55,13 @@ interface CollectionData {
   desc: string;
 }
 const Create = () => {
-  const [allDatas, setAllDatas] = useState<CollectionData[]>([]);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [allDatas, setAllDatas] = useState<CollectionData[]>([]);
   const { api, allAccounts, injector, extensionEnabled, pending, setPending } =
     useSubstrateContext();
 
+  const { toast } = useToast();
   useEffect(() => {
     const fetchCollectionIds = async () => {
       if (!api) return; // 如果 api 尚未初始化，直接返回
@@ -107,6 +112,14 @@ const Create = () => {
   const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    console.log("点击创建");
+    console.log("api", api);
+    if (!api) {
+      alert("请关联账户");
+      return;
+    }
+
+    setLoading(true);
     console.log(event);
     const formData = new FormData(event.currentTarget);
     console.log("formData", formData);
@@ -175,7 +188,6 @@ const Create = () => {
   };
   const handleMint = async (id) => {
     console.log("[Call] mintNft");
-
     setPending(true);
     console.log(id);
     let tx = api.tx.nftModule.mintNft(id, 0x0);
@@ -191,14 +203,6 @@ const Create = () => {
         extensionEnabled,
         injector
       );
-      console.log(`mint hash: ${hash.toHex()}`);
-      // 查询现有的 NFT 集合
-      console.log("[Query] nftCollectionIds");
-      const collectionIds = await api.query.nftModule.nftCollectionIds();
-      console.log(`collection ids: ${collectionIds}`);
-      getInfo(collectionIds);
-    } catch (error) {
-      console.log(`mint error: ${error}`);
       toast({
         title: <div className="flex items-center">{error}</div>,
         description: "Fail",
@@ -238,11 +242,9 @@ const Create = () => {
       <Header />
       <div className="max-w-[80%] w-full">
         <div className="w-15 relative  flex max-w-sm items-center space-x-2 my-20">
-          {/* <SheetTrigger asChild> */}
           <button
             onClick={() => {
               console.log("点击创建");
-              console.log("api", api);
               if (!api) {
                 toast({
                   title: (
@@ -259,15 +261,13 @@ const Create = () => {
                 return;
               } else {
                 console.log("api", api);
-
                 setIsSheetOpen(true);
               }
             }}
-            className="px-4 py-2 rounded-md border font-semibold border-white-300 uppercase bg-purple-200 text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
+            className="px-4 py-2 rounded-md border font-semibold border-white-300 uppercase bg-purple-200 text-black transition-transform duration-200 hover:-translate-y-1 hover:shadow-md"
           >
             Add Collection
           </button>
-          {/* </SheetTrigger> */}
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetContent
               side="left"
@@ -327,17 +327,13 @@ const Create = () => {
                     />
                   </div>
                 </div>
-                <SheetFooter>
-                  <SheetClose asChild>
-                    <button
-                      type="submit"
-                      className="px-4 py-2 rounded-md border font-semibold border-white-300 uppercase bg-purple-200 text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
-                      disabled={pending}
-                    >
-                      Create
-                    </button>
-                  </SheetClose>
-                </SheetFooter>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-md border font-semibold border-white-300 uppercase bg-purple-200 text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
+                  disabled={loading}
+                >
+                  Create
+                </button>
               </form>
             </SheetContent>
           </Sheet>
@@ -355,6 +351,7 @@ const Create = () => {
 export default Create;
 
 const ListBox = ({ item, handleMint }) => {
+  const { toast } = useToast();
   return (
     <li className="flex justify-between gap-x-6 py-5">
       <div className="flex gap-x-4">
@@ -377,7 +374,7 @@ const ListBox = ({ item, handleMint }) => {
       <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
         {/* <p className="text-sm leading-6 text-gray-200">Co-Founder / CEO</p> */}
         {/* <p className="mt-1 text-xs leading-5 text-gray-500">Last seen</p> */}
-        <Button
+        <button
           onClick={() => {
             if (item.curIndex + 1 > item.maxItem) {
               toast({
@@ -394,15 +391,13 @@ const ListBox = ({ item, handleMint }) => {
               });
             } else handleMint(item.id);
           }}
-          // disabled={api}
           className="px-2 py-2 rounded-md border border-white-100 font-medium bg-purple-200 text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
-          style={{ color: "#000" }}
         >
           mint{" "}
           <span className="text-purple-900 font-semibold ">
             ({item.curIndex}/{item.maxItem})
           </span>
-        </Button>
+        </button>
       </div>
     </li>
   );
