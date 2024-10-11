@@ -2,11 +2,7 @@
 import React, { useState, FormEvent, useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { useSubstrateContext } from "@/app/SubstrateProvider";
-import {
-  web3Enable,
-  web3Accounts,
-  web3FromAddress,
-} from "@polkadot/extension-dapp";
+
 import { sendAndWait } from "@/utils/sendAndWait";
 
 import Header from "@/components/Header";
@@ -246,6 +242,7 @@ const Create = () => {
           <button
             onClick={() => {
               console.log("点击创建");
+              console.log("api", api);
               if (!api) {
                 toast({
                   title: (

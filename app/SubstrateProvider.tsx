@@ -1,17 +1,14 @@
+
 // api/SubstrateProvider.tsx
 "use client";
 
 import React, { createContext, useState, ReactNode, useEffect } from "react";
-import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
+import { ApiPromise, WsProvider } from "@polkadot/api";
 import {
   InjectedExtension,
   InjectedAccount,
 } from "@polkadot/extension-inject/types";
-import {
-  web3Accounts,
-  web3Enable,
-  web3FromAddress,
-} from "@polkadot/extension-dapp";
+
 const RPC_URL = "ws://127.0.0.1:9944";
 
 interface SubstrateContextProps {
@@ -59,70 +56,19 @@ export const SubstrateProvider: React.FC<SubstrateProviderProps> = ({
   const [pending, setPending] = useState<boolean>(false);
 
   const initConnection = async () => {
-    try {
-      const provider = new WsProvider(RPC_URL);
-      const _api = await ApiPromise.create({ provider, types: {} });
-      const extensions = await web3Enable("nft swap");
-
-      if (extensions.length === 0) {
-        alert("请安装 Polkadot.js 扩展！");
-        return;
-      }
-      const curAllAccounts = await fetchAccounts(extensions);
-      setAllAccounts(curAllAccounts);
-      localStorage.setItem("connectedAccount", curAllAccounts[0].address);
-      localStorage.setItem("allAccounts", JSON.stringify(curAllAccounts));
-
-      const _injector = await web3FromAddress(curAllAccounts[0].address);
-      setInjector(_injector);
-      setExtensionEnabled(true);
-
-      console.log("API initialized:", _api);
-      setApi(_api); // 更新 api 状态
-      return _api; // 返回新创建的 API 实例
-    } catch (error) {
-      console.error("Failed to initialize connection:", error);
-    }
-  };
-  // Handle account retrieval
-  const fetchAccounts = async (
-    extensions: any[]
-  ): Promise<InjectedAccount[]> => {
-    const keyring = new Keyring({ type: "sr25519" });
-    if (extensions.length === 0) {
-      return [keyring.addFromUri("//Alice")];
-    } else {
-      const allAcc = await web3Accounts();
-      setAllAccounts(allAcc);
-      return allAcc.length > 0 ? allAcc : [keyring.addFromUri("//Alice")];
-    }
+    const provider = new WsProvider(RPC_URL);
+    const _api = await ApiPromise.create({ provider, types: {} });
+    setApi(_api);
+    return _api;
   };
   useEffect(() => {
-    const connectAndFetchAccounts = async () => {
-      console.log("刷新页面");
-      const connectedAccount = localStorage.getItem("connectedAccount");
-      console.log("当前的 api 状态:", api);
+    const connectedAccount = localStorage.getItem("connectedAccount");
+    if (connectedAccount && !api) {
+      initConnection(); // 如果有账户信息，初始化连接
+      const allCs = localStorage.getItem("allAccounts")
+      setAllAccounts(JSON.parse(allCs));
 
-      if (connectedAccount && !api) {
-        console.log("检测到连接账户信息，准备初始化连接...");
-        const _api = await initConnection(); // 初始化连接
-        if (_api) {
-          console.log("连接成功，获取账户信息");
-          const allCs = localStorage.getItem("allAccounts");
-          const _injector = await web3FromAddress(connectedAccount);
-          if (allCs) {
-            console.log("allAccounts", JSON.parse(allCs));
-            setInjector(_injector);
-            setAllAccounts(JSON.parse(allCs)); // 更新账户信息
-            setExtensionEnabled(true);
-          } else {
-            console.log("未检测到 allAccounts 数据");
-          }
-        }
-      }
-    };
-
-    connectAndFetchAccounts(); // 调用异步函数执行连接逻辑
+    }
   }, [api]);
   const value = {
     api,

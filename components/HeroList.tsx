@@ -1,3 +1,11 @@
+/*
+ * @Descripttion:
+ * @version: 1.0
+ * @Author: Hesin
+ * @Date: 2024-10-11 17:01:06
+ * @LastEditors: Hesin
+ * @LastEditTime: 2024-10-11 18:08:19
+ */
 "use client";
 import Image from "next/image";
 import React from "react";
@@ -33,13 +41,13 @@ const DummyContent = () => {
               Langotiya jeetu ka mara hua yaar is ready to capture every
               thought.
             </p>
-            <Image
+            {/* <Image
               src="https://assets.aceternity.com/macbook.png"
               alt="Macbook mockup from Aceternity UI"
               height="500"
               width="500"
               className="md:w-1/2 md:h-1/2 h-full w-full mx-auto object-contain"
-            />
+            /> */}
           </div>
         );
       })}
@@ -51,77 +59,41 @@ const data = [
   {
     category: "Productivity",
     title: "Enhance your productivity.",
-    src: "https://app.nftmart.io/static/media/003.1ce066e7.png",
-    content: <DummyContent />,
-    info:{
-        a:'ABC',
-        b:'10000 NMT',
-        c:'Account1',
-    }
+    src: "https://app.nftmart.io/static/media/002.13cd1b7b.png",
+    info: {
+      a: "ABC",
+      b: "10000 NMT",
+      c: "Account2",
+    },
   },
   {
     category: "Productivity",
     title: "Enhance your productivity.",
     src: "https://app.nftmart.io/static/media/010.2a151c7e.png",
-    content: <DummyContent />,
-    info:{
-        a:'ABC',
-        b:'10000 NMT',
-        c:'Account1',
-    }
+    info: {
+      a: "ABC",
+      b: "10000 NMT",
+      c: "Account2",
+    },
   },
   {
     category: "Productivity",
     title: "Enhance your productivity.",
     src: "https://app.nftmart.io/static/media/010.2a151c7e.png",
-    content: <DummyContent />,
-    info:{
-        a:'ABC',
-        b:'10000 NMT',
-        c:'Account1',
-    }
+    info: {
+      a: "ABC",
+      b: "10000 NMT",
+      c: "Account3",
+    },
   },
   {
     category: "Productivity",
     title: "Enhance your productivity.",
     src: "https://app.nftmart.io/static/media/006.23d34011.png",
-    content: <DummyContent />,
-    info:{
-        a:'ABC',
-        b:'10000 NMT',
-        c:'Account1',
-    }
+    info: {
+      a: "ABC",
+      b: "10000 NMT",
+      c: "Account4",
+    },
   },
-  
-  //   {
-  //     category: "Artificial Intelligence",
-  //     title: "You can do more with AI.",
-  //     src: "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?q=80&w=3556&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  //     content: <DummyContent />,
-  //   },
-  //   {
-  //     category: "Product",
-  //     title: "Launching the new Apple Vision Pro.",
-  //     src: "https://images.unsplash.com/photo-1713869791518-a770879e60dc?q=80&w=2333&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  //     content: <DummyContent />,
-  //   },
-
-  //   {
-  //     category: "Product",
-  //     title: "Maps for your iPhone 15 Pro Max.",
-  //     src: "https://images.unsplash.com/photo-1599202860130-f600f4948364?q=80&w=2515&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  //     content: <DummyContent />,
-  //   },
-  //   {
-  //     category: "iOS",
-  //     title: "Photography just got better.",
-  //     src: "https://images.unsplash.com/photo-1602081957921-9137a5d6eaee?q=80&w=2793&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  //     content: <DummyContent />,
-  //   },
-  //   {
-  //     category: "Hiring",
-  //     title: "Hiring for a Staff Software Engineer",
-  //     src: "https://images.unsplash.com/photo-1511984804822-e16ba72f5848?q=80&w=2048&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  //     content: <DummyContent />,
-  //   },
 ];

@@ -2,9 +2,16 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProviders";
-import { SubstrateProvider } from "./SubstrateProvider";
+// import { SubstrateProvider } from "./SubstrateProvider";
 import { Toaster } from "@/components/ui/toaster";
+import dynamic from "next/dynamic";
 
+const SubstrateProvider = dynamic(
+  () => import("./SubstrateProvider").then((mod) => mod.SubstrateProvider),
+  {
+    ssr: false,
+  }
+);
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",

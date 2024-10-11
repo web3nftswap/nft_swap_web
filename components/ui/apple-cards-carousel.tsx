@@ -29,7 +29,7 @@ type Card = {
   src: string;
   title: string;
   category: string;
-  content: React.ReactNode;
+  // content: React.ReactNode;
   info: CardInfo;
 };
 
@@ -239,7 +239,7 @@ export const Card = ({
               >
                 {card.title}
               </motion.p>
-              <div className="py-10">{card.content}</div>
+              {/* <div className="py-10">{card.content}</div> */}
             </motion.div>
           </div>
         )}
@@ -267,6 +267,7 @@ export const Card = ({
         <BlurImage
           src={card.src}
           alt={card.title}
+          sizes="100%"
           fill
           className="object-cover absolute z-10 inset-0"
         />
@@ -301,10 +302,11 @@ export const BlurImage = ({
       src={src}
       width={width}
       height={height}
-      loading="lazy"
+      // loading="lazy"
       decoding="async"
       blurDataURL={typeof src === "string" ? src : undefined}
       alt={alt ? alt : "Background of a beautiful view"}
+      priority
       {...rest}
     />
   );
