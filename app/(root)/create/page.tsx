@@ -26,6 +26,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { RiErrorWarningLine } from "react-icons/ri";
+import { hexCodeToString } from "@/utils/util";
 
 const listMap = [
   {
@@ -65,8 +66,8 @@ const Create = () => {
   useEffect(() => {
     const fetchCollectionIds = async () => {
       if (!api) return; // 如果 api 尚未初始化，直接返回
-
       try {
+        console.log(api);
         // 查询现有的 NFT 集合
         const collectionIds = await api.query.nftModule.nftCollectionIds();
         getInfo(collectionIds);
@@ -162,16 +163,6 @@ const Create = () => {
       const collectionIds = await api.query.nftModule.nftCollectionIds();
       console.log(`collection ids: ${collectionIds}`);
       getInfo(collectionIds);
-    } catch (error) {
-      console.log(`create error: ${error}`);
-      toast({
-        title: <div className="flex items-center">{error}</div>,
-        description: "Fail",
-        variant: "destructive",
-      });
-    } finally {
-      console.log("pending", pending);
-      setPending(false);
       toast({
         title: (
           <div className="flex items-center">
@@ -184,6 +175,16 @@ const Create = () => {
         ),
         variant: "success",
       });
+    } catch (error) {
+      console.log(`create error: ${error}`);
+      toast({
+        title: <div className="flex items-center">{error}</div>,
+        description: "Fail",
+        variant: "destructive",
+      });
+    } finally {
+      console.log("pending", pending);
+      setPending(false);
     }
   };
   const handleMint = async (id) => {
@@ -203,25 +204,12 @@ const Create = () => {
         extensionEnabled,
         injector
       );
-      toast({
-        title: <div className="flex items-center">{error}</div>,
-        description: "Fail",
-        variant: "destructive",
-      });
-      toast({
-        title: (
-          <div className="flex items-center">
-            <FaRegCircleCheck
-              size={50}
-              style={{ fill: "white", marginRight: "2rem" }}
-            />
-            Mint Successful !!
-          </div>
-        ),
-        variant: "success",
-      });
-    } finally {
-      setPending(false);
+      console.log(`create hash: ${hash.toHex()}`);
+      // 查询现有的 NFT 集合
+      console.log("[Query] nftCollectionIds");
+      const collectionIds = await api.query.nftModule.nftCollectionIds();
+      console.log(`collection ids: ${collectionIds}`);
+      getInfo(collectionIds);
 
       toast({
         title: (
@@ -235,6 +223,15 @@ const Create = () => {
         ),
         variant: "success",
       });
+    } catch (error) {
+      console.log(`create error: ${error}`);
+      toast({
+        title: <div className="flex items-center">{error}</div>,
+        description: "Fail",
+        variant: "destructive",
+      });
+    } finally {
+      setPending(false);
     }
   };
   return (
@@ -327,13 +324,15 @@ const Create = () => {
                     />
                   </div>
                 </div>
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-md border font-semibold border-white-300 uppercase bg-purple-200 text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
-                  disabled={loading}
-                >
-                  Create
-                </button>
+                <div className="flex py-8 justify-center w-full">
+                  <button
+                    type="submit"
+                    className="px-4 py-2 rounded-md border font-semibold border-white-300 uppercase bg-purple-200 text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
+                    disabled={loading}
+                  >
+                    Create
+                  </button>
+                </div>
               </form>
             </SheetContent>
           </Sheet>
@@ -401,13 +400,4 @@ const ListBox = ({ item, handleMint }) => {
       </div>
     </li>
   );
-};
-const hexCodeToString = (hexCodes: string): string => {
-  let str = "";
-  for (let i = 0; i < hexCodes.length; i += 2) {
-    const hexCode = hexCodes.slice(i, i + 2);
-    const charCode = parseInt(hexCode, 16);
-    str += String.fromCharCode(charCode);
-  }
-  return str;
 };

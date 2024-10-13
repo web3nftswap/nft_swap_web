@@ -392,7 +392,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
         <h3 className="text-xl text-black-100 font-semibold">
           {item[0].slice(0, 6)}...{item[0].slice(-4)}
         </h3>
-        <p className="text-sm text-gray-500">{item[1]}</p>
+        <p className="text-sm text-gray-500">idx：{item[1]}</p>
         <p className="text-lg font-bold text-pink-500 mt-2">{item[2]}%</p>
       </div>
     </div>
