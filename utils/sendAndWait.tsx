@@ -1,9 +1,8 @@
 export async function sendAndWait(api, tx, signer, extensionEnabled, injector) {
-
-  console.log('sendAndWait',tx)
-  console.log('sendAndWait',signer)
-  console.log('sendAndWait',extensionEnabled)
-  console.log('sendAndWait',injector)
+  console.log("sendAndWait", tx);
+  console.log("sendAndWait", signer);
+  console.log("sendAndWait", extensionEnabled);
+  console.log("sendAndWait", injector);
   return new Promise((resolve, reject) => {
     
     const process = ({ status, events, dispatchError }) => {
@@ -25,13 +24,20 @@ export async function sendAndWait(api, tx, signer, extensionEnabled, injector) {
 
     const signAndSend = async () => {
       if (extensionEnabled && injector) {
-        return await tx.signAndSend(
-          signer.address,
-          {
-            signer: injector.signer,
-          },
-          process
-        );
+        try {
+          console.error("signAndSend start");
+          const res = await tx.signAndSend(
+            signer.address,
+            {
+              signer: injector.signer,
+            },
+            process
+          );
+          return res;
+        } catch (e) {
+          console.error(e);
+          return reject(new Error("Failed to sign transaction"));
+        }
       } else {
         return await tx.signAndSend(signer, process);
       }
