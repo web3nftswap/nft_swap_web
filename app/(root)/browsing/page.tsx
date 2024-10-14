@@ -1,3 +1,11 @@
+/*
+ * @Descripttion: 
+ * @version: 1.0
+ * @Author: Hesin
+ * @Date: 2024-10-11 17:01:06
+ * @LastEditors: Hesin
+ * @LastEditTime: 2024-10-14 22:34:04
+ */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -9,6 +17,7 @@ import { Checkbox } from "@/components/ui/check-box";
 import { useSubstrateContext } from "@/app/SubstrateProvider";
 import { hexCodeToString } from "@/utils/util";
 import { IoIosArrowDown } from "react-icons/io";
+import Link from "next/link";
 const PAGE_SIZE = 15; // 每次加载的数据量
 
 const nftData = [
@@ -107,34 +116,39 @@ const Browsing = () => {
     // 获取所有的集合
     const collectionIdsArray = JSON.parse(JSON.stringify(collectionIds));
     let datas = [];
-    for (let i = 0; i < collectionIdsArray.length; ++i) {
-      // 获取每一个集合的信息
-      const collectionInfo = await api.query.nftModule.nftCollections(
-        collectionIdsArray[i]
-      );
-      const [maxItem, curIndex, metainfo] = JSON.parse(
-        JSON.stringify(collectionInfo)
-      );
-      const collectionMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
+    console.log("collectionIdsArray", collectionIdsArray);
+    if (collectionIdsArray && collectionIdsArray.length > 0) {
+      for (let i = 0; i < collectionIdsArray.length; ++i) {
+        // 获取每一个集合的信息
+        const collectionInfo = await api.query.nftModule.nftCollections(
+          collectionIdsArray[i]
+        );
+        const [maxItem, curIndex, metainfo] = JSON.parse(
+          JSON.stringify(collectionInfo)
+        );
+        const collectionMetaInfo = JSON.parse(
+          hexCodeToString(metainfo).slice(1)
+        );
 
-      for (let j = 0; j < curIndex; ++j) {
-        // 获取集合中每个nft的拥有者
-        let owners = await api.query.nftModule.nftOwners([
-          collectionIdsArray[i],
-          j,
-        ]);
-        console.log(`nft ${j} owner: ${owners}`);
-        const NFTData = {
-          id: collectionIdsArray[i],
-          // maxItem,
-          // curIndex,
-          idx: j,
-          name: collectionMetaInfo.name,
-          url: collectionMetaInfo.url,
-          desc: collectionMetaInfo.desc,
-          owners: JSON.parse(JSON.stringify(owners)),
-        };
-        datas.push(NFTData);
+        for (let j = 0; j < curIndex; ++j) {
+          // 获取集合中每个nft的拥有者
+          let owners = await api.query.nftModule.nftOwners([
+            collectionIdsArray[i],
+            j,
+          ]);
+          console.log(`nft ${j} owner: ${owners}`);
+          const NFTData = {
+            id: collectionIdsArray[i],
+            // maxItem,
+            // curIndex,
+            idx: j,
+            name: collectionMetaInfo.name,
+            url: collectionMetaInfo.url,
+            desc: collectionMetaInfo.desc,
+            owners: JSON.parse(JSON.stringify(owners)),
+          };
+          datas.push(NFTData);
+        }
       }
     }
     console.log(datas);
@@ -165,7 +179,7 @@ const Browsing = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {/* 遍历所有类别下的 NFT */}
             {visibleDatas.map((itm) => (
-              <DummyContent key={`${itm.id}-${itm.idx}`} {...itm} />
+              <DummyContent key={`${itm.id}-${itm.idx}`} data={itm} {...itm} />
             ))}
           </div>
         ),
@@ -249,6 +263,7 @@ export default Browsing;
 //   price: string; // 价格可以是字符串或数字，取决于你的需求
 // };
 const DummyContent: React.FC<NFTDataProp> = ({
+  data,
   id,
   idx,
   name,
@@ -274,6 +289,9 @@ const DummyContent: React.FC<NFTDataProp> = ({
         <p className="text-sm text-gray-500">idx：{idx}</p>
         {/* <p className="text-lg font-bold text-pink-500 mt-2">{desc}</p> */}
       </div>
+      <Link href={`/browsing/${id}/${idx}?data=${data}`}>
+        <p className="cursor-pointer text-sm text-gray-500">详情</p>
+      </Link>
     </div>
   );
 };

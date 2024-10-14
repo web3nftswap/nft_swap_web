@@ -114,7 +114,7 @@ export const GridIn = ({
       {tabs.map((tab, idx) => (
         <motion.div
           key={tab.value}
-          className={cn("w-full h-full absolute top-0 left-0", className)}
+          className={cn("w-full h-full relative top-0 left-0", className)}
           initial={{ opacity: 0, y: -20 }} // 初始状态为透明并向下偏移
           animate={{
             opacity: isActive(tab) ? 1 : 0, // 仅活动选项卡显示
