@@ -1,10 +1,12 @@
+import { toast } from "@/hooks/use-toast";
+
 export async function sendAndWait(api, tx, signer, extensionEnabled, injector) {
   console.log("sendAndWait", tx);
   console.log("sendAndWait", signer);
   console.log("sendAndWait", extensionEnabled);
   console.log("sendAndWait", injector);
+
   return new Promise((resolve, reject) => {
-    
     const process = ({ status, events, dispatchError }) => {
       if (dispatchError) {
         if (dispatchError.isModule) {
@@ -25,7 +27,6 @@ export async function sendAndWait(api, tx, signer, extensionEnabled, injector) {
     const signAndSend = async () => {
       if (extensionEnabled && injector) {
         try {
-          console.error("signAndSend start");
           const res = await tx.signAndSend(
             signer.address,
             {
@@ -33,10 +34,11 @@ export async function sendAndWait(api, tx, signer, extensionEnabled, injector) {
             },
             process
           );
-          return res;
+          console.log("res", res);
+          resolve(res); // 成功时 resolve
         } catch (e) {
-          console.error(e);
-          return reject(new Error("Failed to sign transaction"));
+          console.log("error", e);
+          reject(e.message); // 这里使用 reject 传递错误信息
         }
       } else {
         return await tx.signAndSend(signer, process);

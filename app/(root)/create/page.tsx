@@ -179,7 +179,7 @@ const Create = () => {
       console.log(`create error: ${error}`);
       toast({
         title: <div className="flex items-center">{error}</div>,
-        description: "Fail",
+        // description: "Fail",
         variant: "destructive",
       });
     } finally {
@@ -227,7 +227,7 @@ const Create = () => {
       console.log(`create error: ${error}`);
       toast({
         title: <div className="flex items-center">{error}</div>,
-        description: "Fail",
+        // description: "Fail",
         variant: "destructive",
       });
     } finally {
