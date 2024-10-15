@@ -147,27 +147,32 @@ const ConnectButton = () => {
           Pending
         </div>
       ) : (
-        <Menu setActive={setActive} setDropdownVisible={setDropdownVisible}>
-          <MenuItem
-            setActive={setActive}
-            active={active}
-            isConnect={isConnect}
-            dropdownVisible={dropdownVisible}
-            setDropdownVisible={setDropdownVisible}
-            item="Connect"
-            title={!isConnect ? "Connect" : displayAddress(accountAddr)}
-            handleConnect={handleConnect}
-          >
-            <div className="flex flex-col space-y-4 text-sm">
-              <HoveredLi>Switch Account</HoveredLi>
-              <HoveredLi onClick={() => handleDisConnect()}>
-                <span className="text-red-400 hover:font-semibold ">
-                  Disconnect
-                </span>{" "}
-              </HoveredLi>
-            </div>
-          </MenuItem>
-        </Menu>
+        <div className="flex justify-center items-center">
+          <div className="hover:scale-110 transition-transform duration-300 cursor-pointer" >
+            <Image src={`/images/faucet.png`} alt="" width="30" height="30" />
+          </div>
+          <Menu setActive={setActive} setDropdownVisible={setDropdownVisible}>
+            <MenuItem
+              setActive={setActive}
+              active={active}
+              isConnect={isConnect}
+              dropdownVisible={dropdownVisible}
+              setDropdownVisible={setDropdownVisible}
+              item="Connect"
+              title={!isConnect ? "Connect" : displayAddress(accountAddr)}
+              handleConnect={handleConnect}
+            >
+              <div className="flex flex-col space-y-4 text-sm">
+                <HoveredLi>Switch Account</HoveredLi>
+                <HoveredLi onClick={() => handleDisConnect()}>
+                  <span className="text-red-400 hover:font-semibold ">
+                    Disconnect
+                  </span>{" "}
+                </HoveredLi>
+              </div>
+            </MenuItem>
+          </Menu>
+        </div>
       )}
     </div>
   );
