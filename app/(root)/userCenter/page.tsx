@@ -42,7 +42,7 @@ const nftData = [
   },
 ];
 
-const Consolidate = () => {
+const UserCenter = () => {
   const [mergeBtn, setmergeBtn] = useState(false);
   const [splitBtn, setsplitBtn] = useState(false);
   const [datas, setdatas] = useState([]);
@@ -52,37 +52,34 @@ const Consolidate = () => {
     useSubstrateContext();
 
   useEffect(() => {
-    console.log("mergeBtn", mergeBtn);
-    console.log("splitBtn", splitBtn);
-  }, [mergeBtn, setmergeBtn, splitBtn, setsplitBtn]);
-  useEffect(() => {
-    fetchCollectionIds();
+    const fetchUserNFTs = async () => {
+      if (!api) return; // 如果 api 尚未初始化，直接返回
+
+      try {
+        console.log("[Query] ownedNFTs");
+        const connectedAccount = localStorage.getItem("connectedAccount");
+        const nfts = await api.query.nftModule.ownedNFTs(connectedAccount);
+        const datas = JSON.parse(nfts);
+
+        console.log("datas", datas);
+        const newData = await Promise.all(
+          datas.map(async (i) => {
+            let status = await getNftConsolidateStatus(i[0], i[1]);
+            return {
+              nft: i,
+              status: status,
+            };
+          })
+        );
+        console.log("Fetched Data:", newData);
+        setdatas(newData);
+      } catch (error) {
+        console.error("Error fetching collection IDs:", error);
+      }
+    };
+
+    fetchUserNFTs();
   }, [api]);
-  const fetchCollectionIds = async () => {
-    if (!api) return; // 如果 api 尚未初始化，直接返回
-
-    try {
-      const connectedAccount = localStorage.getItem("connectedAccount");
-      console.log(connectedAccount);
-      const nfts = await api.query.nftModule.ownedNFTs(connectedAccount);
-      const datas = JSON.parse(nfts);
-
-      console.log("datas", datas);
-      const newData = await Promise.all(
-        datas.map(async (i) => {
-          let status = await getNftConsolidateStatus(i[0], i[1]);
-          return {
-            nft: i,
-            status: status,
-          };
-        })
-      );
-      console.log("Fetched Data:", newData);
-      setdatas(newData);
-    } catch (error) {
-      console.error("Error fetching collection IDs:", error);
-    }
-  };
 
   const getNftConsolidateStatus = async (
     collectionId,
@@ -155,7 +152,6 @@ const Consolidate = () => {
         console.log(`mint hash: ${hash.toHex()}`);
 
         setPending(false);
-        fetchCollectionIds();
         toast({
           title: (
             <div className="flex items-center">
@@ -220,7 +216,6 @@ const Consolidate = () => {
         );
         console.log(`split hash: ${hash.toHex()}`);
         setPending(false);
-        fetchCollectionIds();
         toast({
           title: (
             <div className="flex items-center">
@@ -306,7 +301,7 @@ const Consolidate = () => {
   );
 };
 
-export default Consolidate;
+export default UserCenter;
 
 // 定义 DummyContent 组件的 props 类型
 type DummyContentProps = {

@@ -24,27 +24,44 @@ export async function sendAndWait(api, tx, signer, extensionEnabled, injector) {
       }
     };
 
+    // const signAndSend = async () => {
+    //   if (extensionEnabled && injector) {
+    //     try {
+    //       const res = await tx.signAndSend(
+    //         signer.address,
+    //         {
+    //           signer: injector.signer,
+    //         },
+    //         process
+    //       );
+    //       console.log("res", res);
+    //       resolve(res); // 成功时 resolve
+    //     } catch (e) {
+    //       console.log("error", e);
+    //       reject(e.message); // 这里使用 reject 传递错误信息
+    //     }
+    //   } else {
+    //     return await tx.signAndSend(signer, process);
+    //   }
+    // };
     const signAndSend = async () => {
       if (extensionEnabled && injector) {
         try {
-          const res = await tx.signAndSend(
+          return await tx.signAndSend(
             signer.address,
             {
               signer: injector.signer,
             },
             process
           );
-          console.log("res", res);
-          resolve(res); // 成功时 resolve
         } catch (e) {
-          console.log("error", e);
-          reject(e.message); // 这里使用 reject 传递错误信息
+          console.log("error", e.message);
+          reject(e.message);
         }
       } else {
         return await tx.signAndSend(signer, process);
       }
     };
-
     signAndSend();
   });
 }

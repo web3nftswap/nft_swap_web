@@ -12,6 +12,7 @@ import { InjectedAccount } from "@polkadot/extension-inject/types";
 import { ApiPromise, WsProvider, Keyring } from "@polkadot/api";
 import { TbReload } from "react-icons/tb";
 import Image from "next/image";
+import Link from "next/link";
 const RPC_URL = "ws://127.0.0.1:9944";
 
 const ConnectButton = () => {
@@ -148,7 +149,7 @@ const ConnectButton = () => {
         </div>
       ) : (
         <div className="flex justify-center items-center">
-          <div className="hover:scale-110 transition-transform duration-300 cursor-pointer" >
+          <div className="hover:scale-110 transition-transform duration-300 cursor-pointer">
             <Image src={`/images/faucet.png`} alt="" width="30" height="30" />
           </div>
           <Menu setActive={setActive} setDropdownVisible={setDropdownVisible}>
@@ -163,7 +164,9 @@ const ConnectButton = () => {
               handleConnect={handleConnect}
             >
               <div className="flex flex-col space-y-4 text-sm">
-                <HoveredLi>Switch Account</HoveredLi>
+                <HoveredLi>
+                  <Link href="/userCenter">User Center</Link>
+                </HoveredLi>
                 <HoveredLi onClick={() => handleDisConnect()}>
                   <span className="text-red-400 hover:font-semibold ">
                     Disconnect
