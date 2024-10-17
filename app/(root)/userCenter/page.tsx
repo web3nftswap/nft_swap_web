@@ -4,13 +4,21 @@ import { Tabs } from "@/components/ui/tabs";
 import Header from "@/components/Header";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/check-box";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useSubstrateContext } from "@/app/SubstrateProvider";
 import { FiEdit } from "react-icons/fi";
 import { useToast } from "@/hooks/use-toast";
 import { sendAndWait } from "@/utils/sendAndWait";
 import { Button } from "@/components/ui/button";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { LuFileStack } from "react-icons/lu";
 import { RiErrorWarningLine } from "react-icons/ri";
@@ -43,6 +51,7 @@ const nftData = [
 ];
 
 const UserCenter = () => {
+  const [open, setOpen] = useState(false);
   const [mergeBtn, setmergeBtn] = useState(false);
   const [splitBtn, setsplitBtn] = useState(false);
   const [datas, setdatas] = useState([]);
@@ -52,34 +61,33 @@ const UserCenter = () => {
     useSubstrateContext();
 
   useEffect(() => {
-    const fetchUserNFTs = async () => {
-      if (!api) return; // 如果 api 尚未初始化，直接返回
-
-      try {
-        console.log("[Query] ownedNFTs");
-        const connectedAccount = localStorage.getItem("connectedAccount");
-        const nfts = await api.query.nftModule.ownedNFTs(connectedAccount);
-        const datas = JSON.parse(nfts);
-
-        console.log("datas", datas);
-        const newData = await Promise.all(
-          datas.map(async (i) => {
-            let status = await getNftConsolidateStatus(i[0], i[1]);
-            return {
-              nft: i,
-              status: status,
-            };
-          })
-        );
-        console.log("Fetched Data:", newData);
-        setdatas(newData);
-      } catch (error) {
-        console.error("Error fetching collection IDs:", error);
-      }
-    };
-
     fetchUserNFTs();
   }, [api]);
+  const fetchUserNFTs = async () => {
+    if (!api) return; // 如果 api 尚未初始化，直接返回
+
+    try {
+      console.log("[Query] ownedNFTs");
+      const connectedAccount = localStorage.getItem("connectedAccount");
+      const ownedNFTs = await api.query.nftModule.ownedNFTs(connectedAccount);
+      const datas = JSON.parse(ownedNFTs);
+      // console.log("datas", datas);
+
+      const ownedNFTsArray = await Promise.all(
+        datas.map(async (i) => {
+          let status = await getNftConsolidateStatus(i[0], i[1]);
+          return {
+            nft: i,
+            status: status,
+          };
+        })
+      );
+      console.log("Fetched Data:", ownedNFTsArray);
+      setdatas(ownedNFTsArray);
+    } catch (error) {
+      console.error("Error fetching collection IDs:", error);
+    }
+  };
 
   const getNftConsolidateStatus = async (
     collectionId,
@@ -240,6 +248,50 @@ const UserCenter = () => {
       }
     }
   };
+
+  const handlePublish = async (event: FormEvent<HTMLFormElement>, nft) => {
+    event.preventDefault();
+
+    console.log("上架");
+    const formData = new FormData(event.currentTarget);
+    const formDataObject = Object.fromEntries(formData.entries());
+    console.log("表单数据对象:", formDataObject);
+
+    const shareRate = Number(formDataObject.share);
+    const price = Number(formDataObject.price);
+    const param1 = [nft[0], Number(nft[1]), shareRate];
+    console.log(param1);
+    // 上架
+    try {
+      console.log("pending", pending);
+      setPending(true);
+      //当前账户
+      const currentAccount = allAccounts[0];
+      //tx
+      const tx = api.tx.nftMarketModule.listNft(param1, price);
+      //hash
+      const hash = await sendAndWait(
+        api,
+        tx,
+        currentAccount,
+        extensionEnabled,
+        injector
+      );
+      console.log(`create hash: ${hash.toHex()}`);
+      //刷新数据 NFT 集合
+      fetchUserNFTs();
+    } catch (error) {
+      console.log(`create error: ${error}`);
+      toast({
+        title: <div className="flex items-center">{error}</div>,
+        // description: "Fail",
+        variant: "destructive",
+      });
+    } finally {
+      setPending(false);
+      setOpen(false);
+    }
+  };
   return (
     <main className="relative bg-black-100 flex justify-center items-center flex-col overflow-hidden sm:px-10 px-5">
       <Header />
@@ -293,6 +345,9 @@ const UserCenter = () => {
                 splitBtn={splitBtn}
                 datas={datas}
                 setdatas={setdatas}
+                handlePublish={handlePublish}
+                open={open}
+                setOpen={setOpen}
               />
             ))}
         </div>
@@ -310,16 +365,22 @@ type DummyContentProps = {
   mergeBtn: boolean;
   splitBtn: boolean;
   status: string;
+  handlePublish: (event: FormEvent<HTMLFormElement>, item: string[]) => void;
   // datas: string[];
   // setdatas: string[];
+  open: boolean;
+  setOpen: (open: boolean) => void;
 };
 const DummyContent: React.FC<DummyContentProps> = ({
   item,
   mergeBtn,
   splitBtn,
-  datas,
-  setdatas,
+  // datas,
+  // setdatas,
   status,
+  handlePublish,
+  open,
+  setOpen,
 }) => {
   return (
     <div className="cursor-pointer relative bg-white shadow-md rounded-t-lg rounded-b-md p-4 w-full max-w-sm mx-auto">
@@ -390,6 +451,50 @@ const DummyContent: React.FC<DummyContentProps> = ({
         </h3>
         <p className="text-sm text-gray-500">idx：{item[1]}</p>
         <p className="text-lg font-bold text-pink-500 mt-2">{item[2]}%</p>
+        <div className="w-full flex justify-between items-center ">
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline">Publish</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Publish Form</DialogTitle>
+                <DialogDescription>Enter share and price.</DialogDescription>
+              </DialogHeader>
+              <form onSubmit={(event) => handlePublish(event, item)}>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <label htmlFor="share" className="text-right">
+                      Share
+                    </label>
+                    <Input
+                      id="share"
+                      name="share"
+                      type="number"
+                      defaultValue="0<num<100"
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <label htmlFor="price" className="text-right">
+                      Price
+                    </label>
+                    <Input
+                      id="price"
+                      name="price"
+                      type="number"
+                      defaultValue="@peduarte"
+                      className="col-span-3"
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button type="submit">Submit</Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
     </div>
   );

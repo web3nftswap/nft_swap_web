@@ -15,33 +15,6 @@ import { FaRegCircleCheck } from "react-icons/fa6";
 import { LuFileStack } from "react-icons/lu";
 import { RiErrorWarningLine } from "react-icons/ri";
 
-const nftData = [
-  {
-    id: 1,
-    title: "Digital Sunrise",
-    imageUrl: "https://app.nftmart.io/static/media/007.16d68919.png",
-    description: "A beautiful digital sunrise artwork.",
-    creator: "Artist A",
-    price: "0.5 ETH",
-  },
-  {
-    id: 2,
-    title: "Abstract Dream",
-    imageUrl: "https://app.nftmart.io/static/media/007.16d68919.png",
-    description: "An abstract piece that captures the essence of dreams.",
-    creator: "Artist B",
-    price: "1.2 ETH",
-  },
-  {
-    id: 3,
-    title: "Ocean Waves",
-    imageUrl: "https://app.nftmart.io/static/media/007.16d68919.png",
-    description: "A stunning representation of ocean waves.",
-    creator: "Artist C",
-    price: "0.8 ETH",
-  },
-];
-
 const Consolidate = () => {
   const [mergeBtn, setmergeBtn] = useState(false);
   const [splitBtn, setsplitBtn] = useState(false);

@@ -4,7 +4,7 @@
  * @Author: Hesin
  * @Date: 2024-10-10 00:11:53
  * @LastEditors: Hesin
- * @LastEditTime: 2024-10-10 00:41:17
+ * @LastEditTime: 2024-10-15 23:13:08
  */
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
@@ -13,7 +13,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "px-6 py-2 bg-transparent border border-black uppercase dark:border-white dark:text-white text-black rounded-lg transform hover:-translate-y-1 transition duration-400",
+  "px-6 py-2 bg-transparent border rounded-lg transform hover:scale-105 transition-transform duration-300 ",
   {
     variants: {
       variant: {
@@ -23,7 +23,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+          "border border-input text-purple dark:text-black border-black dark:border-fuchsia",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
