@@ -11,6 +11,7 @@ import { hexCodeToString } from "@/utils/util";
 import { IoIosArrowDown } from "react-icons/io";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import Footer from "@/components/Footer";
 const PAGE_SIZE = 15; // 每次加载的数据量
 
 const nftData = [
@@ -273,6 +274,8 @@ const Browsing = () => {
           )}
         </div>
       </div>
+
+      <Footer/>
     </main>
   );
 };

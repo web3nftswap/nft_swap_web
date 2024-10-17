@@ -27,6 +27,7 @@ import { useToast } from "@/hooks/use-toast";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { RiErrorWarningLine } from "react-icons/ri";
 import { hexCodeToString } from "@/utils/util";
+import Footer from "@/components/Footer";
 
 const listMap = [
   {
@@ -343,6 +344,7 @@ const Create = () => {
           ))}
         </ul>
       </div>
+      <Footer/>
     </main>
   );
 };
