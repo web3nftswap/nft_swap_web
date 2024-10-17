@@ -69,6 +69,18 @@ const UserCenter = () => {
     try {
       console.log("[Query] ownedNFTs");
       const connectedAccount = localStorage.getItem("connectedAccount");
+
+      // 当前账号的上架 list
+      const entries = await api.query.nftMarketModule.listings.entries();
+      const publishedNFTs = entries
+        .filter(([key]) => key.args[1].eq(connectedAccount))
+        .map(([key, value]) => ({
+          nft: JSON.parse(JSON.stringify(key.args[0])),
+          seller: JSON.parse(JSON.stringify(key.args[1])),
+          price: JSON.parse(JSON.stringify(value)).price,
+        }));
+      console.log("publishedNFTs", publishedNFTs);
+
       const ownedNFTs = await api.query.nftModule.ownedNFTs(connectedAccount);
       const datas = JSON.parse(ownedNFTs);
       // console.log("datas", datas);
@@ -76,9 +88,17 @@ const UserCenter = () => {
       const ownedNFTsArray = await Promise.all(
         datas.map(async (i) => {
           let status = await getNftConsolidateStatus(i[0], i[1]);
+          // 检查 publishedNFTs 中是否存在匹配的对象
+          const matchingItem = publishedNFTs.find(
+            (item) => item.nft[0] === i[0] && item.nft[1] === i[1]
+          );
+          console.log(matchingItem);
           return {
             nft: i,
             status: status,
+            ...(matchingItem
+              ? { price: matchingItem.price, share: matchingItem.nft[2] }
+              : {}),
           };
         })
       );
@@ -339,7 +359,8 @@ const UserCenter = () => {
             .map((item, idx) => (
               <DummyContent
                 key={`${item[0]}-${idx}`}
-                item={item.nft}
+                item={item}
+                nftInfo={item.nft}
                 status={item.status}
                 mergeBtn={mergeBtn}
                 splitBtn={splitBtn}
@@ -361,6 +382,7 @@ export default UserCenter;
 // 定义 DummyContent 组件的 props 类型
 type DummyContentProps = {
   item: string[];
+  nftInfo: string[];
   idx: string;
   mergeBtn: boolean;
   splitBtn: boolean;
@@ -373,6 +395,7 @@ type DummyContentProps = {
 };
 const DummyContent: React.FC<DummyContentProps> = ({
   item,
+  nftInfo,
   mergeBtn,
   splitBtn,
   // datas,
@@ -383,7 +406,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
   setOpen,
 }) => {
   return (
-    <div className="cursor-pointer relative bg-white shadow-md rounded-t-lg rounded-b-md p-4 w-full max-w-sm mx-auto">
+    <div className="cursor-pointer relative bg-white shadow-md rounded-t-lg rounded-b-md p-4 pb-2 w-full max-w-sm mx-auto">
       {/*Merge Checkbox */}
       {mergeBtn && status !== "merged" && (
         <div className="absolute -top-3 -left-3 w-10 h-10 rounded-full shadow-lg overflow-hidden bg-purple-200 flex justify-center items-center">
@@ -447,21 +470,42 @@ const DummyContent: React.FC<DummyContentProps> = ({
       {/* NFT Info */}
       <div className="mt-4 text-center">
         <h3 className="text-xl text-black-100 font-semibold">
-          {item[0].slice(0, 6)}...{item[0].slice(-4)}
+          {nftInfo[0].slice(0, 6)}...{nftInfo[0].slice(-4)}
         </h3>
-        <p className="text-sm text-gray-500">idx：{item[1]}</p>
-        <p className="text-lg font-bold text-pink-500 mt-2">{item[2]}%</p>
-        <div className="w-full flex justify-between items-center ">
+        <p className="text-sm text-gray-500">idx：{nftInfo[1]}</p>
+        <p className="text-lg font-bold text-pink-500 mt-2">
+          {nftInfo[2]}%
+          <span className="text-sm font-normal text-pink-300 mt-2">
+            {item.share ? `(${item.share})` : ""}
+          </span>
+        </p>
+        <div className="flex justify-between items-center  -mx-2">
           <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline">Publish</Button>
-            </DialogTrigger>
+            {item.share ? (
+              <div className="w-full flex justify-between pt-2">
+                <Button variant="outline" size="sm">
+                  Unpublish
+                </Button>
+                <DialogTrigger asChild>
+                  <Button variant="secondary" size="sm">
+                    Update
+                  </Button>
+                </DialogTrigger>
+              </div>
+            ) : (
+              <DialogTrigger asChild>
+                <Button variant="secondary" className="w-full">
+                  Publish
+                </Button>
+              </DialogTrigger>
+            )}
+
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Publish Form</DialogTitle>
                 <DialogDescription>Enter share and price.</DialogDescription>
               </DialogHeader>
-              <form onSubmit={(event) => handlePublish(event, item)}>
+              <form onSubmit={(event) => handlePublish(event, nftInfo)}>
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-4 items-center gap-4">
                     <label htmlFor="share" className="text-right">
