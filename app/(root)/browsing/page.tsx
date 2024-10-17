@@ -1,11 +1,3 @@
-/*
- * @Descripttion: 
- * @version: 1.0
- * @Author: Hesin
- * @Date: 2024-10-11 17:01:06
- * @LastEditors: Hesin
- * @LastEditTime: 2024-10-14 22:34:04
- */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -18,6 +10,7 @@ import { useSubstrateContext } from "@/app/SubstrateProvider";
 import { hexCodeToString } from "@/utils/util";
 import { IoIosArrowDown } from "react-icons/io";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 const PAGE_SIZE = 15; // 每次加载的数据量
 
 const nftData = [
@@ -89,9 +82,17 @@ interface NFTDataProp {
   owners: string[]; // owners 是一个字符串数组
 }
 
+interface BuyNFTDataProp {
+  nft: string[]; // 可能是 string 或 number 类型
+  price: number; // 索引，number 类型
+  seller: string; // 名称，string 类型
+}
+
 const Browsing = () => {
   const [allDatas, setAllDatas] = useState<NFTDataProp[]>([]);
-  const [visibleDatas, setVisibleDatas] = useState<NFTDataProp[]>([]);
+  const [visibleDatas, setVisibleDatas] = useState<NFTDataProp[]>([]); //All data
+  const [buyDatas, setbuyAllDatas] = useState<BuyNFTDataProp[]>([]);
+  const [visibleBuyDatas, setVisibleBuyDatas] = useState<BuyNFTDataProp[]>([]);
   const [tabs, settabs] = useState([] as any);
 
   const { api, allAccounts, injector, extensionEnabled, pending, setPending } =
@@ -110,13 +111,33 @@ const Browsing = () => {
     };
 
     fetchAllNfts();
+    fetchBuyNfts();
   }, [api]); // 添加 api 作为依赖项
+
+  const fetchBuyNfts = async () => {
+    if (!api) return; //
+    // 查询所有BuyNFTs
+    try {
+      const entries = await api.query.nftMarketModule.listings.entries();
+      const buyNFTs = entries.map(([key, value]) => ({
+        nft: JSON.parse(JSON.stringify(key.args[0])),
+        seller: JSON.parse(JSON.stringify(key.args[1])),
+        price: JSON.parse(JSON.stringify(value)).price,
+      }));
+      console.log("buyNFTs", buyNFTs);
+      const NFTData = {};
+      setbuyAllDatas(buyNFTs);
+      setVisibleBuyDatas(buyNFTs.slice(0, PAGE_SIZE)); // 初始化可见数据
+    } catch (error) {
+      console.error("Error fetching collection IDs:", error);
+    }
+  };
 
   const getAllNfts = async (collectionIds) => {
     // 获取所有的集合
     const collectionIdsArray = JSON.parse(JSON.stringify(collectionIds));
     let datas = [];
-    console.log("collectionIdsArray", collectionIdsArray);
+    // console.log("collectionIdsArray", collectionIdsArray);
     if (collectionIdsArray && collectionIdsArray.length > 0) {
       for (let i = 0; i < collectionIdsArray.length; ++i) {
         // 获取每一个集合的信息
@@ -136,7 +157,7 @@ const Browsing = () => {
             collectionIdsArray[i],
             j,
           ]);
-          console.log(`nft ${j} owner: ${owners}`);
+          // console.log(`nft ${j} owner: ${owners}`);
           const NFTData = {
             id: collectionIdsArray[i],
             // maxItem,
@@ -151,12 +172,12 @@ const Browsing = () => {
         }
       }
     }
-    console.log(datas);
+    // console.log(datas);
     setAllDatas(datas);
     setVisibleDatas(datas.slice(0, PAGE_SIZE)); // 初始化可见数据
   };
   const loadMoreData = () => {
-    console.log("ssss");
+    console.log("loadMoreData");
     const currentVisibleCount = visibleDatas.length;
     if (currentVisibleCount >= allDatas.length) return;
     const nextDataCount = Math.min(
@@ -170,7 +191,7 @@ const Browsing = () => {
     setVisibleDatas((prev) => [...prev, ...nextData]);
   };
   useEffect(() => {
-    console.log("tabs", allDatas);
+    console.log("tabs");
     const tabs = [
       {
         title: "All",
@@ -190,17 +211,19 @@ const Browsing = () => {
         content: (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {/* 遍历 Art 类别下的 NFT */}
-            {/* {nftData
-            .find((category) => category.category === "Collectibles")
-            ?.items.map((item) => (
-              <DummyContent key={item.id} {...item} />
-            ))} */}
+            {visibleBuyDatas.map((itm) => (
+              <DummyContenBuy
+                key={`${itm.nft[0]}-${itm.nft[1]}`}
+                data={itm}
+                {...itm}
+              />
+            ))}
           </div>
         ),
       },
     ];
     settabs(tabs);
-  }, [visibleDatas, allDatas]);
+  }, [visibleDatas, allDatas,visibleBuyDatas,buyDatas]);
 
   return (
     <main className="relative bg-black-100 flex justify-center items-center flex-col overflow-hidden sm:px-10 px-5">
@@ -292,6 +315,39 @@ const DummyContent: React.FC<NFTDataProp> = ({
       <Link href={`/browsing/${id}/${idx}?data=${data}`}>
         <p className="cursor-pointer text-sm text-gray-500">详情</p>
       </Link>
+    </div>
+  );
+};
+const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
+  data,
+  nft,
+  price,
+  seller,
+}) => {
+  return (
+    <div className="cursor-pointer bg-white shadow-md rounded-t-lg rounded-b-md p-4 pb-2  w-full max-w-sm mx-auto">
+      {/* Image Placeholder */}
+      <div className="w-full h-48 bg-gray-200 rounded-t-lg flex items-center justify-center">
+        {/* <Image
+          src={url}
+          alt="dummy image"
+          width={100}
+          height={100}
+          className="h-full w-full object-cover rounded-t-lg"
+        /> */}
+      </div>
+      {/* NFT Info */}
+      <div className="mt-4 text-center">
+        <h3 className="text-xl text-black-100 font-semibold">
+          {nft[0].slice(0, 6)}...{nft[0].slice(-4)}
+        </h3>
+        <p className="text-sm text-gray-500">idx：{nft[1]}</p>
+        {/* <p className="text-lg font-bold text-pink-500 mt-2">{desc}</p> */}
+      </div>
+      <div className="flex justify-between pt-2 -mx-2">
+        <Button variant="secondary">Buy</Button>
+        <Button variant="outline">Swap</Button>
+      </div>
     </div>
   );
 };
