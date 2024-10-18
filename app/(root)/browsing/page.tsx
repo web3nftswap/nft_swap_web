@@ -1,3 +1,11 @@
+/*
+ * @Descripttion:
+ * @version: 1.0
+ * @Author: Hesin
+ * @Date: 2024-10-11 17:01:06
+ * @LastEditors: Hesin
+ * @LastEditTime: 2024-10-18 08:03:08
+ */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -12,6 +20,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
+import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
 const PAGE_SIZE = 15; // 每次加载的数据量
 
 const nftData = [
@@ -126,9 +135,23 @@ const Browsing = () => {
         price: JSON.parse(JSON.stringify(value)).price,
       }));
       console.log("buyNFTs", buyNFTs);
-      const NFTData = {};
-      setbuyAllDatas(buyNFTs);
-      setVisibleBuyDatas(buyNFTs.slice(0, PAGE_SIZE)); // 初始化可见数据
+      let newBuydatas = [];
+      for (let i = 0; i < buyNFTs.length; i++) {
+        let owners = await api.query.nftModule.nftOwners([
+          buyNFTs[i].nft[0],
+          buyNFTs[i].nft[1],
+        ]);
+        const nft = {
+          ...buyNFTs[i],
+          owners: JSON.parse(JSON.stringify(owners)),
+        };
+        console.log(nft);
+        newBuydatas.push(nft);
+      }
+      console.log("newBuydatas", newBuydatas);
+      // 获取每个nft的拥有者
+      setbuyAllDatas(newBuydatas);
+      setVisibleBuyDatas(newBuydatas.slice(0, PAGE_SIZE)); // 初始化可见数据
     } catch (error) {
       console.error("Error fetching collection IDs:", error);
     }
@@ -224,7 +247,7 @@ const Browsing = () => {
       },
     ];
     settabs(tabs);
-  }, [visibleDatas, allDatas,visibleBuyDatas,buyDatas]);
+  }, [visibleDatas, allDatas, visibleBuyDatas, buyDatas]);
 
   return (
     <main className="relative bg-black-100 flex justify-center items-center flex-col overflow-hidden sm:px-10 px-5">
@@ -275,7 +298,7 @@ const Browsing = () => {
         </div>
       </div>
 
-      <Footer/>
+      <Footer />
     </main>
   );
 };
@@ -326,6 +349,7 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
   nft,
   price,
   seller,
+  owners,
 }) => {
   return (
     <div className="cursor-pointer bg-white shadow-md rounded-t-lg rounded-b-md p-4 pb-2  w-full max-w-sm mx-auto">
@@ -345,7 +369,14 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
           {nft[0].slice(0, 6)}...{nft[0].slice(-4)}
         </h3>
         <p className="text-sm text-gray-500">idx：{nft[1]}</p>
-        {/* <p className="text-lg font-bold text-pink-500 mt-2">{desc}</p> */}
+        <p className="text-lg font-bold text-pink-500 mt-2">$ {price}</p>
+        <p className="text-sm text-gray-500 py-2 ">
+          <AnimatedTooltip
+            items={[
+              { name: "See Owners", designation: owners.join("\n")},
+            ]}
+          />
+        </p>
       </div>
       <div className="flex justify-between pt-2 -mx-2">
         <Button variant="secondary">Buy</Button>
