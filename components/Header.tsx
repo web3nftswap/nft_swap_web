@@ -1,3 +1,11 @@
+/*
+ * @Descripttion: 
+ * @version: 1.0
+ * @Author: Hesin
+ * @Date: 2024-10-11 17:01:06
+ * @LastEditors: Hesin
+ * @LastEditTime: 2024-10-19 09:57:42
+ */
 import MobilNav from "@/components/MobilNav";
 import Nav from "@/components/Nav";
 import Link from "next/link";
@@ -11,7 +19,7 @@ const ConnectButton = dynamic(() => import("@/components/ConnectButton"), {
 });
 const Header = () => {
   return (
-    <div className="border-b-2 pt-4 px-0 h-20 xl:h-16 text-white container mx-auto flex justify-between otems-center">
+    <div className="fixed top-0 z-50 bg-background bg-opacity-50 border-b-2 pt-4 px-0 h-20 xl:h-16 text-white container mx-auto flex justify-between otems-center">
       {/* logo */}
       <Link href="/">
         <h1 className="text-4xl font-semibold ">
