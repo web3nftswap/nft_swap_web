@@ -4,7 +4,7 @@
  * @Author: Hesin
  * @Date: 2024-10-11 17:01:06
  * @LastEditors: Hesin
- * @LastEditTime: 2024-10-19 10:13:09
+ * @LastEditTime: 2024-10-19 23:24:17
  */
 "use client";
 
@@ -122,29 +122,31 @@ const Browsing = () => {
     // 查询所有BuyNFTs
     try {
       const entries = await api.query.nftMarketModule.listings.entries();
-      const buyNFTs = entries.map(([key, value]) => ({
-        nft: JSON.parse(JSON.stringify(key.args[0])),
-        seller: JSON.parse(JSON.stringify(key.args[1])),
-        price: JSON.parse(JSON.stringify(value)).price,
-      }));
-      console.log("buyNFTs", buyNFTs);
-      let newBuydatas = [];
-      for (let i = 0; i < buyNFTs.length; i++) {
-        let owners = await api.query.nftModule.nftOwners([
-          buyNFTs[i].nft[0],
-          buyNFTs[i].nft[1],
-        ]);
-        const nft = {
-          ...buyNFTs[i],
-          owners: JSON.parse(JSON.stringify(owners)),
-        };
-        console.log(nft);
-        newBuydatas.push(nft);
+      if (entries.length > 0) {
+        const buyNFTs = entries.map(([key, value]) => ({
+          nft: JSON.parse(JSON.stringify(key.args[0])),
+          seller: JSON.parse(JSON.stringify(key.args[1])),
+          price: JSON.parse(JSON.stringify(value)).price,
+        }));
+        console.log("buyNFTs", buyNFTs);
+        let newBuydatas = [];
+        for (let i = 0; i < buyNFTs.length; i++) {
+          let owners = await api.query.nftModule.nftOwners([
+            buyNFTs[i].nft[0],
+            buyNFTs[i].nft[1],
+          ]);
+          const nft = {
+            ...buyNFTs[i],
+            owners: JSON.parse(JSON.stringify(owners)),
+          };
+          console.log(nft);
+          newBuydatas.push(nft);
+        }
+        console.log("newBuydatas", newBuydatas);
+        // 获取每个nft的拥有者
+        setbuyAllDatas(newBuydatas);
+        setVisibleBuyDatas(newBuydatas.slice(0, PAGE_SIZE)); // 初始化可见数据
       }
-      console.log("newBuydatas", newBuydatas);
-      // 获取每个nft的拥有者
-      setbuyAllDatas(newBuydatas);
-      setVisibleBuyDatas(newBuydatas.slice(0, PAGE_SIZE)); // 初始化可见数据
     } catch (error) {
       console.error("Error fetching collection IDs:", error);
     }
@@ -223,7 +225,8 @@ const Browsing = () => {
       setPending(true);
       console.log(info.nft, info.seller);
       const tx = api.tx.nftMarketModule.buyNft(info.nft, info.seller);
-      const connectedAccount = localStorage.getItem("connectedAccount");
+      // const connectedAccount = localStorage.getItem("connectedAccount");
+      const connectedAccount = allAccounts[0];
       const hash = await sendAndWait(
         api,
         tx,
