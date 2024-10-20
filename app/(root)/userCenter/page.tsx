@@ -114,7 +114,7 @@ const UserCenter = () => {
             JSON.stringify(nftInfo)
           );
           const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
-          console.log("nftMetaInfo", nftMetaInfo);
+         // console.log("nftMetaInfo", nftMetaInfo);
           return {
             nft: i,
             url: nftMetaInfo.url,

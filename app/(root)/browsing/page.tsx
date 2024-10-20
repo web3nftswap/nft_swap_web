@@ -4,7 +4,7 @@
  * @Author: Hesin
  * @Date: 2024-10-11 17:01:06
  * @LastEditors: Hesin
- * @LastEditTime: 2024-10-21 00:13:50
+ * @LastEditTime: 2024-10-21 07:52:43
  */
 "use client";
 
@@ -23,20 +23,9 @@ import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -174,7 +163,7 @@ const Browsing = () => {
             JSON.stringify(nftInfo)
           );
           const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
-          console.log("nftMetaInfo", nftMetaInfo);
+          //console.log("nftMetaInfo", nftMetaInfo);
 
           const nft = {
             ...buyNFTs[i],
@@ -183,7 +172,7 @@ const Browsing = () => {
             desc: nftMetaInfo.desc,
             owners: JSON.parse(JSON.stringify(owners)),
           };
-          console.log(nft);
+          // console.log(nft);
           newBuydatas.push(nft);
         }
         console.log("newBuydatas", newBuydatas);
@@ -209,6 +198,7 @@ const Browsing = () => {
       console.error("Error fetching collection IDs:", error);
     }
   };
+
   const getAllNfts = async (collectionIds) => {
     // 获取所有的集合
     const collectionIdsArray = JSON.parse(JSON.stringify(collectionIds));
@@ -241,7 +231,7 @@ const Browsing = () => {
         }
       }
     }
-    // console.log(datas);
+    console.log("all", datas);
     setAllDatas(datas);
     setVisibleDatas(datas.slice(0, PAGE_SIZE)); // 初始化可见数据
     getOwnedNFTArray();
@@ -325,7 +315,7 @@ const Browsing = () => {
           JSON.stringify(nftInfo)
         );
         const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
-        console.log("nftMetaInfo", nftMetaInfo);
+        // console.log("nftMetaInfo", nftMetaInfo);
 
         const nft = {
           nft: bobOwnedNFTsArray[i],
@@ -564,12 +554,15 @@ const DummyContent: React.FC<NFTDataProp> = ({
       </div>
       {/* NFT Info */}
       <div className="mt-4 text-center">
-        <h3 className="text-xl text-black-100 font-semibold">{name}</h3>
+        <h3 className="text-xl text-black-100 font-semibold mb-2">{name}</h3>
+        <p className="text-md text-black-100">
+          {id.slice(0, 6)}...{id.slice(-4)}
+        </p>
         <p className="text-sm text-gray-500">idx：{idx}</p>
         {/* <p className="text-lg font-bold text-pink-500 mt-2">{desc}</p> */}
       </div>
       <Link href={`/browsing/${id}/${idx}?data=${data}`}>
-        <p className="cursor-pointer text-sm text-gray-500">详情</p>
+        <p className="mt-2 text-right cursor-pointer text-sm text-gray-400 ">详情</p>
       </Link>
     </div>
   );
@@ -601,7 +594,6 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
         <h3 className="text-xl text-black-100 font-semibold mb-2">
           {data.name}
         </h3>
-
         <div className="flex justify-between">
           <p className="text-md text-black-100">
             {nft[0].slice(0, 6)}...{nft[0].slice(-4)}
