@@ -10,6 +10,7 @@ import { FiEdit } from "react-icons/fi";
 import { useToast } from "@/hooks/use-toast";
 import { sendAndWait } from "@/utils/sendAndWait";
 import { Button } from "@/components/ui/button";
+import { BiSolidMessageSquareDetail } from "react-icons/bi";
 import {
   Dialog,
   DialogContent,
@@ -32,6 +33,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet-box";
+import Footer from "@/components/Footer";
 const nftData = [
   {
     id: 1,
@@ -231,7 +233,6 @@ const UserCenter = () => {
         injector
       );
       console.log(`publish hash: ${hash.toHex()}`);
-
       toast({
         title: (
           <div className="flex items-center">
@@ -254,8 +255,8 @@ const UserCenter = () => {
         variant: "destructive",
       });
     } finally {
-      setPending(false);
       setOpen(false);
+      setPending(false);
     }
   };
 
@@ -363,6 +364,7 @@ const UserCenter = () => {
             ))}
         </div>
       </div>
+      <Footer />
     </main>
   );
 };
@@ -490,7 +492,6 @@ const DummyContent: React.FC<DummyContentProps> = ({
   );
 };
 const ListBox = ({ item, handleOffer }) => {
-  const { toast } = useToast();
   return (
     <li>
       <div className="flex justify-between gap-x-6 py-5">
@@ -517,35 +518,67 @@ const ListBox = ({ item, handleOffer }) => {
         </div>
       </div>
       <div className="pl-8">
-        {item.offers.map((itm, idx) => (
-          <div
-            key={`offer-${itm.buyer}`}
-            className="min-w-0 flex-auto flex justify-around"
-          >
-            <p className="text-5 font-semibold leading-6 text-gray-200">
-              <span className="pr-2">{idx + 1}.</span> Buyer:{" "}
-              <span className="text-purple-300">
-                {itm.buyer.slice(0, 6)}...{itm.buyer.slice(-4)}
-              </span>
-            </p>
-            <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
-              tokenAmount:{" "}
-              <span className="text-purple-300  font-semibold">
-                {itm.tokenAmount}
-              </span>
-            </p>
-            <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-              <button
-                onClick={() => {
-                  handleOffer(item, idx);
-                }}
-                className="px-2 py-2 rounded-md border border-white-100 font-medium bg-purple-200 text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
-              >
-                Confirm Offer
-              </button>
+        {item.offers.map((itm, idx) => {
+          console.log("ssssssssssss", itm.offeredNfts[0][0]);
+          return (
+            <div key={`offer-${itm.buyer}`}>
+              <div className="min-w-0 flex-auto flex justify-between">
+                <p className="text-5 font-semibold leading-6 text-gray-200">
+                  <span className="pr-2">{idx + 1}.</span> Buyer:{" "}
+                  <span className="text-purple-300">
+                    {itm.buyer.slice(0, 6)}...{itm.buyer.slice(-4)}
+                  </span>
+                </p>
+                <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
+                  tokenAmount:{" "}
+                  <span className="text-purple-300  font-semibold">
+                    {itm.tokenAmount}
+                  </span>
+                </p>
+                <div className="flex justify-between">
+                  <Button
+                    onClick={() => {
+                      handleOffer(item, idx);
+                    }}
+                    className="px-2 py-2 rounded-md  bg-purple-300 text-black "
+                  >
+                    Confirm
+                  </Button>
+                  <Button
+                    className="ml-2"
+                    onClick={() => {
+                      console.log("reject");
+                    }}
+                  >
+                    Reject
+                  </Button>
+                </div>
+              </div>
+              <div className="pl-6 min-w-0 flex-auto flex gap-4 ">
+                <BiSolidMessageSquareDetail size={30} />
+                <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
+                  Share:
+                  <span className="pl-2 text-purple-300  font-semibold">
+                    {itm.offeredNfts[0][2]}
+                  </span>
+                </p>
+                <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
+                  id:
+                  <span className="pl-2 text-purple-300  font-semibold">
+                    {itm.offeredNfts[0][1]}
+                  </span>
+                </p>
+                <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
+                  address:
+                  <span className="pl-2 text-purple-300  font-semibold">
+                    {itm.offeredNfts[0][0].slice(0, 6)}...
+                    {itm.offeredNfts[0][0].slice(-4)}
+                  </span>
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </li>
   );

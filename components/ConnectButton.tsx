@@ -13,6 +13,8 @@ import { ApiPromise, WsProvider, Keyring } from "@polkadot/api";
 import { TbReload } from "react-icons/tb";
 import Image from "next/image";
 import Link from "next/link";
+import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
+
 const RPC_URL = "ws://127.0.0.1:9944";
 
 const ConnectButton = () => {
@@ -122,7 +124,7 @@ const ConnectButton = () => {
   const displayAddress = (address: string) => {
     return address ? (
       <>
-        <span className="text-purple-200">Add:</span>
+        {/* <span className="text-purple-200">Add:</span> */}
         {address.slice(0, 6)}...{address.slice(-4)}
       </>
     ) : (
@@ -149,8 +151,16 @@ const ConnectButton = () => {
         </div>
       ) : (
         <div className="flex justify-center items-center">
-          <div className="hover:scale-110 transition-transform duration-300 cursor-pointer">
-            <Image src={`/images/faucet.png`} alt="" width="30" height="30" />
+          <div className="relative group hover:scale-110 transition-transform duration-300 cursor-pointer">
+            <Image
+              src={`/images/faucet.png`}
+              alt="faucet"
+              width="30"
+              height="30"
+            />
+            <div className="absolute left-1/2 transform -translate-x-1/2 mt-2  text-white text-center text-sm rounded p-2 bg-black/80 shadow-inner opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+              faucet
+            </div>
           </div>
           <Menu setActive={setActive} setDropdownVisible={setDropdownVisible}>
             <MenuItem

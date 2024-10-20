@@ -4,7 +4,7 @@
  * @Author: Hesin
  * @Date: 2024-10-11 17:01:06
  * @LastEditors: Hesin
- * @LastEditTime: 2024-10-20 12:57:08
+ * @LastEditTime: 2024-10-20 19:21:37
  */
 "use client";
 
@@ -311,7 +311,11 @@ const Browsing = () => {
     const bobOwnedNFTsArray = JSON.parse(JSON.stringify(bobOwnedNFTs));
     console.log(bobOwnedNFTsArray);
     let ownedNFTArray = [];
-    if (bobOwnedNFTsArray.length && bobOwnedNFTsArray.length > 0) {
+    if (
+      bobOwnedNFTsArray &&
+      bobOwnedNFTsArray.length &&
+      bobOwnedNFTsArray.length > 0
+    ) {
       for (let i = 0; i < bobOwnedNFTsArray.length; i++) {
         // 获取每一个集合的信息
         const nftInfo = await api.query.nftModule.nftCollections(
@@ -427,6 +431,8 @@ const Browsing = () => {
         ),
         variant: "success",
       });
+      fetchAllNfts();
+      fetchBuyNfts();
     } catch (error) {
       console.log(`offer error: ${error}`);
       toast({
@@ -440,7 +446,6 @@ const Browsing = () => {
   return (
     <main className="relative bg-black-100 flex justify-center items-center flex-col overflow-hidden sm:px-10 px-5">
       <Header />
-
       <div className="max-w-[80%] w-full">
         <div className="h-[20rem] md:h-[40rem] [perspective:1000px] relative b flex flex-col max-w-5xl mx-auto w-full  items-start justify-start my-40">
           <div className="w-15 absolute right-0 z-20 custom-top flex max-w-sm items-center space-x-2 ">
@@ -484,42 +489,46 @@ const Browsing = () => {
             </div>
           )}
         </div>
-      </div>
-      <Sheet open={open} onOpenChange={setopen}>
-        <SheetContent side="left" className="w-[50vw] bg-white">
-          <SheetHeader>
-            <SheetTitle>Submit Offer Form</SheetTitle>
-          </SheetHeader>
-          <form onSubmit={handleSwap}>
-            <div className="grid gap-4 py-4 mt-2">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <label htmlFor="price" className="text-right">
-                  Price
-                </label>
-                <Input
-                  id="price"
-                  name="price"
-                  type="number"
-                  defaultValue="@peduarte"
-                  className="col-span-3"
+
+        <Sheet open={open} onOpenChange={setopen}>
+          <SheetContent side="left" className="w-[50vw] bg-white">
+            <SheetHeader>
+              <SheetTitle>Submit Offer Form</SheetTitle>
+            </SheetHeader>
+            <form onSubmit={handleSwap}>
+              <div className="grid gap-4 py-4 mt-2">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <label htmlFor="price" className="text-right">
+                    Price
+                  </label>
+                  <Input
+                    id="price"
+                    name="price"
+                    type="number"
+                    defaultValue="@peduarte"
+                    className="col-span-3"
+                  />
+                </div>
+              </div>
+              <div className="container mx-auto py-10">
+                <DataTableDemo
+                  data={ownedNFTsList}
+                  selectedRow={selectSwapNFT}
                 />
               </div>
-            </div>
-            <div className="container mx-auto py-10">
-              <DataTableDemo data={ownedNFTsList} selectedRow={selectSwapNFT} />
-            </div>
 
-            <div className="flex py-8 justify-center w-full">
-              <button
-                type="submit"
-                className="px-4 py-2 rounded-md border font-semibold border-white-300 uppercase bg-purple-200 text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
-              >
-                Submit Offer
-              </button>
-            </div>
-          </form>
-        </SheetContent>
-      </Sheet>
+              <div className="flex py-8 justify-center w-full">
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-md border font-semibold border-white-300 uppercase bg-purple-200 text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
+                >
+                  Submit Offer
+                </button>
+              </div>
+            </form>
+          </SheetContent>
+        </Sheet>
+      </div>
       <Footer />
     </main>
   );

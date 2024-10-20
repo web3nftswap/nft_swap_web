@@ -14,7 +14,7 @@ export const AnimatedTooltip = ({
 }: {
   items: {
     // id: number;
-    name: string;
+    name: string|React.ReactNode;
     designation: string;
     // image: string;
   }[];

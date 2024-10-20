@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { LuFileStack } from "react-icons/lu";
 import { RiErrorWarningLine } from "react-icons/ri";
+import Footer from "@/components/Footer";
 
 const Consolidate = () => {
   const [mergeBtn, setmergeBtn] = useState(false);
@@ -223,9 +224,8 @@ const Consolidate = () => {
       <Header />
 
       <div className="max-w-[80%] w-full relative  flex flex-col my-20  items-start justify-start">
-        <div className="absolute left-0 z-20 flex items-center space-x-2">
+        <div className="absolute left-0 z-20 flex items-center space-x-2 mt-20">
           <Input className="w-[200px]" />
-
           <Button className="">Search</Button>
           <Button
             onClick={() => {
@@ -275,6 +275,7 @@ const Consolidate = () => {
             ))}
         </div>
       </div>
+      <Footer />
     </main>
   );
 };
