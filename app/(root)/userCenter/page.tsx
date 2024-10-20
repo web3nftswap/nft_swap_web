@@ -410,14 +410,15 @@ const DummyContent: React.FC<DummyContentProps> = ({
 
       {/* NFT Info */}
       <div className="mt-4 text-center">
-        <h3 className="text-xl text-black-100 font-semibold">
+        <h3 className="text-xl text-black-100 font-semibold">{item.name}</h3>
+        <p className="text-md text-black-100">
           {nftInfo[0].slice(0, 6)}...{nftInfo[0].slice(-4)}
-        </h3>
+        </p>
         <p className="text-sm text-gray-500">idx：{nftInfo[1]}</p>
         <p className="text-lg font-bold text-pink-500 mt-2">
           {nftInfo[2]}%
-          <span className="text-sm font-normal text-pink-300 mt-2">
-            {item.share ? `(${item.share})` : ""}
+          <span className="text-sm font-normal text-pink-300 ml-2">
+            {item.share ? `(${item.share}%)` : ""}
           </span>
         </p>
         <div className="flex justify-between items-center  -mx-2">
@@ -481,7 +482,9 @@ const DummyContent: React.FC<DummyContentProps> = ({
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button type="submit" variant="dark">Submit</Button>
+                  <Button type="submit" variant="dark">
+                    Submit
+                  </Button>
                 </DialogFooter>
               </form>
             </DialogContent>
