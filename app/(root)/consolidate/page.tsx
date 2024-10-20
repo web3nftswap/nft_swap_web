@@ -15,6 +15,7 @@ import { FaRegCircleCheck } from "react-icons/fa6";
 import { LuFileStack } from "react-icons/lu";
 import { RiErrorWarningLine } from "react-icons/ri";
 import Footer from "@/components/Footer";
+import { hexCodeToString } from "@/utils/util";
 
 const Consolidate = () => {
   const [mergeBtn, setmergeBtn] = useState(false);
@@ -45,9 +46,19 @@ const Consolidate = () => {
       const newData = await Promise.all(
         datas.map(async (i) => {
           let status = await getNftConsolidateStatus(i[0], i[1]);
+          // 获取每一个集合的信息
+          const nftInfo = await api.query.nftModule.nftCollections(i[0]);
+          const [maxItem, curIndex, metainfo] = JSON.parse(
+            JSON.stringify(nftInfo)
+          );
+          const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
+          // console.log("nftMetaInfo", nftMetaInfo);
           return {
             nft: i,
             status: status,
+            url: nftMetaInfo.url,
+            name: nftMetaInfo.name,
+            desc: nftMetaInfo.desc,
           };
         })
       );
@@ -265,7 +276,7 @@ const Consolidate = () => {
             .map((item, idx) => (
               <DummyContent
                 key={`${item[0]}-${idx}`}
-                item={item.nft}
+                item={item}
                 status={item.status}
                 mergeBtn={mergeBtn}
                 splitBtn={splitBtn}
@@ -306,15 +317,14 @@ const DummyContent: React.FC<DummyContentProps> = ({
       {mergeBtn && status !== "merged" && (
         <div className="absolute -top-3 -left-3 w-10 h-10 rounded-full shadow-lg overflow-hidden bg-purple-200 flex justify-center items-center">
           <Checkbox
-            id={item[1]}
+            id={item.nft[1]}
             className="border-black-100 border-2"
-            // checked={item[3] ? item[3] : false}
             onCheckedChange={(checked) => {
-              console.log(item[0], checked);
+              console.log(item.nft[0], checked);
               console.log(datas);
               setdatas((prevDatas) => {
                 const newDatas = [...prevDatas];
-                newDatas[item[1]].checked = checked;
+                newDatas[item.nft[1]].checked = checked;
                 console.log(newDatas);
                 return newDatas;
               });
@@ -327,15 +337,15 @@ const DummyContent: React.FC<DummyContentProps> = ({
       {splitBtn && status == "merged" && (
         <div className="absolute -top-3 -right-3 w-10 h-10 rounded-full shadow-lg overflow-hidden bg-yellow-200 flex justify-center items-center">
           <Checkbox
-            id={item[1]}
+            id={item.nft[1]}
             className="border-black-100 border-2"
             // checked={item[3] ? item[3] : false}
             onCheckedChange={(checked) => {
-              console.log(item[0], checked);
+              console.log(item.nft[0], checked);
               console.log(datas);
               setdatas((prevDatas) => {
                 const newDatas = [...prevDatas];
-                newDatas[item[1]].checked = checked;
+                newDatas[item.nft[1]].checked = checked;
                 console.log(newDatas);
                 return newDatas;
               });
@@ -354,7 +364,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
 
       <div className="w-full h-48 bg-gray-200 rounded-t-lg flex items-center justify-center">
         <Image
-          src="https://app.nftmart.io/static/media/007.16d68919.png"
+          src={item.url}
           alt=""
           width={100}
           height={100}
@@ -364,11 +374,12 @@ const DummyContent: React.FC<DummyContentProps> = ({
 
       {/* NFT Info */}
       <div className="mt-4 text-center">
-        <h3 className="text-xl text-black-100 font-semibold">
-          {item[0].slice(0, 6)}...{item[0].slice(-4)}
-        </h3>
-        <p className="text-sm text-gray-500">idx：{item[1]}</p>
-        <p className="text-lg font-bold text-pink-500 mt-2">{item[2]}%</p>
+        <h3 className="text-xl text-black-100 font-semibold">{item.name}</h3>
+        <p className="text-md text-black-100">
+          {item.nft[0].slice(0, 6)}...{item.nft[0].slice(-4)}
+        </p>
+        <p className="text-sm text-gray-500">idx：{item.nft[1]}</p>
+        <p className="text-lg font-bold text-pink-500 mt-2">{item.nft[2]}%</p>
       </div>
     </div>
   );

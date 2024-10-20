@@ -240,7 +240,7 @@ const UserCenter = () => {
               size={50}
               style={{ fill: "white", marginRight: "2rem" }}
             />
-            Publish Successful !!
+            List of sale Successful !!
           </div>
         ),
         variant: "success",
@@ -320,8 +320,8 @@ const UserCenter = () => {
             }}
           >
             Offer
-            <div className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900">
-              {offerCounts}
+            <div className="absolute inline-flex items-center justify-center w-3 h-3 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900">
+              {/* {offerCounts} */}
             </div>
           </Button>
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -443,20 +443,20 @@ const DummyContent: React.FC<DummyContentProps> = ({
                     console.log("publish", item);
                   }}
                 >
-                  Publish
+                  List of sale
                 </Button>
               </DialogTrigger>
             )}
 
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Publish Form</DialogTitle>
+                <DialogTitle> List of sale Form</DialogTitle>
                 <DialogDescription>Enter share and price.</DialogDescription>
               </DialogHeader>
               <form onSubmit={handlePublish}>
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <label htmlFor="share" className="text-right">
+                    <label htmlFor="share" className="text-right text-black">
                       Share
                     </label>
                     <Input
@@ -468,7 +468,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
                     />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <label htmlFor="price" className="text-right">
+                    <label htmlFor="price" className="text-right text-black">
                       Price
                     </label>
                     <Input
@@ -481,7 +481,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button type="submit">Submit</Button>
+                  <Button type="submit" variant="dark">Submit</Button>
                 </DialogFooter>
               </form>
             </DialogContent>
@@ -495,7 +495,7 @@ const ListBox = ({ item, handleOffer }) => {
   return (
     <li>
       <div className="flex justify-between gap-x-6 py-5">
-        <div className="flex gap-x-4">
+        <div className="flex gap-x-4 w-full">
           <Image
             className="h-12 w-12 flex-none rounded-full bg-gray-50"
             src={item.url}
@@ -503,14 +503,33 @@ const ListBox = ({ item, handleOffer }) => {
             width={48}
             height={48}
           />
-          <div className="min-w-0 flex-auto">
-            <p className="text-5 font-semibold leading-6 text-gray-200">
-              {item.name}
-            </p>
+          <div className="w-full flex-auto">
+            <div className="flex w-full gap-8 border-b-2 border-white">
+              <p className="text-lg font-semibold leading-6 text-gray-200">
+                {item.name}
+              </p>
+              <p className="text-sm leading-6 text-gray-200">
+                Address:{" "}
+                <span className="text-sm pl-2 text-purple-300  font-semibold">
+                  {item.nft[0].slice(0, 6)}...{item.nft[0].slice(-4)}
+                </span>
+              </p>
+              <p className="text-sm  leading-6 text-gray-200">
+                IDX:{" "}
+                <span className="text-sm pl-2 text-purple-300  font-semibold">
+                  {item.nft[1]}
+                </span>
+              </p>
+              <p className="text-sm  leading-6 text-gray-200">
+                Share:{" "}
+                <span className="text-sm pl-2 text-purple-300  font-semibold">
+                  {item.nft[2]}
+                </span>
+              </p>
+            </div>
             <p className="mt-1 truncate text-xs leading-5 text-gray-200">
-              offers num:{" "}
+              offers num:
               <span className="px-2  font-semibold  text-lg text-red-400">
-                {" "}
                 {item.offers.length}
               </span>
             </p>
@@ -519,7 +538,6 @@ const ListBox = ({ item, handleOffer }) => {
       </div>
       <div className="pl-8">
         {item.offers.map((itm, idx) => {
-          console.log("ssssssssssss", itm.offeredNfts[0][0]);
           return (
             <div key={`offer-${itm.buyer}`}>
               <div className="min-w-0 flex-auto flex justify-between">
@@ -542,7 +560,7 @@ const ListBox = ({ item, handleOffer }) => {
                     }}
                     className="px-2 py-2 rounded-md  bg-purple-300 text-black "
                   >
-                    Confirm
+                    Accept
                   </Button>
                   <Button
                     className="ml-2"
@@ -554,28 +572,34 @@ const ListBox = ({ item, handleOffer }) => {
                   </Button>
                 </div>
               </div>
-              <div className="pl-6 min-w-0 flex-auto flex gap-4 ">
-                <BiSolidMessageSquareDetail size={30} />
-                <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
-                  Share:
-                  <span className="pl-2 text-purple-300  font-semibold">
-                    {itm.offeredNfts[0][2]}
-                  </span>
-                </p>
-                <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
-                  id:
-                  <span className="pl-2 text-purple-300  font-semibold">
-                    {itm.offeredNfts[0][1]}
-                  </span>
-                </p>
-                <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
-                  address:
-                  <span className="pl-2 text-purple-300  font-semibold">
-                    {itm.offeredNfts[0][0].slice(0, 6)}...
-                    {itm.offeredNfts[0][0].slice(-4)}
-                  </span>
-                </p>
-              </div>
+              {itm.offeredNfts.map((offItm, idx) => (
+                <div
+                  className="pl-6 min-w-0 flex-auto flex gap-4 "
+                  key={`offer-${idx}`}
+                >
+                  <BiSolidMessageSquareDetail size={30} />
+                  <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
+                    address:
+                    <span className="pl-2 text-purple-300  font-semibold">
+                      {offItm[0].slice(0, 6)}...
+                      {offItm[0].slice(-4)}
+                    </span>
+                  </p>
+
+                  <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
+                    id:
+                    <span className="pl-2 text-purple-300  font-semibold">
+                      {offItm[1]}
+                    </span>
+                  </p>
+                  <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
+                    Share:
+                    <span className="pl-2 text-purple-300  font-semibold">
+                      {offItm[2]}
+                    </span>
+                  </p>
+                </div>
+              ))}
             </div>
           );
         })}

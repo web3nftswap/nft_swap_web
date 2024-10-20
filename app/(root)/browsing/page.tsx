@@ -4,7 +4,7 @@
  * @Author: Hesin
  * @Date: 2024-10-11 17:01:06
  * @LastEditors: Hesin
- * @LastEditTime: 2024-10-20 19:21:37
+ * @LastEditTime: 2024-10-21 00:13:50
  */
 "use client";
 
@@ -610,7 +610,7 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
         </div>
         <div className="flex justify-between">
           <p className="text-md text-pink-500 mt-2">share: {nft[2]}%</p>
-          <p className="text-lg font-bold text-pink-500 mt-2">$ {price}</p>
+          <p className="text-md font-bold text-pink-500 mt-2">{price} SNS</p>
         </div>
         <div className="text-sm text-gray-500 py-2 ">
           <AnimatedTooltip

@@ -20,6 +20,9 @@ const buttonVariants = cva(
         default:
           "flex items-center px-4 py-2 px-6 py-2 bg-transparent border uppercase border-black dark:border-white dark:text-white text-black rounded-lg transform hover:-translate-y-1 transition duration-400",
         // default: "flex items-center px-4 py-2 rounded-md border border-3 border-white uppercase bg-purple-200 text-black-100  hover:-translate-y-1 transform transition duration-200 hover:shadow-md",
+        dark:
+          "flex items-center px-4 py-2 px-6 py-2 bg-transparent border uppercase border-black dark:border-black dark:text-black text-black rounded-lg transform hover:-translate-y-1 transition duration-400",
+
         destructive:
           "bg-red-400 text-destructive-foreground hover:bg-destructive/90",
         outline:
