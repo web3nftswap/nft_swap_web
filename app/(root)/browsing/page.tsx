@@ -4,11 +4,11 @@
  * @Author: Hesin
  * @Date: 2024-10-11 17:01:06
  * @LastEditors: Hesin
- * @LastEditTime: 2024-10-19 23:24:17
+ * @LastEditTime: 2024-10-20 12:57:08
  */
 "use client";
 
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import { Tabs } from "@/components/ui/tabs";
 import Header from "@/components/Header";
@@ -21,9 +21,30 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
-
+import { FaRegCircleCheck } from "react-icons/fa6";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet-box";
 import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
 import { sendAndWait } from "@/utils/sendAndWait";
+import { DataTableDemo } from "@/components/ui/data-table";
+
 const PAGE_SIZE = 15; // 每次加载的数据量
 
 const nftData = [
@@ -100,13 +121,22 @@ interface BuyNFTDataProp {
   price: number; // 索引，number 类型
   seller: string; // 名称，string 类型
 }
-
+export type Payment = {
+  id: string;
+  amount: number;
+  status: "pending" | "processing" | "success" | "failed";
+  email: string;
+};
 const Browsing = () => {
   const [allDatas, setAllDatas] = useState<NFTDataProp[]>([]);
   const [visibleDatas, setVisibleDatas] = useState<NFTDataProp[]>([]); //All data
   const [buyDatas, setbuyAllDatas] = useState<BuyNFTDataProp[]>([]);
   const [visibleBuyDatas, setVisibleBuyDatas] = useState<BuyNFTDataProp[]>([]);
   const [tabs, settabs] = useState([] as any);
+  const [ownedNFTsList, setownedNFTsList] = useState([]);
+  const [targetNFT, settargetNFT] = useState([]); //目标nft
+  const [offerNfts, setofferNfts] = useState([]);
+  const [open, setopen] = useState(false);
   const { toast } = useToast();
 
   const { api, allAccounts, injector, extensionEnabled, pending, setPending } =
@@ -116,36 +146,54 @@ const Browsing = () => {
     fetchAllNfts();
     fetchBuyNfts();
   }, [api]); // 添加 api 作为依赖项
-
+  // 获取所有buy nft
   const fetchBuyNfts = async () => {
     if (!api) return; //
     // 查询所有BuyNFTs
     try {
       const entries = await api.query.nftMarketModule.listings.entries();
+      console.log("entries", entries);
       if (entries.length > 0) {
         const buyNFTs = entries.map(([key, value]) => ({
           nft: JSON.parse(JSON.stringify(key.args[0])),
           seller: JSON.parse(JSON.stringify(key.args[1])),
           price: JSON.parse(JSON.stringify(value)).price,
         }));
-        console.log("buyNFTs", buyNFTs);
+        console.log("buy NFTs", buyNFTs);
         let newBuydatas = [];
         for (let i = 0; i < buyNFTs.length; i++) {
           let owners = await api.query.nftModule.nftOwners([
             buyNFTs[i].nft[0],
             buyNFTs[i].nft[1],
           ]);
+          // 获取每一个集合的信息
+          const nftInfo = await api.query.nftModule.nftCollections(
+            buyNFTs[i].nft[0]
+          );
+          const [maxItem, curIndex, metainfo] = JSON.parse(
+            JSON.stringify(nftInfo)
+          );
+          const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
+          console.log("nftMetaInfo", nftMetaInfo);
+
           const nft = {
             ...buyNFTs[i],
+            url: nftMetaInfo.url,
+            name: nftMetaInfo.name,
+            desc: nftMetaInfo.desc,
             owners: JSON.parse(JSON.stringify(owners)),
           };
           console.log(nft);
           newBuydatas.push(nft);
         }
         console.log("newBuydatas", newBuydatas);
-        // 获取每个nft的拥有者
+        // 可买bft list
         setbuyAllDatas(newBuydatas);
         setVisibleBuyDatas(newBuydatas.slice(0, PAGE_SIZE)); // 初始化可见数据
+      } else {
+        // 获取每个nft的拥有者
+        setbuyAllDatas([]);
+        setVisibleBuyDatas([]); // 初始化可见数据z
       }
     } catch (error) {
       console.error("Error fetching collection IDs:", error);
@@ -180,12 +228,6 @@ const Browsing = () => {
         );
 
         for (let j = 0; j < curIndex; ++j) {
-          // 获取集合中每个nft的拥有者
-          let owners = await api.query.nftModule.nftOwners([
-            collectionIdsArray[i],
-            j,
-          ]);
-          // console.log(`nft ${j} owner: ${owners}`);
           const NFTData = {
             id: collectionIdsArray[i],
             // maxItem,
@@ -194,7 +236,6 @@ const Browsing = () => {
             name: collectionMetaInfo.name,
             url: collectionMetaInfo.url,
             desc: collectionMetaInfo.desc,
-            owners: JSON.parse(JSON.stringify(owners)),
           };
           datas.push(NFTData);
         }
@@ -203,6 +244,7 @@ const Browsing = () => {
     // console.log(datas);
     setAllDatas(datas);
     setVisibleDatas(datas.slice(0, PAGE_SIZE)); // 初始化可见数据
+    getOwnedNFTArray();
   };
   const loadMoreData = () => {
     console.log("loadMoreData");
@@ -242,13 +284,12 @@ const Browsing = () => {
               size={50}
               style={{ fill: "white", marginRight: "2rem" }}
             />
-            Create Successful !!
+            Buy Successful !!
           </div>
         ),
         variant: "success",
       });
 
-      fetchAllNfts();
       fetchBuyNfts();
     } catch (error) {
       console.log(`create error: ${error}`);
@@ -262,7 +303,38 @@ const Browsing = () => {
       setPending(false);
     }
   };
+  const getOwnedNFTArray = async () => {
+    console.log("get owned nft list");
+    //获取当前账户的nfts
+    const connectedAccount = localStorage.getItem("connectedAccount");
+    const bobOwnedNFTs = await api.query.nftModule.ownedNFTs(connectedAccount);
+    const bobOwnedNFTsArray = JSON.parse(JSON.stringify(bobOwnedNFTs));
+    console.log(bobOwnedNFTsArray);
+    let ownedNFTArray = [];
+    if (bobOwnedNFTsArray.length && bobOwnedNFTsArray.length > 0) {
+      for (let i = 0; i < bobOwnedNFTsArray.length; i++) {
+        // 获取每一个集合的信息
+        const nftInfo = await api.query.nftModule.nftCollections(
+          bobOwnedNFTsArray[i][0]
+        );
+        const [maxItem, curIndex, metainfo] = JSON.parse(
+          JSON.stringify(nftInfo)
+        );
+        const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
+        console.log("nftMetaInfo", nftMetaInfo);
 
+        const nft = {
+          nft: bobOwnedNFTsArray[i],
+          url: nftMetaInfo.url,
+          name: nftMetaInfo.name,
+          desc: nftMetaInfo.desc,
+        };
+        ownedNFTArray.push(nft);
+      }
+      console.log("ownedNFTArray", ownedNFTArray);
+      setownedNFTsList(ownedNFTArray);
+    }
+  };
   useEffect(() => {
     console.log("tabs");
     const tabs = [
@@ -289,6 +361,9 @@ const Browsing = () => {
                 key={`${itm.nft[0]}-${itm.nft[1]}`}
                 data={itm}
                 handleBuy={handleBuy}
+                setopen={setopen}
+                settargetNFT={settargetNFT}
+                ownedNFTsList={ownedNFTsList}
                 {...itm}
               />
             ))}
@@ -299,6 +374,69 @@ const Browsing = () => {
     settabs(tabs);
   }, [visibleDatas, allDatas, visibleBuyDatas, buyDatas]);
 
+  const selectSwapNFT = (ids, rows) => {
+    console.log("选择的列有哪些");
+    console.log(rows);
+    setofferNfts(rows);
+  };
+
+  const handleSwap = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    console.log("SWAP ----------");
+    setPending(true);
+
+    // FormData to Object
+    const formData = new FormData(event.currentTarget);
+    const formDataObject = Object.fromEntries(formData.entries());
+    console.log("表单数据对象:", formDataObject);
+    //报价
+    const swapToken = formDataObject.price;
+    console.log(targetNFT);
+    console.log("[Call] placeOffer");
+    const swapLists = offerNfts.map((row) => row.nft);
+    console.log(swapLists);
+
+    let tx = api.tx.nftMarketModule.placeOffer(
+      targetNFT.nft, // 目标NFT
+      swapLists, // 用于报价的NFT数组
+      swapToken, // 用于报价的token
+      targetNFT.seller // 卖家
+    );
+    try {
+      const currentAccount = allAccounts[0];
+
+      let hash = await sendAndWait(
+        api,
+        tx,
+        currentAccount,
+        extensionEnabled,
+        injector
+      );
+      console.log(`offer hash: ${hash.toHex()}`);
+
+      toast({
+        title: (
+          <div className="flex items-center">
+            <FaRegCircleCheck
+              size={50}
+              style={{ fill: "white", marginRight: "2rem" }}
+            />
+            Offer Successful !!
+          </div>
+        ),
+        variant: "success",
+      });
+    } catch (error) {
+      console.log(`offer error: ${error}`);
+      toast({
+        title: <div className="flex items-center">{error}</div>,
+        variant: "destructive",
+      });
+    } finally {
+      setPending(false);
+    }
+  };
   return (
     <main className="relative bg-black-100 flex justify-center items-center flex-col overflow-hidden sm:px-10 px-5">
       <Header />
@@ -347,7 +485,41 @@ const Browsing = () => {
           )}
         </div>
       </div>
+      <Sheet open={open} onOpenChange={setopen}>
+        <SheetContent side="left" className="w-[50vw] bg-white">
+          <SheetHeader>
+            <SheetTitle>Submit Offer Form</SheetTitle>
+          </SheetHeader>
+          <form onSubmit={handleSwap}>
+            <div className="grid gap-4 py-4 mt-2">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <label htmlFor="price" className="text-right">
+                  Price
+                </label>
+                <Input
+                  id="price"
+                  name="price"
+                  type="number"
+                  defaultValue="@peduarte"
+                  className="col-span-3"
+                />
+              </div>
+            </div>
+            <div className="container mx-auto py-10">
+              <DataTableDemo data={ownedNFTsList} selectedRow={selectSwapNFT} />
+            </div>
 
+            <div className="flex py-8 justify-center w-full">
+              <button
+                type="submit"
+                className="px-4 py-2 rounded-md border font-semibold border-white-300 uppercase bg-purple-200 text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
+              >
+                Submit Offer
+              </button>
+            </div>
+          </form>
+        </SheetContent>
+      </Sheet>
       <Footer />
     </main>
   );
@@ -368,7 +540,6 @@ const DummyContent: React.FC<NFTDataProp> = ({
   name,
   url,
   desc,
-  owners,
 }) => {
   return (
     <div className="cursor-pointer bg-white shadow-md rounded-t-lg rounded-b-md p-4 w-full max-w-sm mx-auto">
@@ -399,37 +570,51 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
   nft,
   price,
   seller,
-  owners,
   handleBuy,
+  settargetNFT,
+  setopen,
 }) => {
   const currentAddress = localStorage.getItem("connectedAccount");
   return (
     <div className="cursor-pointer bg-white shadow-md rounded-t-lg rounded-b-md p-4 pb-2  w-full max-w-sm mx-auto">
       {/* Image Placeholder */}
       <div className="w-full h-48 bg-gray-200 rounded-t-lg flex items-center justify-center">
-        {/* <Image
-          src={url}
+        <Image
+          src={data.url}
           alt="dummy image"
           width={100}
           height={100}
           className="h-full w-full object-cover rounded-t-lg"
-        /> */}
+        />
       </div>
       {/* NFT Info */}
       <div className="mt-4 text-center">
-        <h3 className="text-xl text-black-100 font-semibold">
-          {nft[0].slice(0, 6)}...{nft[0].slice(-4)}
+        <h3 className="text-xl text-black-100 font-semibold mb-2">
+          {data.name}
         </h3>
-        <p className="text-sm text-gray-500">idx：{nft[1]}</p>
-        <p className="text-md text-pink-500 mt-2">share: {nft[2]}%</p>
-        <p className="text-lg font-bold text-pink-500 mt-2">$ {price}</p>
+
+        <div className="flex justify-between">
+          <p className="text-md text-black-100">
+            {nft[0].slice(0, 6)}...{nft[0].slice(-4)}
+          </p>
+          <p className="text-sm text-gray-500">idx：{nft[1]}</p>
+        </div>
+        <div className="flex justify-between">
+          <p className="text-md text-pink-500 mt-2">share: {nft[2]}%</p>
+          <p className="text-lg font-bold text-pink-500 mt-2">$ {price}</p>
+        </div>
         <div className="text-sm text-gray-500 py-2 ">
           <AnimatedTooltip
-            items={[{ name: "See Owners", designation: owners.join("\n") }]}
+            items={[
+              {
+                name: "See Owners",
+                designation: seller,
+              },
+            ]}
           />
         </div>
       </div>
-      {owners.includes(currentAddress) ? (
+      {seller === currentAddress ? (
         ""
       ) : (
         <div className="flex justify-between pt-2 -mx-2">
@@ -441,8 +626,15 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
           >
             Buy
           </Button>
-
-          <Button variant="outline">Swap</Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setopen(true);
+              settargetNFT(data);
+            }}
+          >
+            Swap
+          </Button>
         </div>
       )}
     </div>

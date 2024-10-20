@@ -21,8 +21,17 @@ import {
 } from "@/components/ui/dialog";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { LuFileStack } from "react-icons/lu";
-import { RiErrorWarningLine } from "react-icons/ri";
-
+import { hexCodeToString } from "@/utils/util";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet-box";
 const nftData = [
   {
     id: 1,
@@ -52,9 +61,11 @@ const nftData = [
 
 const UserCenter = () => {
   const [open, setOpen] = useState(false);
-  const [mergeBtn, setmergeBtn] = useState(false);
-  const [splitBtn, setsplitBtn] = useState(false);
   const [datas, setdatas] = useState([]);
+  const [pubItem, setpubItem] = useState([]);
+  const [offerCounts, setofferCounts] = useState(0);
+  const [offerList, setofferList] = useState([]);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const { toast } = useToast();
   const { api, allAccounts, injector, extensionEnabled, pending, setPending } =
@@ -63,6 +74,7 @@ const UserCenter = () => {
   useEffect(() => {
     fetchUserNFTs();
   }, [api]);
+
   const fetchUserNFTs = async () => {
     if (!api) return; // 如果 api 尚未初始化，直接返回
 
@@ -83,8 +95,9 @@ const UserCenter = () => {
 
       const ownedNFTs = await api.query.nftModule.ownedNFTs(connectedAccount);
       const datas = JSON.parse(ownedNFTs);
-      // console.log("datas", datas);
+      console.log("ownedNFTs", datas);
 
+      // 当前账号的上架 list
       const ownedNFTsArray = await Promise.all(
         datas.map(async (i) => {
           let status = await getNftConsolidateStatus(i[0], i[1]);
@@ -92,9 +105,19 @@ const UserCenter = () => {
           const matchingItem = publishedNFTs.find(
             (item) => item.nft[0] === i[0] && item.nft[1] === i[1]
           );
-          console.log(matchingItem);
+          console.log("是否上架", matchingItem);
+          // 获取每一个集合的信息
+          const nftInfo = await api.query.nftModule.nftCollections(i[0]);
+          const [maxItem, curIndex, metainfo] = JSON.parse(
+            JSON.stringify(nftInfo)
+          );
+          const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
+          console.log("nftMetaInfo", nftMetaInfo);
           return {
             nft: i,
+            url: nftMetaInfo.url,
+            name: nftMetaInfo.name,
+            desc: nftMetaInfo.desc,
             status: status,
             ...(matchingItem
               ? { price: matchingItem.price, share: matchingItem.nft[2] }
@@ -107,8 +130,19 @@ const UserCenter = () => {
     } catch (error) {
       console.error("Error fetching collection IDs:", error);
     }
-  };
 
+    // 收到的所有offer
+    getOfferList();
+  };
+  const getOfferList = async () => {
+    console.log("[Query] alice offers");
+    // 收到的所有offer
+    const connectedAccount = localStorage.getItem("connectedAccount");
+    const offersList = await getAccountAllOffers(api, connectedAccount);
+    console.log("收到的所有offer", offersList);
+    setofferList(offersList);
+    setofferCounts(offersList.length);
+  };
   const getNftConsolidateStatus = async (
     collectionId,
     itemIndex
@@ -131,146 +165,45 @@ const UserCenter = () => {
       console.log("merged nft");
     } else if (mergedNft == null) {
       status = "general"; // 普通没有merge的nft
-      console.log("general nft");
+      // console.log("general nft");
     } else {
       status = "sub"; // 该nft已被merge，当前不可用
-      console.log("sub(frozen) nft");
+      // console.log("sub(frozen) nft");
     }
     return status;
   };
 
-  // handleMerge
-  const handleMerge = async () => {
-    console.log("合并");
-    let dd = [];
+  const getAccountAllOffers = async (api, accountAddress) => {
+    const entries = await api.query.nftMarketModule.offers.entries();
+    const offersForAccount = [];
+    for (const [key, value] of entries) {
+      // 获取每一个集合的信息
+      const nftInfo = await api.query.nftModule.nftCollections(
+        JSON.parse(JSON.stringify(key.args[0]))[0]
+      ); // 使用 key.args[0] 作为参数
+      const [maxItem, curIndex, metainfo] = JSON.parse(JSON.stringify(nftInfo));
+      const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
 
-    datas.filter((i) => {
-      if (i.checked && i.checked == true) {
-        dd.push([i.nft[0], i.nft[1]]);
-      }
-    });
-    console.log("dd", dd);
-    if (dd.length < 2 || dd.length > 10) {
-      toast({
-        title: (
-          <div className="flex items-center">
-            <RiErrorWarningLine
-              size={50}
-              style={{ fill: "white", marginRight: "2rem" }}
-            />
-            Collection Number must be more than 2 and less than 10
-          </div>
-        ),
-        variant: "warning",
-      });
-    } else {
-      console.log("[Call] mergeNfts");
-      let tx = api.tx.nftModule.mergeNfts(dd);
-      try {
-        setPending(true);
-        const currentAccount = allAccounts[0];
-        console.log("currentAccount", currentAccount);
-        let hash = await sendAndWait(
-          api,
-          tx,
-          currentAccount,
-          extensionEnabled,
-          injector
-        );
-        console.log(`mint hash: ${hash.toHex()}`);
-
-        setPending(false);
-        toast({
-          title: (
-            <div className="flex items-center">
-              <FaRegCircleCheck
-                size={50}
-                style={{ fill: "white", marginRight: "2rem" }}
-              />
-              Successful !!
-            </div>
-          ),
-          // description: "Friday, February 10, 2023 at 5:57 PM",
-          variant: "success",
-        });
-      } catch (error) {
-        console.log(`merge error: ${error}`);
-        setPending(true);
-        toast({
-          title: <div className="flex items-center">{error}</div>,
-          description: "Fail",
-          variant: "destructive",
+      if (key.args[1].eq(accountAddress)) {
+        offersForAccount.push({
+          nft: JSON.parse(JSON.stringify(key.args[0])),
+          offers: JSON.parse(JSON.stringify(value)),
+          url: nftMetaInfo.url,
+          name: nftMetaInfo.name,
         });
       }
     }
-  };
-  // handleSplit
-  const handleSplit = async () => {
-    console.log("拆分");
-    let dd = [];
 
-    datas.filter((i) => {
-      if (i.checked && i.status == "merged" && i.checked == true) {
-        dd.push([i.nft[0], i.nft[1]]);
-      }
-    });
-    console.log("dd", dd);
-    if (dd.length > 1 || dd.length == 0) {
-      toast({
-        title: (
-          <div className="flex items-center">
-            <RiErrorWarningLine
-              size={50}
-              style={{ fill: "white", marginRight: "2rem" }}
-            />
-            Collection Number must be 1
-          </div>
-        ),
-        variant: "warning",
-      });
-    } else {
-      console.log("[Call] splitNft");
-      let tx = api.tx.nftModule.splitNft([dd[0][0], dd[0][1]]);
-      try {
-        setPending(true);
-        const currentAccount = allAccounts[0];
-        console.log("currentAccount", currentAccount);
-        let hash = await sendAndWait(
-          api,
-          tx,
-          currentAccount,
-          extensionEnabled,
-          injector
-        );
-        console.log(`split hash: ${hash.toHex()}`);
-        setPending(false);
-        toast({
-          title: (
-            <div className="flex items-center">
-              <FaRegCircleCheck
-                size={50}
-                style={{ fill: "white", marginRight: "2rem" }}
-              />
-              Successful!
-            </div>
-          ),
-          description: hash.toHex(),
-          variant: "success",
-        });
-      } catch (error) {
-        console.log(`split error: ${error}`);
-        setPending(true);
-        toast({
-          title: <div className="flex items-center">{error}</div>,
-          description: "Fail",
-          variant: "destructive",
-        });
-      }
-    }
+    // .map(([key, value]) => ({
+    //   nft: JSON.parse(JSON.stringify(key.args[0])),
+    //   offers: JSON.parse(JSON.stringify(value)),
+    // }));
+    return offersForAccount;
   };
 
-  const handlePublish = async (event: FormEvent<HTMLFormElement>, nft) => {
+  const handlePublish = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    console.log(pubItem);
 
     console.log("上架");
     const formData = new FormData(event.currentTarget);
@@ -279,7 +212,7 @@ const UserCenter = () => {
 
     const shareRate = Number(formDataObject.share);
     const price = Number(formDataObject.price);
-    const param1 = [nft[0], Number(nft[1]), shareRate];
+    const param1 = [pubItem.nft[0], Number(pubItem.nft[1]), shareRate];
     console.log(param1);
     // 上架
     try {
@@ -297,7 +230,20 @@ const UserCenter = () => {
         extensionEnabled,
         injector
       );
-      console.log(`create hash: ${hash.toHex()}`);
+      console.log(`publish hash: ${hash.toHex()}`);
+
+      toast({
+        title: (
+          <div className="flex items-center">
+            <FaRegCircleCheck
+              size={50}
+              style={{ fill: "white", marginRight: "2rem" }}
+            />
+            Publish Successful !!
+          </div>
+        ),
+        variant: "success",
+      });
       //刷新数据 NFT 集合
       fetchUserNFTs();
     } catch (error) {
@@ -312,47 +258,92 @@ const UserCenter = () => {
       setOpen(false);
     }
   };
+
+  const handleOffer = async (target, idx) => {
+    console.log("[Call] acceptOffer");
+    console.log(target, idx);
+
+    let tx = api.tx.nftMarketModule.acceptOffer(
+      target.nft, // 目标NFT
+      target.offers[idx].offeredNfts, // 用于报价的NFT数组
+      target.offers[idx].tokenAmount, // 用于报价的token
+      target.offers[idx].buyer // 买家
+    );
+    try {
+      setPending(true);
+      const currentAccount = allAccounts[0];
+      let hash = await sendAndWait(
+        api,
+        tx,
+        currentAccount,
+        extensionEnabled,
+        injector
+      );
+      console.log(`accept hash: ${hash.toHex()}`);
+      toast({
+        title: (
+          <div className="flex items-center">
+            <FaRegCircleCheck
+              size={50}
+              style={{ fill: "white", marginRight: "2rem" }}
+            />
+            Successful!
+          </div>
+        ),
+        description: hash.toHex(),
+        variant: "success",
+      });
+      setPending(false);
+    } catch (error) {
+      console.log(`accept error: ${error}`);
+      setPending(true);
+      toast({
+        title: <div className="flex items-center">{error}</div>,
+        description: "Fail",
+        variant: "destructive",
+      });
+    } finally {
+      setPending(false);
+      setIsSheetOpen(false);
+    }
+  };
   return (
     <main className="relative bg-black-100 flex justify-center items-center flex-col overflow-hidden sm:px-10 px-5">
       <Header />
-
-      <div className="max-w-[80%] w-full relative  flex flex-col my-20  items-start justify-start">
+      <div className="max-w-[80%] w-full  relative  flex flex-col mt-40  items-start justify-start">
         <div className="absolute left-0 z-20 flex items-center space-x-2">
-          <Input className="w-[200px]" />
-
-          <Button className="">Search</Button>
           <Button
+            className="relative"
             onClick={() => {
-              setmergeBtn(!mergeBtn);
-              setsplitBtn(false);
+              setIsSheetOpen(true);
             }}
           >
-            {mergeBtn && <FiEdit />}merge
+            Offer
+            <div className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900">
+              {offerCounts}
+            </div>
           </Button>
-          <Button
-            onClick={() => {
-              setsplitBtn(!splitBtn);
-              setmergeBtn(false);
-            }}
-          >
-            {splitBtn && <FiEdit />} Split
-          </Button>
-          {(mergeBtn || splitBtn) && (
-            <Button
-              onClick={() => {
-                if (mergeBtn) {
-                  handleMerge();
-                } else if (splitBtn) {
-                  handleSplit();
-                }
-              }}
-              className="px-4 py-2 rounded-md uppercase bg-purple-300 hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
-            >
-              Submit
-            </Button>
-          )}
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+            <SheetContent side="right" className="w-[80vw] bg-white">
+              <SheetHeader>
+                <SheetTitle>Offer List</SheetTitle>
+                <SheetDescription>confirm offer </SheetDescription>
+              </SheetHeader>
+              <div
+                className="overflow-y-scroll"
+                style={{ height: "calc(100vh + 80vh)" }}
+              >
+                <ul role="list" className="divide-y divide-gray-100">
+                  {offerList.map((itm, idx) => (
+                    <ListBox item={itm} key={idx} handleOffer={handleOffer} />
+                  ))}
+                </ul>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
-        <div className="mt-40 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+        <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {/* 遍历 Art 类别下的 NFT */}
           {datas
             .filter((item) => item.status !== "sub") // 先过滤掉状态为 "sub" 的项目
@@ -362,13 +353,12 @@ const UserCenter = () => {
                 item={item}
                 nftInfo={item.nft}
                 status={item.status}
-                mergeBtn={mergeBtn}
-                splitBtn={splitBtn}
                 datas={datas}
                 setdatas={setdatas}
                 handlePublish={handlePublish}
                 open={open}
                 setOpen={setOpen}
+                setpubItem={setpubItem}
               />
             ))}
         </div>
@@ -384,8 +374,6 @@ type DummyContentProps = {
   item: string[];
   nftInfo: string[];
   idx: string;
-  mergeBtn: boolean;
-  splitBtn: boolean;
   status: string;
   handlePublish: (event: FormEvent<HTMLFormElement>, item: string[]) => void;
   // datas: string[];
@@ -396,70 +384,21 @@ type DummyContentProps = {
 const DummyContent: React.FC<DummyContentProps> = ({
   item,
   nftInfo,
-  mergeBtn,
-  splitBtn,
   // datas,
   // setdatas,
   status,
   handlePublish,
   open,
   setOpen,
+  setpubItem,
 }) => {
   return (
-    <div className="cursor-pointer relative bg-white shadow-md rounded-t-lg rounded-b-md p-4 pb-2 w-full max-w-sm mx-auto">
-      {/*Merge Checkbox */}
-      {mergeBtn && status !== "merged" && (
-        <div className="absolute -top-3 -left-3 w-10 h-10 rounded-full shadow-lg overflow-hidden bg-purple-200 flex justify-center items-center">
-          <Checkbox
-            id={item[1]}
-            className="border-black-100 border-2"
-            // checked={item[3] ? item[3] : false}
-            onCheckedChange={(checked) => {
-              console.log(item[0], checked);
-              console.log(datas);
-              setdatas((prevDatas) => {
-                const newDatas = [...prevDatas];
-                newDatas[item[1]].checked = checked;
-                console.log(newDatas);
-                return newDatas;
-              });
-              return checked;
-            }}
-          />
-        </div>
-      )}
-      {/* Split Checkbox */}
-      {splitBtn && status == "merged" && (
-        <div className="absolute -top-3 -right-3 w-10 h-10 rounded-full shadow-lg overflow-hidden bg-yellow-200 flex justify-center items-center">
-          <Checkbox
-            id={item[1]}
-            className="border-black-100 border-2"
-            // checked={item[3] ? item[3] : false}
-            onCheckedChange={(checked) => {
-              console.log(item[0], checked);
-              console.log(datas);
-              setdatas((prevDatas) => {
-                const newDatas = [...prevDatas];
-                newDatas[item[1]].checked = checked;
-                console.log(newDatas);
-                return newDatas;
-              });
-              return checked;
-            }}
-          />
-        </div>
-      )}
-      {/* Merged Logo */}
-      {status == "merged" && (
-        <div className="absolute -top-3 -left-3 w-10 h-10 rounded-full shadow-lg overflow-hidden bg-black-100 flex justify-center items-center">
-          <LuFileStack size={24} />
-        </div>
-      )}
+    <div className=" cursor-pointer relative bg-white shadow-md rounded-t-lg rounded-b-md p-4 pb-2 w-full max-w-sm mx-auto">
       {/* Image Placeholder */}
 
       <div className="w-full h-48 bg-gray-200 rounded-t-lg flex items-center justify-center">
         <Image
-          src="https://app.nftmart.io/static/media/007.16d68919.png"
+          src={item.url}
           alt=""
           width={100}
           height={100}
@@ -494,7 +433,14 @@ const DummyContent: React.FC<DummyContentProps> = ({
               </div>
             ) : (
               <DialogTrigger asChild>
-                <Button variant="secondary" className="w-full">
+                <Button
+                  variant="secondary"
+                  className="w-full"
+                  onClick={() => {
+                    setpubItem(item);
+                    console.log("publish", item);
+                  }}
+                >
                   Publish
                 </Button>
               </DialogTrigger>
@@ -505,7 +451,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
                 <DialogTitle>Publish Form</DialogTitle>
                 <DialogDescription>Enter share and price.</DialogDescription>
               </DialogHeader>
-              <form onSubmit={(event) => handlePublish(event, nftInfo)}>
+              <form onSubmit={handlePublish}>
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-4 items-center gap-4">
                     <label htmlFor="share" className="text-right">
@@ -541,5 +487,66 @@ const DummyContent: React.FC<DummyContentProps> = ({
         </div>
       </div>
     </div>
+  );
+};
+const ListBox = ({ item, handleOffer }) => {
+  const { toast } = useToast();
+  return (
+    <li>
+      <div className="flex justify-between gap-x-6 py-5">
+        <div className="flex gap-x-4">
+          <Image
+            className="h-12 w-12 flex-none rounded-full bg-gray-50"
+            src={item.url}
+            alt=""
+            width={48}
+            height={48}
+          />
+          <div className="min-w-0 flex-auto">
+            <p className="text-5 font-semibold leading-6 text-gray-200">
+              {item.name}
+            </p>
+            <p className="mt-1 truncate text-xs leading-5 text-gray-200">
+              offers num:{" "}
+              <span className="px-2  font-semibold  text-lg text-red-400">
+                {" "}
+                {item.offers.length}
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="pl-8">
+        {item.offers.map((itm, idx) => (
+          <div
+            key={`offer-${itm.buyer}`}
+            className="min-w-0 flex-auto flex justify-around"
+          >
+            <p className="text-5 font-semibold leading-6 text-gray-200">
+              <span className="pr-2">{idx + 1}.</span> Buyer:{" "}
+              <span className="text-purple-300">
+                {itm.buyer.slice(0, 6)}...{itm.buyer.slice(-4)}
+              </span>
+            </p>
+            <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
+              tokenAmount:{" "}
+              <span className="text-purple-300  font-semibold">
+                {itm.tokenAmount}
+              </span>
+            </p>
+            <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+              <button
+                onClick={() => {
+                  handleOffer(item, idx);
+                }}
+                className="px-2 py-2 rounded-md border border-white-100 font-medium bg-purple-200 text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
+              >
+                Confirm Offer
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </li>
   );
 };

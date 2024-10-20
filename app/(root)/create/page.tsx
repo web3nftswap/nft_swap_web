@@ -58,7 +58,6 @@ interface CollectionData {
 }
 const Create = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [allDatas, setAllDatas] = useState<CollectionData[]>([]);
   const { api, allAccounts, injector, extensionEnabled, pending, setPending } =
     useSubstrateContext();
@@ -121,7 +120,7 @@ const Create = () => {
       return;
     }
 
-    setLoading(true);
+    setPending(true);
     console.log(event);
     const formData = new FormData(event.currentTarget);
     console.log("formData", formData);
@@ -185,6 +184,7 @@ const Create = () => {
       });
     } finally {
       console.log("pending", pending);
+      setIsSheetOpen(false);
       setPending(false);
     }
   };
@@ -238,11 +238,11 @@ const Create = () => {
   return (
     <main className="relative bg-black-100 flex justify-center items-center flex-col overflow-hidden sm:px-10 px-5">
       <Header />
-      <div className="max-w-[80%] w-full">
+      <div className="max-w-[80%] w-full mt-10 h-[80vh]">
         <div className="w-15 relative  flex max-w-sm items-center space-x-2 my-20">
           <button
             onClick={() => {
-              console.log("点击创建");
+              // console.log("点击创建");
               if (!api) {
                 toast({
                   title: (
@@ -329,7 +329,6 @@ const Create = () => {
                   <button
                     type="submit"
                     className="px-4 py-2 rounded-md border font-semibold border-white-300 uppercase bg-purple-200 text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
-                    disabled={loading}
                   >
                     Create
                   </button>
@@ -344,7 +343,7 @@ const Create = () => {
           ))}
         </ul>
       </div>
-      <Footer/>
+      <Footer />
     </main>
   );
 };
