@@ -29,26 +29,6 @@ import { RiErrorWarningLine } from "react-icons/ri";
 import { hexCodeToString } from "@/utils/util";
 import Footer from "@/components/Footer";
 
-const listMap = [
-  {
-    title: "title1",
-    img: "https://app.nftmart.io/static/media/007.16d68919.png",
-    desc: "desc",
-    num: 5,
-  },
-  {
-    title: "title2",
-    img: "https://app.nftmart.io/static/media/007.16d68919.png",
-    desc: "desc",
-    num: 5,
-  },
-  {
-    title: "title3",
-    img: "https://app.nftmart.io/static/media/007.16d68919.png",
-    desc: "desc",
-    num: 5,
-  },
-];
 interface CollectionData {
   maxItem: number;
   curIndex: number;

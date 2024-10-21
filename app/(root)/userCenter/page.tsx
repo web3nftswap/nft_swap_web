@@ -11,6 +11,8 @@ import { useToast } from "@/hooks/use-toast";
 import { sendAndWait } from "@/utils/sendAndWait";
 import { Button } from "@/components/ui/button";
 import { BiSolidMessageSquareDetail } from "react-icons/bi";
+import { RiErrorWarningLine } from "react-icons/ri";
+
 import {
   Dialog,
   DialogContent,
@@ -33,33 +35,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet-box";
+import { z } from "zod";
+
 import Footer from "@/components/Footer";
-const nftData = [
-  {
-    id: 1,
-    title: "Digital Sunrise",
-    imageUrl: "https://app.nftmart.io/static/media/007.16d68919.png",
-    description: "A beautiful digital sunrise artwork.",
-    creator: "Artist A",
-    price: "0.5 ETH",
-  },
-  {
-    id: 2,
-    title: "Abstract Dream",
-    imageUrl: "https://app.nftmart.io/static/media/007.16d68919.png",
-    description: "An abstract piece that captures the essence of dreams.",
-    creator: "Artist B",
-    price: "1.2 ETH",
-  },
-  {
-    id: 3,
-    title: "Ocean Waves",
-    imageUrl: "https://app.nftmart.io/static/media/007.16d68919.png",
-    description: "A stunning representation of ocean waves.",
-    creator: "Artist C",
-    price: "0.8 ETH",
-  },
-];
 
 const UserCenter = () => {
   const [open, setOpen] = useState(false);
@@ -68,7 +46,7 @@ const UserCenter = () => {
   const [offerCounts, setofferCounts] = useState(0);
   const [offerList, setofferList] = useState([]);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-
+  const [shareMes, setshareMes] = useState(0); // share 默认值为 0
   const { toast } = useToast();
   const { api, allAccounts, injector, extensionEnabled, pending, setPending } =
     useSubstrateContext();
@@ -114,7 +92,7 @@ const UserCenter = () => {
             JSON.stringify(nftInfo)
           );
           const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
-         // console.log("nftMetaInfo", nftMetaInfo);
+          // console.log("nftMetaInfo", nftMetaInfo);
           return {
             nft: i,
             url: nftMetaInfo.url,
@@ -213,9 +191,10 @@ const UserCenter = () => {
     console.log("表单数据对象:", formDataObject);
 
     const shareRate = Number(formDataObject.share);
-    const price = Number(formDataObject.price);
+    const price = Number(formDataObject.price)* 10 ** 12;
     const param1 = [pubItem.nft[0], Number(pubItem.nft[1]), shareRate];
     console.log(param1);
+    console.log(price);
     // 上架
     try {
       console.log("pending", pending);
@@ -360,6 +339,8 @@ const UserCenter = () => {
                 open={open}
                 setOpen={setOpen}
                 setpubItem={setpubItem}
+                setshareMes={setshareMes}
+                shareMes={shareMes}
               />
             ))}
         </div>
@@ -393,7 +374,10 @@ const DummyContent: React.FC<DummyContentProps> = ({
   open,
   setOpen,
   setpubItem,
+  shareMes,
+  setshareMes,
 }) => {
+  const { toast } = useToast();
   return (
     <div className=" cursor-pointer relative bg-white shadow-md rounded-t-lg rounded-b-md p-4 pb-2 w-full max-w-sm mx-auto">
       {/* Image Placeholder */}
@@ -441,6 +425,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
                   className="w-full"
                   onClick={() => {
                     setpubItem(item);
+                    setshareMes(item.nft[2]);
                     console.log("publish", item);
                   }}
                 >
@@ -458,26 +443,48 @@ const DummyContent: React.FC<DummyContentProps> = ({
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-4 items-center gap-4">
                     <label htmlFor="share" className="text-right text-black">
-                      Share
+                      Share(%)
                     </label>
                     <Input
                       id="share"
                       name="share"
                       type="number"
-                      defaultValue="0<num<100"
-                      className="col-span-3"
+                      value={shareMes}
+                      onChange={(e) => {
+                        const value = Number(e.target.value);
+                        if (value >= 0 && value <= 100) {
+                          // 检查范围
+                          setshareMes(value);
+                        } else {
+                          toast({
+                            title: (
+                              <div className="flex items-center">
+                                <RiErrorWarningLine
+                                  size={50}
+                                  style={{ fill: "white", marginRight: "2rem" }}
+                                />
+                                Value must be between 0 and 100
+                              </div>
+                            ),
+                            variant: "warning",
+                          });
+                          // 如果不在范围内，可以选择不更新状态或给出提示
+                          console.warn("Value must be between 0 and 100");
+                        }
+                      }} // 处理输入变化
+                      className="col-span-3 w-[150px]"
                     />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <label htmlFor="price" className="text-right text-black">
-                      Price
+                      Price(SNS)
                     </label>
                     <Input
                       id="price"
                       name="price"
                       type="number"
-                      defaultValue="@peduarte"
-                      className="col-span-3"
+                      className="col-span-3 w-[150px]"
+                      step="0.01" 
                     />
                   </div>
                 </div>
