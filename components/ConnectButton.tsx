@@ -74,7 +74,7 @@ const ConnectButton = () => {
   // Handle account balance retrieval
   const fetchBalance = async (account: string): Promise<string> => {
     if (!api) return "";
-    const accountInfo = await api.query.system.account(account);
+    const accountInfo: any = await api.query.system.account(account);
     return accountInfo.data.free.toString();
   };
 

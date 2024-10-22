@@ -1,3 +1,11 @@
+/*
+ * @Descripttion: 
+ * @version: 1.0
+ * @Author: Hesin
+ * @Date: 2024-10-15 00:02:40
+ * @LastEditors: Hesin
+ * @LastEditTime: 2024-10-22 12:48:09
+ */
 import { toast } from "@/hooks/use-toast";
 
 export async function sendAndWait(api, tx, signer, extensionEnabled, injector) {
@@ -24,26 +32,6 @@ export async function sendAndWait(api, tx, signer, extensionEnabled, injector) {
       }
     };
 
-    // const signAndSend = async () => {
-    //   if (extensionEnabled && injector) {
-    //     try {
-    //       const res = await tx.signAndSend(
-    //         signer.address,
-    //         {
-    //           signer: injector.signer,
-    //         },
-    //         process
-    //       );
-    //       console.log("res", res);
-    //       resolve(res); // 成功时 resolve
-    //     } catch (e) {
-    //       console.log("error", e);
-    //       reject(e.message); // 这里使用 reject 传递错误信息
-    //     }
-    //   } else {
-    //     return await tx.signAndSend(signer, process);
-    //   }
-    // };
     const signAndSend = async () => {
       if (extensionEnabled && injector) {
         try {
@@ -54,7 +42,7 @@ export async function sendAndWait(api, tx, signer, extensionEnabled, injector) {
             },
             process
           );
-        } catch (e) {
+        } catch (e: any) {
           console.log("error", e.message);
           reject(e.message);
         }

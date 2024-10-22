@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { RxCaretSort } from "react-icons/rx";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -24,21 +23,6 @@ import {
   TableHeader,
   TableRow,
 } from "./table";
-
-const data1: Payment[] = [
-  {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
-    name: "ken99@yahoo.com",
-  },
-  {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
-    name: "ken99@yahoo.com",
-  },
-];
 
 export type Payment = {
   id: string;

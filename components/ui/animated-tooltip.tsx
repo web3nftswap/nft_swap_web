@@ -13,8 +13,8 @@ export const AnimatedTooltip = ({
   items,
 }: {
   items: {
-    // id: number;
-    name: string|React.ReactNode;
+    id: number;
+    name: string | React.ReactNode;
     designation: string;
     // image: string;
   }[];
@@ -41,8 +41,8 @@ export const AnimatedTooltip = ({
     <>
       {items.map((item, idx) => (
         <div
+          key={item.name as string}
           className="-mr-4  relative group"
-          key={item.name}
           onMouseEnter={() => setHoveredIndex(item.id)}
           onMouseLeave={() => setHoveredIndex(null)}
         >

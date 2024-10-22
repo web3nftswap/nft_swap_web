@@ -35,14 +35,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet-box";
-import { z } from "zod";
 
 import Footer from "@/components/Footer";
 
 const UserCenter = () => {
   const [open, setOpen] = useState(false);
   const [datas, setdatas] = useState([]);
-  const [pubItem, setpubItem] = useState([]);
+  const [pubItem, setpubItem] = useState([] as any);
   const [offerCounts, setofferCounts] = useState(0);
   const [offerList, setofferList] = useState([]);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -73,13 +72,15 @@ const UserCenter = () => {
         }));
       // console.log("publishedNFTs", publishedNFTs);
 
-      const ownedNFTs = await api.query.nftModule.ownedNFTs(connectedAccount);
+      const ownedNFTs: any = await api.query.nftModule.ownedNFTs(
+        connectedAccount
+      );
       const datas = JSON.parse(ownedNFTs);
       // console.log("ownedNFTs", datas);
 
       // 当前账号的上架 list
-      const ownedNFTsArray = await Promise.all(
-        datas.map(async (i) => {
+      const ownedNFTsArray: any = await Promise.all(
+        datas.map(async (i:any) => {
           let status = await getNftConsolidateStatus(i[0], i[1]);
           // 检查 publishedNFTs 中是否存在匹配的对象
           const matchingItem = publishedNFTs.find(
@@ -128,7 +129,7 @@ const UserCenter = () => {
     itemIndex
   ): Promise<string> => {
     // console.log("[Query] nftDetails");
-    const nftDetails = await api.query.nftModule.nftDetails([
+    const nftDetails = await api?.query.nftModule.nftDetails([
       collectionId,
       itemIndex,
     ]);
@@ -155,7 +156,7 @@ const UserCenter = () => {
 
   const getAccountAllOffers = async (api, accountAddress) => {
     const entries = await api.query.nftMarketModule.offers.entries();
-    const offersForAccount = [];
+    const offersForAccount: any = [];
     for (const [key, value] of entries) {
       // 获取每一个集合的信息
       const nftInfo = await api.query.nftModule.nftCollections(
@@ -191,7 +192,7 @@ const UserCenter = () => {
     // console.log("表单数据对象:", formDataObject);
 
     const shareRate = Number(formDataObject.share);
-    const price = Number(formDataObject.price)* 10 ** 12;
+    const price = Number(formDataObject.price) * 10 ** 12;
     const param1 = [pubItem.nft[0], Number(pubItem.nft[1]), shareRate];
     // console.log(param1);
     // console.log(price);
@@ -202,7 +203,7 @@ const UserCenter = () => {
       //当前账户
       const currentAccount = allAccounts[0];
       //tx
-      const tx = api.tx.nftMarketModule.listNft(param1, price);
+      const tx = api?.tx.nftMarketModule.listNft(param1, price);
       //hash
       const hash = await sendAndWait(
         api,
@@ -226,7 +227,7 @@ const UserCenter = () => {
       });
       //刷新数据 NFT 集合
       fetchUserNFTs();
-    } catch (error) {
+    } catch (error: any) {
       // console.log(`create error: ${error}`);
       toast({
         title: <div className="flex items-center">{error}</div>,
@@ -243,7 +244,7 @@ const UserCenter = () => {
     // console.log("[Call] acceptOffer");
     // console.log(target, idx);
 
-    let tx = api.tx.nftMarketModule.acceptOffer(
+    let tx = api?.tx.nftMarketModule.acceptOffer(
       target.nft, // 目标NFT
       target.offers[idx].offeredNfts, // 用于报价的NFT数组
       target.offers[idx].tokenAmount, // 用于报价的token
@@ -252,7 +253,7 @@ const UserCenter = () => {
     try {
       setPending(true);
       const currentAccount = allAccounts[0];
-      let hash = await sendAndWait(
+      let hash: any = await sendAndWait(
         api,
         tx,
         currentAccount,
@@ -274,7 +275,7 @@ const UserCenter = () => {
         variant: "success",
       });
       setPending(false);
-    } catch (error) {
+    } catch (error: any) {
       // console.log(`accept error: ${error}`);
       setPending(true);
       toast({
@@ -326,15 +327,13 @@ const UserCenter = () => {
         <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {/* 遍历 Art 类别下的 NFT */}
           {datas
-            .filter((item) => item.status !== "sub") // 先过滤掉状态为 "sub" 的项目
+            .filter((item: any) => item.status !== "sub") // 先过滤掉状态为 "sub" 的项目
             .map((item, idx) => (
               <DummyContent
                 key={`${item[0]}-${idx}`}
                 item={item}
-                nftInfo={item.nft}
-                status={item.status}
-                datas={datas}
-                setdatas={setdatas}
+                nftInfo={(item as { nft: string[] }).nft}
+                status={(item as { status: string }).status}
                 handlePublish={handlePublish}
                 open={open}
                 setOpen={setOpen}
@@ -354,22 +353,19 @@ export default UserCenter;
 
 // 定义 DummyContent 组件的 props 类型
 type DummyContentProps = {
-  item: string[];
+  item: any;
   nftInfo: string[];
-  idx: string;
   status: string;
-  handlePublish: (event: FormEvent<HTMLFormElement>, item: string[]) => void;
-  // datas: string[];
-  // setdatas: string[];
+  handlePublish: (event: FormEvent<HTMLFormElement>) => void;
   open: boolean;
   setOpen: (open: boolean) => void;
+  setpubItem: (open: boolean) => void;
+  shareMes: any;
+  setshareMes: (open: number) => void;
 };
 const DummyContent: React.FC<DummyContentProps> = ({
   item,
   nftInfo,
-  // datas,
-  // setdatas,
-  status,
   handlePublish,
   open,
   setOpen,
@@ -484,7 +480,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
                       name="price"
                       type="number"
                       className="col-span-3 w-[150px]"
-                      step="0.01" 
+                      step="0.01"
                     />
                   </div>
                 </div>

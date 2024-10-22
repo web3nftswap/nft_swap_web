@@ -60,13 +60,13 @@ const Create = () => {
   }, [api]); // 添加 api 作为依赖项
 
   // 处理获取集合列表
-  const getInfo = async (collectionIds) => {
+  const getInfo = async (collectionIds: any) => {
     const collectionIdsArray = JSON.parse(JSON.stringify(collectionIds));
     if (collectionIdsArray) {
       // console.log("[Query] nftCollections");
       const fetchedDatas = await Promise.all(
-        collectionIdsArray.map(async (id) => {
-          const collectionInfo = await api.query.nftModule.nftCollections(id);
+        collectionIdsArray.map(async (id: any) => {
+          const collectionInfo = await api?.query.nftModule.nftCollections(id);
           const [maxItem, curIndex, metainfo] = JSON.parse(
             JSON.stringify(collectionInfo)
           );
@@ -155,7 +155,7 @@ const Create = () => {
         ),
         variant: "success",
       });
-    } catch (error) {
+    } catch (error: any) {
       // console.log(`create error: ${error}`);
       toast({
         title: <div className="flex items-center">{error}</div>,
@@ -168,11 +168,11 @@ const Create = () => {
       setPending(false);
     }
   };
-  const handleMint = async (id) => {
+  const handleMint = async (id: any) => {
     // console.log("[Call] mintNft");
     setPending(true);
     // console.log(id);
-    let tx = api.tx.nftModule.mintNft(id, 0x0);
+    let tx = api?.tx.nftModule.mintNft(id, 0x0);
     //hash = await tx.signAndSend(alice);
     //delay(10000); // 等待mint完成
     const currentAccount = allAccounts[0];
@@ -188,7 +188,7 @@ const Create = () => {
       // console.log(`create hash: ${hash.toHex()}`);
       // 查询现有的 NFT 集合
       // console.log("[Query] nftCollectionIds");
-      const collectionIds = await api.query.nftModule.nftCollectionIds();
+      const collectionIds = await api?.query.nftModule.nftCollectionIds();
       // console.log(`collection ids: ${collectionIds}`);
       getInfo(collectionIds);
 
@@ -204,7 +204,7 @@ const Create = () => {
         ),
         variant: "success",
       });
-    } catch (error) {
+    } catch (error: any) {
       // console.log(`create error: ${error}`);
       toast({
         title: <div className="flex items-center">{error}</div>,
@@ -330,7 +330,7 @@ const Create = () => {
 
 export default Create;
 
-const ListBox = ({ item, handleMint }) => {
+const ListBox = ({ item, handleMint }: { item: any; handleMint: any }) => {
   const { toast } = useToast();
   return (
     <li className="flex justify-between gap-x-6 py-5">

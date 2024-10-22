@@ -39,12 +39,12 @@ const Consolidate = () => {
     try {
       const connectedAccount = localStorage.getItem("connectedAccount");
       // console.log(connectedAccount);
-      const nfts = await api.query.nftModule.ownedNFTs(connectedAccount);
+      const nfts: any = await api.query.nftModule.ownedNFTs(connectedAccount);
       const datas = JSON.parse(nfts);
 
       // console.log("datas", datas);
-      const newData = await Promise.all(
-        datas.map(async (i) => {
+      const newData: any = await Promise.all(
+        datas.map(async (i:any) => {
           let status = await getNftConsolidateStatus(i[0], i[1]);
           // 获取每一个集合的信息
           const nftInfo = await api.query.nftModule.nftCollections(i[0]);
@@ -70,11 +70,11 @@ const Consolidate = () => {
   };
 
   const getNftConsolidateStatus = async (
-    collectionId,
-    itemIndex
+    collectionId:any,
+    itemIndex:any
   ): Promise<string> => {
     // console.log("[Query] nftDetails");
-    const nftDetails = await api.query.nftModule.nftDetails([
+    const nftDetails = await api?.query.nftModule.nftDetails([
       collectionId,
       itemIndex,
     ]);
@@ -102,9 +102,9 @@ const Consolidate = () => {
   // handleMerge
   const handleMerge = async () => {
     // console.log("合并");
-    let dd = [];
+    let dd: any = [];
 
-    datas.filter((i) => {
+    datas.filter((i: any) => {
       if (i.checked && i.checked == true) {
         dd.push([i.nft[0], i.nft[1]]);
       }
@@ -125,7 +125,7 @@ const Consolidate = () => {
       });
     } else {
       // console.log("[Call] mergeNfts");
-      let tx = api.tx.nftModule.mergeNfts(dd);
+      let tx = api?.tx.nftModule.mergeNfts(dd);
       try {
         setPending(true);
         const currentAccount = allAccounts[0];
@@ -154,7 +154,7 @@ const Consolidate = () => {
           // description: "Friday, February 10, 2023 at 5:57 PM",
           variant: "success",
         });
-      } catch (error) {
+      } catch (error: any) {
         // console.log(`merge error: ${error}`);
         setPending(true);
         toast({
@@ -168,9 +168,9 @@ const Consolidate = () => {
   // handleSplit
   const handleSplit = async () => {
     // console.log("拆分");
-    let dd = [];
+    let dd: any = [];
 
-    datas.filter((i) => {
+    datas.filter((i: any) => {
       if (i.checked && i.status == "merged" && i.checked == true) {
         dd.push([i.nft[0], i.nft[1]]);
       }
@@ -191,12 +191,12 @@ const Consolidate = () => {
       });
     } else {
       // console.log("[Call] splitNft");
-      let tx = api.tx.nftModule.splitNft([dd[0][0], dd[0][1]]);
+      let tx = api?.tx.nftModule.splitNft([dd[0][0], dd[0][1]]);
       try {
         setPending(true);
         const currentAccount = allAccounts[0];
         // console.log("currentAccount", currentAccount);
-        let hash = await sendAndWait(
+        let hash: any = await sendAndWait(
           api,
           tx,
           currentAccount,
@@ -219,7 +219,7 @@ const Consolidate = () => {
           description: hash.toHex(),
           variant: "success",
         });
-      } catch (error) {
+      } catch (error: any) {
         // console.log(`split error: ${error}`);
         setPending(true);
         toast({
@@ -272,12 +272,12 @@ const Consolidate = () => {
         <div className="mt-40 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {/* 遍历 Art 类别下的 NFT */}
           {datas
-            .filter((item) => item.status !== "sub") // 先过滤掉状态为 "sub" 的项目
+            .filter((item: any) => item.status !== "sub") // 先过滤掉状态为 "sub" 的项目
             .map((item, idx) => (
               <DummyContent
                 key={`${item[0]}-${idx}`}
                 item={item}
-                status={item.status}
+                status={(item as { status: string }).status}
                 mergeBtn={mergeBtn}
                 splitBtn={splitBtn}
                 datas={datas}
@@ -295,19 +295,17 @@ export default Consolidate;
 
 // 定义 DummyContent 组件的 props 类型
 type DummyContentProps = {
-  item: string[];
-  idx: string;
-  mergeBtn: boolean;
-  splitBtn: boolean;
+  item: any;
+  mergeBtn: any;
+  splitBtn: any;
   status: string;
-  // datas: string[];
-  // setdatas: string[];
+  datas: any;
+  setdatas: any;
 };
 const DummyContent: React.FC<DummyContentProps> = ({
   item,
   mergeBtn,
   splitBtn,
-  datas,
   setdatas,
   status,
 }) => {
@@ -322,7 +320,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
             onCheckedChange={(checked) => {
               // console.log(item.nft[0], checked);
               // console.log(datas);
-              setdatas((prevDatas) => {
+              setdatas((prevDatas: any) => {
                 const newDatas = [...prevDatas];
                 newDatas[item.nft[1]].checked = checked;
                 // console.log(newDatas);
@@ -343,7 +341,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
             onCheckedChange={(checked) => {
               // console.log(item.nft[0], checked);
               // console.log(datas);
-              setdatas((prevDatas) => {
+              setdatas((prevDatas:any) => {
                 const newDatas = [...prevDatas];
                 newDatas[item.nft[1]].checked = checked;
                 // console.log(newDatas);

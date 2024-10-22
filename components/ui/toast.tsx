@@ -89,17 +89,20 @@ const ToastClose = React.forwardRef<
   </ToastPrimitives.Close>
 ));
 ToastClose.displayName = ToastPrimitives.Close.displayName;
-
-const ToastTitle = React.forwardRef<
-  React.ElementRef<typeof ToastPrimitives.Title>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title>
->(({ className, ...props }, ref) => (
-  <ToastPrimitives.Title
-    ref={ref}
-    className={cn("text-sm font-semibold", className)}
-    {...props}
-  />
-));
+type ToastTitleProps = React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title> & {
+  children: React.ReactNode; // 允许 ReactNode 类型
+};
+const ToastTitle = React.forwardRef<React.ElementRef<typeof ToastPrimitives.Title>, ToastTitleProps>(
+  ({ className, children, ...props }, ref) => (
+    <ToastPrimitives.Title
+      ref={ref}
+      className={cn("text-sm font-semibold", className)}
+      {...props}
+    >
+      {children}
+    </ToastPrimitives.Title>
+  )
+);
 ToastTitle.displayName = ToastPrimitives.Title.displayName;
 
 const ToastDescription = React.forwardRef<
