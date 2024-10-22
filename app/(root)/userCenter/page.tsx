@@ -12,7 +12,7 @@ import { sendAndWait } from "@/utils/sendAndWait";
 import { Button } from "@/components/ui/button";
 import { BiSolidMessageSquareDetail } from "react-icons/bi";
 import { RiErrorWarningLine } from "react-icons/ri";
-
+import ReactDOMServer from 'react-dom/server';
 import {
   Dialog,
   DialogContent,
@@ -214,7 +214,7 @@ const UserCenter = () => {
       );
       // console.log(`publish hash: ${hash.toHex()}`);
       toast({
-        title: (
+        title: ReactDOMServer.renderToStaticMarkup(
           <div className="flex items-center">
             <FaRegCircleCheck
               size={50}
@@ -230,7 +230,7 @@ const UserCenter = () => {
     } catch (error: any) {
       // console.log(`create error: ${error}`);
       toast({
-        title: <div className="flex items-center">{error}</div>,
+        title: ReactDOMServer.renderToStaticMarkup(<div className="flex items-center">{error}</div>),
         // description: "Fail",
         variant: "destructive",
       });
@@ -262,7 +262,7 @@ const UserCenter = () => {
       );
       // console.log(`accept hash: ${hash.toHex()}`);
       toast({
-        title: (
+        title: ReactDOMServer.renderToStaticMarkup(
           <div className="flex items-center">
             <FaRegCircleCheck
               size={50}
@@ -279,7 +279,7 @@ const UserCenter = () => {
       // console.log(`accept error: ${error}`);
       setPending(true);
       toast({
-        title: <div className="flex items-center">{error}</div>,
+        title: ReactDOMServer.renderToStaticMarkup (<div className="flex items-center">{error}</div>),
         description: "Fail",
         variant: "destructive",
       });
@@ -453,7 +453,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
                           setshareMes(value);
                         } else {
                           toast({
-                            title: (
+                            title: ReactDOMServer.renderToStaticMarkup(
                               <div className="flex items-center">
                                 <RiErrorWarningLine
                                   size={50}
