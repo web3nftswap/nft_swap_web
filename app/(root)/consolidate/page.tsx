@@ -16,6 +16,7 @@ import { LuFileStack } from "react-icons/lu";
 import { RiErrorWarningLine } from "react-icons/ri";
 import Footer from "@/components/Footer";
 import { hexCodeToString } from "@/utils/util";
+import ReactDOMServer from "react-dom/server";
 
 const Consolidate = () => {
   const [mergeBtn, setmergeBtn] = useState(false);
@@ -44,7 +45,7 @@ const Consolidate = () => {
 
       // console.log("datas", datas);
       const newData: any = await Promise.all(
-        datas.map(async (i:any) => {
+        datas.map(async (i: any) => {
           let status = await getNftConsolidateStatus(i[0], i[1]);
           // 获取每一个集合的信息
           const nftInfo = await api.query.nftModule.nftCollections(i[0]);
@@ -70,8 +71,8 @@ const Consolidate = () => {
   };
 
   const getNftConsolidateStatus = async (
-    collectionId:any,
-    itemIndex:any
+    collectionId: any,
+    itemIndex: any
   ): Promise<string> => {
     // console.log("[Query] nftDetails");
     const nftDetails = await api?.query.nftModule.nftDetails([
@@ -112,7 +113,7 @@ const Consolidate = () => {
     // console.log("dd", dd);
     if (dd.length < 2 || dd.length > 10) {
       toast({
-        title: (
+        title: ReactDOMServer.renderToStaticMarkup(
           <div className="flex items-center">
             <RiErrorWarningLine
               size={50}
@@ -142,7 +143,7 @@ const Consolidate = () => {
         setPending(false);
         fetchCollectionIds();
         toast({
-          title: (
+          title: ReactDOMServer.renderToStaticMarkup(
             <div className="flex items-center">
               <FaRegCircleCheck
                 size={50}
@@ -158,8 +159,9 @@ const Consolidate = () => {
         // console.log(`merge error: ${error}`);
         setPending(true);
         toast({
-          title: <div className="flex items-center">{error}</div>,
-          description: "Fail",
+          title: ReactDOMServer.renderToStaticMarkup(
+            <div className="flex items-center">{error}</div>
+          ),
           variant: "destructive",
         });
       }
@@ -178,7 +180,7 @@ const Consolidate = () => {
     // console.log("dd", dd);
     if (dd.length > 1 || dd.length == 0) {
       toast({
-        title: (
+        title: ReactDOMServer.renderToStaticMarkup(
           <div className="flex items-center">
             <RiErrorWarningLine
               size={50}
@@ -207,7 +209,7 @@ const Consolidate = () => {
         setPending(false);
         fetchCollectionIds();
         toast({
-          title: (
+          title: ReactDOMServer.renderToStaticMarkup(
             <div className="flex items-center">
               <FaRegCircleCheck
                 size={50}
@@ -223,7 +225,7 @@ const Consolidate = () => {
         // console.log(`split error: ${error}`);
         setPending(true);
         toast({
-          title: <div className="flex items-center">{error}</div>,
+          title: ReactDOMServer.renderToStaticMarkup (<div className="flex items-center">{error}</div>),
           description: "Fail",
           variant: "destructive",
         });
@@ -341,7 +343,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
             onCheckedChange={(checked) => {
               // console.log(item.nft[0], checked);
               // console.log(datas);
-              setdatas((prevDatas:any) => {
+              setdatas((prevDatas: any) => {
                 const newDatas = [...prevDatas];
                 newDatas[item.nft[1]].checked = checked;
                 // console.log(newDatas);

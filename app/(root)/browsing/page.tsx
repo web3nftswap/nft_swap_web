@@ -25,6 +25,7 @@ import {
 import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
 import { sendAndWait } from "@/utils/sendAndWait";
 import { DataTableDemo } from "@/components/ui/data-table";
+import ReactDOMServer from 'react-dom/server';
 
 const PAGE_SIZE = 15; // 每次加载的数据量
 
@@ -217,7 +218,7 @@ const Browsing = () => {
       );
       // console.log(`buy hash: ${hash.toHex()}`);
       toast({
-        title: (
+        title: ReactDOMServer.renderToStaticMarkup(
           <div className="flex items-center">
             <FaRegCircleCheck
               size={50}
@@ -233,7 +234,7 @@ const Browsing = () => {
     } catch (error: any) {
       // console.log(`create error: ${error}`);
       toast({
-        title: <div className="flex items-center">{error}</div>,
+        title: ReactDOMServer.renderToStaticMarkup(<div className="flex items-center">{error}</div>),
         // description: "Fail",
         variant: "destructive",
       });
@@ -358,7 +359,7 @@ const Browsing = () => {
       // console.log(`offer hash: ${hash.toHex()}`);
 
       toast({
-        title: (
+        title: ReactDOMServer.renderToStaticMarkup(
           <div className="flex items-center">
             <FaRegCircleCheck
               size={50}
@@ -374,7 +375,8 @@ const Browsing = () => {
     } catch (error: any) {
       // console.log(`offer error: ${error}`);
       toast({
-        title: <div className="flex items-center">{error}</div>,
+        title: ReactDOMServer.renderToStaticMarkup (<div className="flex items-center">{error}</div>),
+        description: "Fail",
         variant: "destructive",
       });
     } finally {

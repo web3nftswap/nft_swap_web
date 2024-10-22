@@ -28,6 +28,7 @@ import { FaRegCircleCheck } from "react-icons/fa6";
 import { RiErrorWarningLine } from "react-icons/ri";
 import { hexCodeToString } from "@/utils/util";
 import Footer from "@/components/Footer";
+import ReactDOMServer from "react-dom/server";
 
 interface CollectionData {
   maxItem: number;
@@ -144,7 +145,7 @@ const Create = () => {
       // console.log(`collection ids: ${collectionIds}`);
       getInfo(collectionIds);
       toast({
-        title: (
+        title: ReactDOMServer.renderToStaticMarkup(
           <div className="flex items-center">
             <FaRegCircleCheck
               size={50}
@@ -158,7 +159,9 @@ const Create = () => {
     } catch (error: any) {
       // console.log(`create error: ${error}`);
       toast({
-        title: <div className="flex items-center">{error}</div>,
+        title: ReactDOMServer.renderToStaticMarkup(
+          <div className="flex items-center">{error}</div>
+        ),
         // description: "Fail",
         variant: "destructive",
       });
@@ -193,7 +196,7 @@ const Create = () => {
       getInfo(collectionIds);
 
       toast({
-        title: (
+        title: ReactDOMServer.renderToStaticMarkup(
           <div className="flex items-center">
             <FaRegCircleCheck
               size={50}
@@ -207,7 +210,9 @@ const Create = () => {
     } catch (error: any) {
       // console.log(`create error: ${error}`);
       toast({
-        title: <div className="flex items-center">{error}</div>,
+        title: ReactDOMServer.renderToStaticMarkup(
+          <div className="flex items-center">{error}</div>
+        ),
         // description: "Fail",
         variant: "destructive",
       });
@@ -225,7 +230,7 @@ const Create = () => {
               // // console.log("点击创建");
               if (!api) {
                 toast({
-                  title: (
+                  title: ReactDOMServer.renderToStaticMarkup(
                     <div className="flex items-center">
                       <RiErrorWarningLine
                         size={50}
@@ -358,7 +363,7 @@ const ListBox = ({ item, handleMint }: { item: any; handleMint: any }) => {
           onClick={() => {
             if (item.curIndex + 1 > item.maxItem) {
               toast({
-                title: (
+                title: ReactDOMServer.renderToStaticMarkup(
                   <div className="flex items-center">
                     <RiErrorWarningLine
                       size={50}
