@@ -4,7 +4,7 @@
  * @Author: Hesin
  * @Date: 2024-10-11 17:01:06
  * @LastEditors: Hesin
- * @LastEditTime: 2024-10-21 07:52:43
+ * @LastEditTime: 2024-10-22 11:01:36
  */
 "use client";
 
@@ -141,14 +141,14 @@ const Browsing = () => {
     // 查询所有BuyNFTs
     try {
       const entries = await api.query.nftMarketModule.listings.entries();
-      console.log("entries", entries);
+      // console.log("entries", entries);
       if (entries.length > 0) {
         const buyNFTs = entries.map(([key, value]) => ({
           nft: JSON.parse(JSON.stringify(key.args[0])),
           seller: JSON.parse(JSON.stringify(key.args[1])),
           price: JSON.parse(JSON.stringify(value)).price,
         }));
-        console.log("buy NFTs", buyNFTs);
+        // console.log("buy NFTs", buyNFTs);
         let newBuydatas = [];
         for (let i = 0; i < buyNFTs.length; i++) {
           let owners = await api.query.nftModule.nftOwners([
@@ -163,7 +163,7 @@ const Browsing = () => {
             JSON.stringify(nftInfo)
           );
           const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
-          //console.log("nftMetaInfo", nftMetaInfo);
+          //// console.log("nftMetaInfo", nftMetaInfo);
 
           const nft = {
             ...buyNFTs[i],
@@ -172,10 +172,10 @@ const Browsing = () => {
             desc: nftMetaInfo.desc,
             owners: JSON.parse(JSON.stringify(owners)),
           };
-          // console.log(nft);
+          // // console.log(nft);
           newBuydatas.push(nft);
         }
-        console.log("newBuydatas", newBuydatas);
+        // console.log("newBuydatas", newBuydatas);
         // 可买bft list
         setbuyAllDatas(newBuydatas);
         setVisibleBuyDatas(newBuydatas.slice(0, PAGE_SIZE)); // 初始化可见数据
@@ -203,7 +203,7 @@ const Browsing = () => {
     // 获取所有的集合
     const collectionIdsArray = JSON.parse(JSON.stringify(collectionIds));
     let datas = [];
-    // console.log("collectionIdsArray", collectionIdsArray);
+    // // console.log("collectionIdsArray", collectionIdsArray);
     if (collectionIdsArray && collectionIdsArray.length > 0) {
       for (let i = 0; i < collectionIdsArray.length; ++i) {
         // 获取每一个集合的信息
@@ -231,13 +231,13 @@ const Browsing = () => {
         }
       }
     }
-    console.log("all", datas);
+    // console.log("all", datas);
     setAllDatas(datas);
     setVisibleDatas(datas.slice(0, PAGE_SIZE)); // 初始化可见数据
     getOwnedNFTArray();
   };
   const loadMoreData = () => {
-    console.log("loadMoreData");
+    // console.log("loadMoreData");
     const currentVisibleCount = visibleDatas.length;
     if (currentVisibleCount >= allDatas.length) return;
     const nextDataCount = Math.min(
@@ -251,11 +251,11 @@ const Browsing = () => {
     setVisibleDatas((prev) => [...prev, ...nextData]);
   };
   const handleBuy = async (info) => {
-    console.log("买了买了", info);
+    // console.log("买了买了", info);
     try {
-      console.log("pending", pending);
+      // console.log("pending", pending);
       setPending(true);
-      console.log(info.nft, info.seller);
+      // console.log(info.nft, info.seller);
       const tx = api.tx.nftMarketModule.buyNft(info.nft, info.seller);
       // const connectedAccount = localStorage.getItem("connectedAccount");
       const connectedAccount = allAccounts[0];
@@ -266,7 +266,7 @@ const Browsing = () => {
         extensionEnabled,
         injector
       );
-      console.log(`buy hash: ${hash.toHex()}`);
+      // console.log(`buy hash: ${hash.toHex()}`);
       toast({
         title: (
           <div className="flex items-center">
@@ -282,24 +282,24 @@ const Browsing = () => {
 
       fetchBuyNfts();
     } catch (error) {
-      console.log(`create error: ${error}`);
+      // console.log(`create error: ${error}`);
       toast({
         title: <div className="flex items-center">{error}</div>,
         // description: "Fail",
         variant: "destructive",
       });
     } finally {
-      console.log("pending", pending);
+      // console.log("pending", pending);
       setPending(false);
     }
   };
   const getOwnedNFTArray = async () => {
-    console.log("get owned nft list");
+    // console.log("get owned nft list");
     //获取当前账户的nfts
     const connectedAccount = localStorage.getItem("connectedAccount");
     const bobOwnedNFTs = await api.query.nftModule.ownedNFTs(connectedAccount);
     const bobOwnedNFTsArray = JSON.parse(JSON.stringify(bobOwnedNFTs));
-    console.log(bobOwnedNFTsArray);
+    // console.log(bobOwnedNFTsArray);
     let ownedNFTArray = [];
     if (
       bobOwnedNFTsArray &&
@@ -315,7 +315,7 @@ const Browsing = () => {
           JSON.stringify(nftInfo)
         );
         const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
-        // console.log("nftMetaInfo", nftMetaInfo);
+        // // console.log("nftMetaInfo", nftMetaInfo);
 
         const nft = {
           nft: bobOwnedNFTsArray[i],
@@ -325,12 +325,12 @@ const Browsing = () => {
         };
         ownedNFTArray.push(nft);
       }
-      console.log("ownedNFTArray", ownedNFTArray);
+      // console.log("ownedNFTArray", ownedNFTArray);
       setownedNFTsList(ownedNFTArray);
     }
   };
   useEffect(() => {
-    console.log("tabs");
+    // console.log("tabs");
     const tabs = [
       {
         title: "All",
@@ -369,27 +369,27 @@ const Browsing = () => {
   }, [visibleDatas, allDatas, visibleBuyDatas, buyDatas]);
 
   const selectSwapNFT = (ids, rows) => {
-    console.log("选择的列有哪些");
-    console.log(rows);
+    // console.log("choose col");
+    // console.log(rows);
     setofferNfts(rows);
   };
 
   const handleSwap = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    console.log("SWAP ----------");
+    // console.log("SWAP ----------");
     setPending(true);
 
     // FormData to Object
     const formData = new FormData(event.currentTarget);
     const formDataObject = Object.fromEntries(formData.entries());
-    console.log("表单数据对象:", formDataObject);
+    // console.log("表单数据对象:", formDataObject);
     //报价
     const swapToken = formDataObject.price;
-    console.log(targetNFT);
-    console.log("[Call] placeOffer");
+    // console.log(targetNFT);
+    // console.log("[Call] placeOffer");
     const swapLists = offerNfts.map((row) => row.nft);
-    console.log(swapLists);
+    // console.log(swapLists);
 
     let tx = api.tx.nftMarketModule.placeOffer(
       targetNFT.nft, // 目标NFT
@@ -407,7 +407,7 @@ const Browsing = () => {
         extensionEnabled,
         injector
       );
-      console.log(`offer hash: ${hash.toHex()}`);
+      // console.log(`offer hash: ${hash.toHex()}`);
 
       toast({
         title: (
@@ -424,7 +424,7 @@ const Browsing = () => {
       fetchAllNfts();
       fetchBuyNfts();
     } catch (error) {
-      console.log(`offer error: ${error}`);
+      // console.log(`offer error: ${error}`);
       toast({
         title: <div className="flex items-center">{error}</div>,
         variant: "destructive",

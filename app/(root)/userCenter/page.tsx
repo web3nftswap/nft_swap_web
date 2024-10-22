@@ -59,7 +59,7 @@ const UserCenter = () => {
     if (!api) return; // 如果 api 尚未初始化，直接返回
 
     try {
-      console.log("[Query] ownedNFTs");
+      // console.log("[Query] ownedNFTs");
       const connectedAccount = localStorage.getItem("connectedAccount");
 
       // 当前账号的上架 list
@@ -71,11 +71,11 @@ const UserCenter = () => {
           seller: JSON.parse(JSON.stringify(key.args[1])),
           price: JSON.parse(JSON.stringify(value)).price,
         }));
-      console.log("publishedNFTs", publishedNFTs);
+      // console.log("publishedNFTs", publishedNFTs);
 
       const ownedNFTs = await api.query.nftModule.ownedNFTs(connectedAccount);
       const datas = JSON.parse(ownedNFTs);
-      console.log("ownedNFTs", datas);
+      // console.log("ownedNFTs", datas);
 
       // 当前账号的上架 list
       const ownedNFTsArray = await Promise.all(
@@ -85,14 +85,14 @@ const UserCenter = () => {
           const matchingItem = publishedNFTs.find(
             (item) => item.nft[0] === i[0] && item.nft[1] === i[1]
           );
-          console.log("是否上架", matchingItem);
+          // console.log("是否上架", matchingItem);
           // 获取每一个集合的信息
           const nftInfo = await api.query.nftModule.nftCollections(i[0]);
           const [maxItem, curIndex, metainfo] = JSON.parse(
             JSON.stringify(nftInfo)
           );
           const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
-          // console.log("nftMetaInfo", nftMetaInfo);
+          // // console.log("nftMetaInfo", nftMetaInfo);
           return {
             nft: i,
             url: nftMetaInfo.url,
@@ -105,7 +105,7 @@ const UserCenter = () => {
           };
         })
       );
-      console.log("Fetched Data:", ownedNFTsArray);
+      // console.log("Fetched Data:", ownedNFTsArray);
       setdatas(ownedNFTsArray);
     } catch (error) {
       console.error("Error fetching collection IDs:", error);
@@ -115,11 +115,11 @@ const UserCenter = () => {
     getOfferList();
   };
   const getOfferList = async () => {
-    console.log("[Query] alice offers");
+    // console.log("[Query] alice offers");
     // 收到的所有offer
     const connectedAccount = localStorage.getItem("connectedAccount");
     const offersList = await getAccountAllOffers(api, connectedAccount);
-    console.log("收到的所有offer", offersList);
+    // console.log("收到的所有offer", offersList);
     setofferList(offersList);
     setofferCounts(offersList.length);
   };
@@ -127,28 +127,28 @@ const UserCenter = () => {
     collectionId,
     itemIndex
   ): Promise<string> => {
-    console.log("[Query] nftDetails");
+    // console.log("[Query] nftDetails");
     const nftDetails = await api.query.nftModule.nftDetails([
       collectionId,
       itemIndex,
     ]);
-    //console.log(`nftDetails: ${nftDetails}`);
+    //// console.log(`nftDetails: ${nftDetails}`);
     const { mergedNft, subNfts, metadata } = JSON.parse(
       JSON.stringify(nftDetails)
     );
-    //console.log(
+    //// console.log(
     //  `mergedNft: ${mergedNft}, subNfts: ${subNfts}, metadata: ${metadata}`
     //);
     let status: string = "";
     if (subNfts.length > 0) {
       status = "merged"; // merge的nft
-      console.log("merged nft");
+      // console.log("merged nft");
     } else if (mergedNft == null) {
       status = "general"; // 普通没有merge的nft
-      // console.log("general nft");
+      // // console.log("general nft");
     } else {
       status = "sub"; // 该nft已被merge，当前不可用
-      // console.log("sub(frozen) nft");
+      // // console.log("sub(frozen) nft");
     }
     return status;
   };
@@ -183,21 +183,21 @@ const UserCenter = () => {
 
   const handlePublish = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(pubItem);
+    // console.log(pubItem);
 
-    console.log("上架");
+    // console.log("上架");
     const formData = new FormData(event.currentTarget);
     const formDataObject = Object.fromEntries(formData.entries());
-    console.log("表单数据对象:", formDataObject);
+    // console.log("表单数据对象:", formDataObject);
 
     const shareRate = Number(formDataObject.share);
     const price = Number(formDataObject.price)* 10 ** 12;
     const param1 = [pubItem.nft[0], Number(pubItem.nft[1]), shareRate];
-    console.log(param1);
-    console.log(price);
+    // console.log(param1);
+    // console.log(price);
     // 上架
     try {
-      console.log("pending", pending);
+      // console.log("pending", pending);
       setPending(true);
       //当前账户
       const currentAccount = allAccounts[0];
@@ -211,7 +211,7 @@ const UserCenter = () => {
         extensionEnabled,
         injector
       );
-      console.log(`publish hash: ${hash.toHex()}`);
+      // console.log(`publish hash: ${hash.toHex()}`);
       toast({
         title: (
           <div className="flex items-center">
@@ -227,7 +227,7 @@ const UserCenter = () => {
       //刷新数据 NFT 集合
       fetchUserNFTs();
     } catch (error) {
-      console.log(`create error: ${error}`);
+      // console.log(`create error: ${error}`);
       toast({
         title: <div className="flex items-center">{error}</div>,
         // description: "Fail",
@@ -240,8 +240,8 @@ const UserCenter = () => {
   };
 
   const handleOffer = async (target, idx) => {
-    console.log("[Call] acceptOffer");
-    console.log(target, idx);
+    // console.log("[Call] acceptOffer");
+    // console.log(target, idx);
 
     let tx = api.tx.nftMarketModule.acceptOffer(
       target.nft, // 目标NFT
@@ -259,7 +259,7 @@ const UserCenter = () => {
         extensionEnabled,
         injector
       );
-      console.log(`accept hash: ${hash.toHex()}`);
+      // console.log(`accept hash: ${hash.toHex()}`);
       toast({
         title: (
           <div className="flex items-center">
@@ -275,7 +275,7 @@ const UserCenter = () => {
       });
       setPending(false);
     } catch (error) {
-      console.log(`accept error: ${error}`);
+      // console.log(`accept error: ${error}`);
       setPending(true);
       toast({
         title: <div className="flex items-center">{error}</div>,
@@ -426,7 +426,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
                   onClick={() => {
                     setpubItem(item);
                     setshareMes(item.nft[2]);
-                    console.log("publish", item);
+                    // console.log("publish", item);
                   }}
                 >
                   List of sale
@@ -575,7 +575,7 @@ const ListBox = ({ item, handleOffer }) => {
                   <Button
                     className="ml-2"
                     onClick={() => {
-                      console.log("reject");
+                      // console.log("reject");
                     }}
                   >
                     Reject

@@ -27,8 +27,8 @@ const Consolidate = () => {
     useSubstrateContext();
 
   useEffect(() => {
-    console.log("mergeBtn", mergeBtn);
-    console.log("splitBtn", splitBtn);
+    // console.log("mergeBtn", mergeBtn);
+    // console.log("splitBtn", splitBtn);
   }, [mergeBtn, setmergeBtn, splitBtn, setsplitBtn]);
   useEffect(() => {
     fetchCollectionIds();
@@ -38,11 +38,11 @@ const Consolidate = () => {
 
     try {
       const connectedAccount = localStorage.getItem("connectedAccount");
-      console.log(connectedAccount);
+      // console.log(connectedAccount);
       const nfts = await api.query.nftModule.ownedNFTs(connectedAccount);
       const datas = JSON.parse(nfts);
 
-      console.log("datas", datas);
+      // console.log("datas", datas);
       const newData = await Promise.all(
         datas.map(async (i) => {
           let status = await getNftConsolidateStatus(i[0], i[1]);
@@ -52,7 +52,7 @@ const Consolidate = () => {
             JSON.stringify(nftInfo)
           );
           const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
-          // console.log("nftMetaInfo", nftMetaInfo);
+          // // console.log("nftMetaInfo", nftMetaInfo);
           return {
             nft: i,
             status: status,
@@ -62,7 +62,7 @@ const Consolidate = () => {
           };
         })
       );
-      console.log("Fetched Data:", newData);
+      // console.log("Fetched Data:", newData);
       setdatas(newData);
     } catch (error) {
       console.error("Error fetching collection IDs:", error);
@@ -73,35 +73,35 @@ const Consolidate = () => {
     collectionId,
     itemIndex
   ): Promise<string> => {
-    console.log("[Query] nftDetails");
+    // console.log("[Query] nftDetails");
     const nftDetails = await api.query.nftModule.nftDetails([
       collectionId,
       itemIndex,
     ]);
-    //console.log(`nftDetails: ${nftDetails}`);
+    //// console.log(`nftDetails: ${nftDetails}`);
     const { mergedNft, subNfts, metadata } = JSON.parse(
       JSON.stringify(nftDetails)
     );
-    //console.log(
+    //// console.log(
     //  `mergedNft: ${mergedNft}, subNfts: ${subNfts}, metadata: ${metadata}`
     //);
     let status: string = "";
     if (subNfts.length > 0) {
       status = "merged"; // merge的nft
-      console.log("merged nft");
+      // console.log("merged nft");
     } else if (mergedNft == null) {
       status = "general"; // 普通没有merge的nft
-      console.log("general nft");
+      // console.log("general nft");
     } else {
       status = "sub"; // 该nft已被merge，当前不可用
-      console.log("sub(frozen) nft");
+      // console.log("sub(frozen) nft");
     }
     return status;
   };
 
   // handleMerge
   const handleMerge = async () => {
-    console.log("合并");
+    // console.log("合并");
     let dd = [];
 
     datas.filter((i) => {
@@ -109,7 +109,7 @@ const Consolidate = () => {
         dd.push([i.nft[0], i.nft[1]]);
       }
     });
-    console.log("dd", dd);
+    // console.log("dd", dd);
     if (dd.length < 2 || dd.length > 10) {
       toast({
         title: (
@@ -124,12 +124,12 @@ const Consolidate = () => {
         variant: "warning",
       });
     } else {
-      console.log("[Call] mergeNfts");
+      // console.log("[Call] mergeNfts");
       let tx = api.tx.nftModule.mergeNfts(dd);
       try {
         setPending(true);
         const currentAccount = allAccounts[0];
-        console.log("currentAccount", currentAccount);
+        // console.log("currentAccount", currentAccount);
         let hash = await sendAndWait(
           api,
           tx,
@@ -137,7 +137,7 @@ const Consolidate = () => {
           extensionEnabled,
           injector
         );
-        console.log(`mint hash: ${hash.toHex()}`);
+        // console.log(`mint hash: ${hash.toHex()}`);
 
         setPending(false);
         fetchCollectionIds();
@@ -155,7 +155,7 @@ const Consolidate = () => {
           variant: "success",
         });
       } catch (error) {
-        console.log(`merge error: ${error}`);
+        // console.log(`merge error: ${error}`);
         setPending(true);
         toast({
           title: <div className="flex items-center">{error}</div>,
@@ -167,7 +167,7 @@ const Consolidate = () => {
   };
   // handleSplit
   const handleSplit = async () => {
-    console.log("拆分");
+    // console.log("拆分");
     let dd = [];
 
     datas.filter((i) => {
@@ -175,7 +175,7 @@ const Consolidate = () => {
         dd.push([i.nft[0], i.nft[1]]);
       }
     });
-    console.log("dd", dd);
+    // console.log("dd", dd);
     if (dd.length > 1 || dd.length == 0) {
       toast({
         title: (
@@ -190,12 +190,12 @@ const Consolidate = () => {
         variant: "warning",
       });
     } else {
-      console.log("[Call] splitNft");
+      // console.log("[Call] splitNft");
       let tx = api.tx.nftModule.splitNft([dd[0][0], dd[0][1]]);
       try {
         setPending(true);
         const currentAccount = allAccounts[0];
-        console.log("currentAccount", currentAccount);
+        // console.log("currentAccount", currentAccount);
         let hash = await sendAndWait(
           api,
           tx,
@@ -203,7 +203,7 @@ const Consolidate = () => {
           extensionEnabled,
           injector
         );
-        console.log(`split hash: ${hash.toHex()}`);
+        // console.log(`split hash: ${hash.toHex()}`);
         setPending(false);
         fetchCollectionIds();
         toast({
@@ -220,7 +220,7 @@ const Consolidate = () => {
           variant: "success",
         });
       } catch (error) {
-        console.log(`split error: ${error}`);
+        // console.log(`split error: ${error}`);
         setPending(true);
         toast({
           title: <div className="flex items-center">{error}</div>,
@@ -320,12 +320,12 @@ const DummyContent: React.FC<DummyContentProps> = ({
             id={item.nft[1]}
             className="border-black-100 border-2"
             onCheckedChange={(checked) => {
-              console.log(item.nft[0], checked);
-              console.log(datas);
+              // console.log(item.nft[0], checked);
+              // console.log(datas);
               setdatas((prevDatas) => {
                 const newDatas = [...prevDatas];
                 newDatas[item.nft[1]].checked = checked;
-                console.log(newDatas);
+                // console.log(newDatas);
                 return newDatas;
               });
               return checked;
@@ -341,12 +341,12 @@ const DummyContent: React.FC<DummyContentProps> = ({
             className="border-black-100 border-2"
             // checked={item[3] ? item[3] : false}
             onCheckedChange={(checked) => {
-              console.log(item.nft[0], checked);
-              console.log(datas);
+              // console.log(item.nft[0], checked);
+              // console.log(datas);
               setdatas((prevDatas) => {
                 const newDatas = [...prevDatas];
                 newDatas[item.nft[1]].checked = checked;
-                console.log(newDatas);
+                // console.log(newDatas);
                 return newDatas;
               });
               return checked;

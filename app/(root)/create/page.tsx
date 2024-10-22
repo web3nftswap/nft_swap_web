@@ -47,7 +47,7 @@ const Create = () => {
     const fetchCollectionIds = async () => {
       if (!api) return; // 如果 api 尚未初始化，直接返回
       try {
-        console.log(api);
+        // console.log(api);
         // 查询现有的 NFT 集合
         const collectionIds = await api.query.nftModule.nftCollectionIds();
         getInfo(collectionIds);
@@ -63,7 +63,7 @@ const Create = () => {
   const getInfo = async (collectionIds) => {
     const collectionIdsArray = JSON.parse(JSON.stringify(collectionIds));
     if (collectionIdsArray) {
-      console.log("[Query] nftCollections");
+      // console.log("[Query] nftCollections");
       const fetchedDatas = await Promise.all(
         collectionIdsArray.map(async (id) => {
           const collectionInfo = await api.query.nftModule.nftCollections(id);
@@ -84,7 +84,7 @@ const Create = () => {
         })
       );
 
-      console.log(fetchedDatas);
+      // console.log(fetchedDatas);
       setAllDatas(fetchedDatas);
     }
     // return allDatas; // 返回包含所有 datas 的数组
@@ -93,23 +93,23 @@ const Create = () => {
   const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    console.log("点击创建");
-    console.log("api", api);
+    // console.log("点击创建");
+    // console.log("api", api);
     if (!api) {
       alert("请关联账户");
       return;
     }
 
     setPending(true);
-    console.log(event);
+    // console.log(event);
     const formData = new FormData(event.currentTarget);
-    console.log("formData", formData);
+    // console.log("formData", formData);
     // FormData to Object
     const formDataObject = Object.fromEntries(formData.entries());
-    console.log("表单数据对象:", formDataObject);
+    // console.log("表单数据对象:", formDataObject);
 
     // 创建 NFT 集合
-    console.log("[Call] createCollection");
+    // console.log("[Call] createCollection");
     const tx = api.tx.nftModule.createCollection(
       formDataObject.maxnum,
       JSON.stringify({
@@ -120,15 +120,15 @@ const Create = () => {
     );
     //当前账户
     const currentAccount = allAccounts[0];
-    console.log(currentAccount);
+    // console.log(currentAccount);
 
     try {
       //// 测试数据
       //const keyring = new Keyring({ type: "sr25519" });
       //const ass = [keyring.addFromUri("//Alice"), keyring.addFromUri("//Bob")];
       //const [alice, bob] = ass;
-      //console.log(alice);
-      console.log("pending", pending);
+      //// console.log(alice);
+      // console.log("pending", pending);
       setPending(true);
       const hash = await sendAndWait(
         api,
@@ -137,11 +137,11 @@ const Create = () => {
         extensionEnabled,
         injector
       );
-      console.log(`create hash: ${hash.toHex()}`);
+      // console.log(`create hash: ${hash.toHex()}`);
       // 查询现有的 NFT 集合
-      console.log("[Query] nftCollectionIds");
+      // console.log("[Query] nftCollectionIds");
       const collectionIds = await api.query.nftModule.nftCollectionIds();
-      console.log(`collection ids: ${collectionIds}`);
+      // console.log(`collection ids: ${collectionIds}`);
       getInfo(collectionIds);
       toast({
         title: (
@@ -156,27 +156,27 @@ const Create = () => {
         variant: "success",
       });
     } catch (error) {
-      console.log(`create error: ${error}`);
+      // console.log(`create error: ${error}`);
       toast({
         title: <div className="flex items-center">{error}</div>,
         // description: "Fail",
         variant: "destructive",
       });
     } finally {
-      console.log("pending", pending);
+      // console.log("pending", pending);
       setIsSheetOpen(false);
       setPending(false);
     }
   };
   const handleMint = async (id) => {
-    console.log("[Call] mintNft");
+    // console.log("[Call] mintNft");
     setPending(true);
-    console.log(id);
+    // console.log(id);
     let tx = api.tx.nftModule.mintNft(id, 0x0);
     //hash = await tx.signAndSend(alice);
     //delay(10000); // 等待mint完成
     const currentAccount = allAccounts[0];
-    console.log("currentAccount", currentAccount);
+    // console.log("currentAccount", currentAccount);
     try {
       let hash = await sendAndWait(
         api,
@@ -185,11 +185,11 @@ const Create = () => {
         extensionEnabled,
         injector
       );
-      console.log(`create hash: ${hash.toHex()}`);
+      // console.log(`create hash: ${hash.toHex()}`);
       // 查询现有的 NFT 集合
-      console.log("[Query] nftCollectionIds");
+      // console.log("[Query] nftCollectionIds");
       const collectionIds = await api.query.nftModule.nftCollectionIds();
-      console.log(`collection ids: ${collectionIds}`);
+      // console.log(`collection ids: ${collectionIds}`);
       getInfo(collectionIds);
 
       toast({
@@ -205,7 +205,7 @@ const Create = () => {
         variant: "success",
       });
     } catch (error) {
-      console.log(`create error: ${error}`);
+      // console.log(`create error: ${error}`);
       toast({
         title: <div className="flex items-center">{error}</div>,
         // description: "Fail",
@@ -222,7 +222,7 @@ const Create = () => {
         <div className="w-15 relative  flex max-w-sm items-center space-x-2 my-20">
           <button
             onClick={() => {
-              // console.log("点击创建");
+              // // console.log("点击创建");
               if (!api) {
                 toast({
                   title: (
@@ -238,7 +238,7 @@ const Create = () => {
                 });
                 return;
               } else {
-                console.log("api", api);
+                // console.log("api", api);
                 setIsSheetOpen(true);
               }
             }}
