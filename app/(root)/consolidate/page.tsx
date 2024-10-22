@@ -121,7 +121,7 @@ const Consolidate = () => {
             />
             Collection Number must be more than 2 and less than 10
           </div>
-        ),
+        ) as unknown as string,
         variant: "warning",
       });
     } else {
@@ -151,7 +151,7 @@ const Consolidate = () => {
               />
               Successful !!
             </div>
-          ),
+          ) as unknown as string,
           // description: "Friday, February 10, 2023 at 5:57 PM",
           variant: "success",
         });
@@ -161,7 +161,7 @@ const Consolidate = () => {
         toast({
           title: (
             <div className="flex items-center">{error}</div>
-          ),
+          ) as unknown as string,
           variant: "destructive",
         });
       }
@@ -188,7 +188,7 @@ const Consolidate = () => {
             />
             Collection Number must be 1
           </div>
-        ),
+        ) as unknown as string,
         variant: "warning",
       });
     } else {
@@ -217,7 +217,7 @@ const Consolidate = () => {
               />
               Successful!
             </div>
-          ),
+          ) as unknown as string,
           description: hash.toHex(),
           variant: "success",
         });
@@ -225,7 +225,7 @@ const Consolidate = () => {
         // console.log(`split error: ${error}`);
         setPending(true);
         toast({
-          title:  (<div className="flex items-center">{error}</div>),
+          title:  (<div className="flex items-center">{error}</div>) as unknown as string,
           description: "Fail",
           variant: "destructive",
         });

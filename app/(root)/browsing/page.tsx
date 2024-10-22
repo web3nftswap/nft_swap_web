@@ -25,7 +25,7 @@ import {
 import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
 import { sendAndWait } from "@/utils/sendAndWait";
 import { DataTableDemo } from "@/components/ui/data-table";
-import ReactDOMServer from 'react-dom/server';
+import ReactDOMServer from "react-dom/server";
 
 const PAGE_SIZE = 15; // 每次加载的数据量
 
@@ -226,7 +226,7 @@ const Browsing = () => {
             />
             Buy Successful !!
           </div>
-        ),
+        ) as unknown as string,
         variant: "success",
       });
 
@@ -234,7 +234,7 @@ const Browsing = () => {
     } catch (error: any) {
       // console.log(`create error: ${error}`);
       toast({
-        title: (<div className="flex items-center">{error}</div>),
+        title: (<div className="flex items-center">{error}</div>) as unknown as string,
         // description: "Fail",
         variant: "destructive",
       });
@@ -367,7 +367,7 @@ const Browsing = () => {
             />
             Offer Successful !!
           </div>
-        ),
+        ) as unknown as string,
         variant: "success",
       });
       fetchAllNfts();
@@ -375,7 +375,7 @@ const Browsing = () => {
     } catch (error: any) {
       // console.log(`offer error: ${error}`);
       toast({
-        title:  (<div className="flex items-center">{error}</div>),
+        title:( <div className="flex items-center">{error}</div>) as unknown as string,
         description: "Fail",
         variant: "destructive",
       });

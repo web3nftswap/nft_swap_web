@@ -153,7 +153,7 @@ const Create = () => {
             />
             Create Successful !!
           </div>
-        ),
+        ) as unknown as string,
         variant: "success",
       });
     } catch (error: any) {
@@ -161,7 +161,7 @@ const Create = () => {
       toast({
         title: (
           <div className="flex items-center">{error}</div>
-        ),
+        ) as unknown as string,
         // description: "Fail",
         variant: "destructive",
       });
@@ -204,7 +204,7 @@ const Create = () => {
             />
             Mint Successful !!
           </div>
-        ),
+        ) as unknown as string,
         variant: "success",
       });
     } catch (error: any) {
@@ -212,7 +212,7 @@ const Create = () => {
       toast({
         title: (
           <div className="flex items-center">{error}</div>
-        ),
+        ) as unknown as string,
         // description: "Fail",
         variant: "destructive",
       });
@@ -238,7 +238,7 @@ const Create = () => {
                       />
                       Please connect your accounts
                     </div>
-                  ),
+                  ) as unknown as string,
                   variant: "warning",
                 });
                 return;
@@ -371,7 +371,7 @@ const ListBox = ({ item, handleMint }: { item: any; handleMint: any }) => {
                     />
                     The maximum number of mints is exceeded
                   </div>
-                ),
+                ) as unknown as string,
                 variant: "warning",
               });
             } else handleMint(item.id);

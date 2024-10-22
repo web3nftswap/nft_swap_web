@@ -222,7 +222,7 @@ const UserCenter = () => {
             />
             List of sale Successful !!
           </div>
-        ),
+        ) as unknown as string,
         variant: "success",
       });
       //刷新数据 NFT 集合
@@ -230,7 +230,9 @@ const UserCenter = () => {
     } catch (error: any) {
       // console.log(`create error: ${error}`);
       toast({
-        title: <div className="flex items-center">{error}</div>,
+        title: (
+          <div className="flex items-center">{error}</div>
+        ) as unknown as string,
         // description: "Fail",
         variant: "destructive",
       });
@@ -270,7 +272,7 @@ const UserCenter = () => {
             />
             Successful!
           </div>
-        ),
+        ) as unknown as string,
         description: hash.toHex(),
         variant: "success",
       });
@@ -279,7 +281,9 @@ const UserCenter = () => {
       // console.log(`accept error: ${error}`);
       setPending(true);
       toast({
-        title: <div className="flex items-center">{error}</div>,
+        title: (
+          <div className="flex items-center">{error}</div>
+        ) as unknown as string,
         description: "Fail",
         variant: "destructive",
       });
@@ -461,7 +465,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
                                 />
                                 Value must be between 0 and 100
                               </div>
-                            ),
+                            ) as unknown as string,
                             variant: "warning",
                           });
                           // 如果不在范围内，可以选择不更新状态或给出提示
