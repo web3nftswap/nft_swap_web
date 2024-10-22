@@ -218,7 +218,7 @@ const Browsing = () => {
       );
       // console.log(`buy hash: ${hash.toHex()}`);
       toast({
-        title: ReactDOMServer.renderToStaticMarkup(
+        title: (
           <div className="flex items-center">
             <FaRegCircleCheck
               size={50}
@@ -234,7 +234,7 @@ const Browsing = () => {
     } catch (error: any) {
       // console.log(`create error: ${error}`);
       toast({
-        title: ReactDOMServer.renderToStaticMarkup(<div className="flex items-center">{error}</div>),
+        title: (<div className="flex items-center">{error}</div>),
         // description: "Fail",
         variant: "destructive",
       });
@@ -359,7 +359,7 @@ const Browsing = () => {
       // console.log(`offer hash: ${hash.toHex()}`);
 
       toast({
-        title: ReactDOMServer.renderToStaticMarkup(
+        title: (
           <div className="flex items-center">
             <FaRegCircleCheck
               size={50}
@@ -375,7 +375,7 @@ const Browsing = () => {
     } catch (error: any) {
       // console.log(`offer error: ${error}`);
       toast({
-        title: ReactDOMServer.renderToStaticMarkup (<div className="flex items-center">{error}</div>),
+        title:  (<div className="flex items-center">{error}</div>),
         description: "Fail",
         variant: "destructive",
       });

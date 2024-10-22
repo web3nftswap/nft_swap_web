@@ -12,7 +12,7 @@ import { sendAndWait } from "@/utils/sendAndWait";
 import { Button } from "@/components/ui/button";
 import { BiSolidMessageSquareDetail } from "react-icons/bi";
 import { RiErrorWarningLine } from "react-icons/ri";
-import ReactDOMServer from 'react-dom/server';
+import ReactDOMServer from "react-dom/server";
 import {
   Dialog,
   DialogContent,
@@ -80,7 +80,7 @@ const UserCenter = () => {
 
       // 当前账号的上架 list
       const ownedNFTsArray: any = await Promise.all(
-        datas.map(async (i:any) => {
+        datas.map(async (i: any) => {
           let status = await getNftConsolidateStatus(i[0], i[1]);
           // 检查 publishedNFTs 中是否存在匹配的对象
           const matchingItem = publishedNFTs.find(
@@ -214,7 +214,7 @@ const UserCenter = () => {
       );
       // console.log(`publish hash: ${hash.toHex()}`);
       toast({
-        title: ReactDOMServer.renderToStaticMarkup(
+        title: (
           <div className="flex items-center">
             <FaRegCircleCheck
               size={50}
@@ -230,7 +230,7 @@ const UserCenter = () => {
     } catch (error: any) {
       // console.log(`create error: ${error}`);
       toast({
-        title: ReactDOMServer.renderToStaticMarkup(<div className="flex items-center">{error}</div>),
+        title: <div className="flex items-center">{error}</div>,
         // description: "Fail",
         variant: "destructive",
       });
@@ -262,7 +262,7 @@ const UserCenter = () => {
       );
       // console.log(`accept hash: ${hash.toHex()}`);
       toast({
-        title: ReactDOMServer.renderToStaticMarkup(
+        title: (
           <div className="flex items-center">
             <FaRegCircleCheck
               size={50}
@@ -279,7 +279,7 @@ const UserCenter = () => {
       // console.log(`accept error: ${error}`);
       setPending(true);
       toast({
-        title: ReactDOMServer.renderToStaticMarkup (<div className="flex items-center">{error}</div>),
+        title: <div className="flex items-center">{error}</div>,
         description: "Fail",
         variant: "destructive",
       });
@@ -406,7 +406,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
             {item.share ? (
               <div className="w-full flex justify-between pt-2">
                 <Button variant="outline" size="sm">
-                  Unpublish
+                  Unlist
                 </Button>
                 <DialogTrigger asChild>
                   <Button variant="secondary" size="sm">
@@ -453,7 +453,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
                           setshareMes(value);
                         } else {
                           toast({
-                            title: ReactDOMServer.renderToStaticMarkup(
+                            title: (
                               <div className="flex items-center">
                                 <RiErrorWarningLine
                                   size={50}

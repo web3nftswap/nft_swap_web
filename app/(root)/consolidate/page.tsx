@@ -113,7 +113,7 @@ const Consolidate = () => {
     // console.log("dd", dd);
     if (dd.length < 2 || dd.length > 10) {
       toast({
-        title: ReactDOMServer.renderToStaticMarkup(
+        title: (
           <div className="flex items-center">
             <RiErrorWarningLine
               size={50}
@@ -143,7 +143,7 @@ const Consolidate = () => {
         setPending(false);
         fetchCollectionIds();
         toast({
-          title: ReactDOMServer.renderToStaticMarkup(
+          title: (
             <div className="flex items-center">
               <FaRegCircleCheck
                 size={50}
@@ -159,7 +159,7 @@ const Consolidate = () => {
         // console.log(`merge error: ${error}`);
         setPending(true);
         toast({
-          title: ReactDOMServer.renderToStaticMarkup(
+          title: (
             <div className="flex items-center">{error}</div>
           ),
           variant: "destructive",
@@ -180,7 +180,7 @@ const Consolidate = () => {
     // console.log("dd", dd);
     if (dd.length > 1 || dd.length == 0) {
       toast({
-        title: ReactDOMServer.renderToStaticMarkup(
+        title: (
           <div className="flex items-center">
             <RiErrorWarningLine
               size={50}
@@ -209,7 +209,7 @@ const Consolidate = () => {
         setPending(false);
         fetchCollectionIds();
         toast({
-          title: ReactDOMServer.renderToStaticMarkup(
+          title: (
             <div className="flex items-center">
               <FaRegCircleCheck
                 size={50}
@@ -225,7 +225,7 @@ const Consolidate = () => {
         // console.log(`split error: ${error}`);
         setPending(true);
         toast({
-          title: ReactDOMServer.renderToStaticMarkup (<div className="flex items-center">{error}</div>),
+          title:  (<div className="flex items-center">{error}</div>),
           description: "Fail",
           variant: "destructive",
         });

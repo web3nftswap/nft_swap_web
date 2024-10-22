@@ -4,7 +4,7 @@
  * @Author: Hesin
  * @Date: 2024-10-11 17:01:06
  * @LastEditors: Hesin
- * @LastEditTime: 2024-10-22 14:58:30
+ * @LastEditTime: 2024-10-22 23:30:57
  */
 "use client";
 import MobilNav from "@/components/MobilNav";
@@ -48,7 +48,7 @@ const Header = () => {
           {/* NFT-Swap <span className="text-white">.</span> */}
         </h1>
       </Link>
-      <div className="px-4 py-4 bg-yellow-400 text-white flex justify-between rounded">
+      {/* <div className="px-4 py-4 bg-yellow-400 text-white flex justify-between rounded">
         <div className="flex items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -58,16 +58,11 @@ const Header = () => {
           >
             <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
           </svg>
-          <p className="text-sm">The current service is not available. Please stay tuned.!</p>
+          <p className="text-sm">The current service is not available. Please stay tuned!</p>
         </div>
        
-      </div>
-      {/* <div
-        className="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4"
-        role="alert"
-      >
-        <p>The current service is not available. Please stay tuned.</p>
       </div> */}
+
       {/* Nav */}
       <div className="z-50 hidden lg:flex items-center gap-8">
         <Nav />
