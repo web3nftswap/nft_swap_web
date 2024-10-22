@@ -4,7 +4,7 @@
  * @Author: Hesin
  * @Date: 2024-10-11 17:01:06
  * @LastEditors: Hesin
- * @LastEditTime: 2024-10-21 14:58:38
+ * @LastEditTime: 2024-10-22 10:53:42
  */
 "use client";
 import Image from "next/image";
@@ -59,7 +59,7 @@ const data = [
   {
     category: "Productivity",
     title: "Enhance your productivity.",
-    src: "https://app.nftmart.io/static/media/002.13cd1b7b.png",
+    src: "/images/13cd1b7b.png",
     info: {
       a: "ABC",
       b: "10000 SNS",
@@ -69,7 +69,7 @@ const data = [
   {
     category: "Productivity",
     title: "Enhance your productivity.",
-    src: "https://app.nftmart.io/static/media/010.2a151c7e.png",
+    src: "/images/2a151c7e.png",
     info: {
       a: "ABC",
       b: "10000 SNS",
@@ -79,7 +79,7 @@ const data = [
   {
     category: "Productivity",
     title: "Enhance your productivity.",
-    src: "https://app.nftmart.io/static/media/010.2a151c7e.png",
+    src: "/images/2a403b20.png",
     info: {
       a: "ABC",
       b: "10000 SNS",
@@ -89,7 +89,7 @@ const data = [
   {
     category: "Productivity",
     title: "Enhance your productivity.",
-    src: "https://app.nftmart.io/static/media/006.23d34011.png",
+    src: "/images/23d34011.png",
     info: {
       a: "ABC",
       b: "10000 SNS",
