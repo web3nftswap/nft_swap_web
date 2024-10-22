@@ -146,7 +146,7 @@ const Consolidate = () => {
                 size={50}
                 style={{ fill: "white", marginRight: "2rem" }}
               />
-              Successful !!
+              Successful Merge!!
             </div>
           ) as unknown as string,
           // description: "Friday, February 10, 2023 at 5:57 PM",
@@ -214,10 +214,10 @@ const Consolidate = () => {
                 size={50}
                 style={{ fill: "white", marginRight: "2rem" }}
               />
-              Successful!
+              Successful Split ! 
             </div>
           ) as unknown as string,
-          description: hash.toHex(),
+          // description: hash.toHex(),
           variant: "success",
         });
       } catch (error: any) {
