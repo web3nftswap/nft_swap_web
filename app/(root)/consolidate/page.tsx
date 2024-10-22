@@ -104,7 +104,6 @@ const Consolidate = () => {
   const handleMerge = async () => {
     // console.log("合并");
     let dd: any = [];
-
     datas.filter((i: any) => {
       if (i.checked && i.checked == true) {
         dd.push([i.nft[0], i.nft[1]]);
@@ -139,8 +138,6 @@ const Consolidate = () => {
           injector
         );
         // console.log(`mint hash: ${hash.toHex()}`);
-
-        setPending(false);
         fetchCollectionIds();
         toast({
           title: (
@@ -157,13 +154,16 @@ const Consolidate = () => {
         });
       } catch (error: any) {
         // console.log(`merge error: ${error}`);
-        setPending(true);
         toast({
           title: (
             <div className="flex items-center">{error}</div>
           ) as unknown as string,
           variant: "destructive",
         });
+      } finally {
+        setPending(false);
+        setmergeBtn(false);
+        setsplitBtn(false);
       }
     }
   };
@@ -206,7 +206,6 @@ const Consolidate = () => {
           injector
         );
         // console.log(`split hash: ${hash.toHex()}`);
-        setPending(false);
         fetchCollectionIds();
         toast({
           title: (
@@ -223,12 +222,17 @@ const Consolidate = () => {
         });
       } catch (error: any) {
         // console.log(`split error: ${error}`);
-        setPending(true);
         toast({
-          title:  (<div className="flex items-center">{error}</div>) as unknown as string,
+          title: (
+            <div className="flex items-center">{error}</div>
+          ) as unknown as string,
           description: "Fail",
           variant: "destructive",
         });
+      } finally {
+        setPending(false);
+        setmergeBtn(false);
+        setsplitBtn(false);
       }
     }
   };
