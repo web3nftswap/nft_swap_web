@@ -151,7 +151,7 @@ const Create = () => {
               size={50}
               style={{ fill: "white", marginRight: "2rem" }}
             />
-            Create Successful !!
+            Create Collection Successfuly !!
           </div>
         ) as unknown as string,
         variant: "success",
@@ -202,7 +202,7 @@ const Create = () => {
               size={50}
               style={{ fill: "white", marginRight: "2rem" }}
             />
-            Mint Successful !!
+            Mint Successfuly !
           </div>
         ) as unknown as string,
         variant: "success",

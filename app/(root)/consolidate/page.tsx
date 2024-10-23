@@ -109,7 +109,7 @@ const Consolidate = () => {
         dd.push([i.nft[0], i.nft[1]]);
       }
     });
-    // console.log("dd", dd);
+    // console.log("合并datas", dd);
     if (dd.length < 2 || dd.length > 10) {
       toast({
         title: (
@@ -124,12 +124,12 @@ const Consolidate = () => {
         variant: "warning",
       });
     } else {
-      // console.log("[Call] mergeNfts");
+      console.log("[Call] mergeNfts");
       let tx = api?.tx.nftModule.mergeNfts(dd);
       try {
         setPending(true);
         const currentAccount = allAccounts[0];
-        // console.log("currentAccount", currentAccount);
+        console.log("currentAccount", currentAccount);
         let hash = await sendAndWait(
           api,
           tx,
@@ -146,7 +146,7 @@ const Consolidate = () => {
                 size={50}
                 style={{ fill: "white", marginRight: "2rem" }}
               />
-              Successful Merge!!
+              Merge Successfuly!
             </div>
           ) as unknown as string,
           // description: "Friday, February 10, 2023 at 5:57 PM",
@@ -169,7 +169,7 @@ const Consolidate = () => {
   };
   // handleSplit
   const handleSplit = async () => {
-    // console.log("拆分");
+    // console.log("拆分"); 
     let dd: any = [];
 
     datas.filter((i: any) => {
@@ -214,7 +214,7 @@ const Consolidate = () => {
                 size={50}
                 style={{ fill: "white", marginRight: "2rem" }}
               />
-              Successful Split ! 
+              Split Successfuly !
             </div>
           ) as unknown as string,
           // description: hash.toHex(),
@@ -321,16 +321,19 @@ const DummyContent: React.FC<DummyContentProps> = ({
       {mergeBtn && status !== "merged" && (
         <div className="absolute -top-3 -left-3 w-10 h-10 rounded-full shadow-lg overflow-hidden bg-purple-200 flex justify-center items-center">
           <Checkbox
-            id={item.nft[1]}
             className="border-black-100 border-2"
+            id={`${item.nft[0]}-${item.nft[1]}`}
+            checked={item.checked ? item.checked : false}
             onCheckedChange={(checked) => {
-              // console.log(item.nft[0], checked);
-              // console.log(datas);
               setdatas((prevDatas: any) => {
-                const newDatas = [...prevDatas];
-                newDatas[item.nft[1]].checked = checked;
-                // console.log(newDatas);
-                return newDatas;
+                let newData = prevDatas.map((i: any) => {
+                  if (i.nft[0] === item.nft[0] && i.nft[1] === item.nft[1]) {
+                    return { ...i, checked }; // 更新 checked
+                  }
+                  return i; // 保持其他项不变
+                });
+                // console.log("newewewewe", newData);
+                return newData;
               });
               return checked;
             }}
@@ -341,17 +344,20 @@ const DummyContent: React.FC<DummyContentProps> = ({
       {splitBtn && status == "merged" && (
         <div className="absolute -top-3 -right-3 w-10 h-10 rounded-full shadow-lg overflow-hidden bg-yellow-200 flex justify-center items-center">
           <Checkbox
-            id={item.nft[1]}
             className="border-black-100 border-2"
-            // checked={item[3] ? item[3] : false}
+            id={`${item.nft[0]}-${item.nft[1]}`}
+            checked={item.checked ? item.checked : false}
             onCheckedChange={(checked) => {
               // console.log(item.nft[0], checked);
-              // console.log(datas);
               setdatas((prevDatas: any) => {
-                const newDatas = [...prevDatas];
-                newDatas[item.nft[1]].checked = checked;
-                // console.log(newDatas);
-                return newDatas;
+                let newData = prevDatas.map((i: any) => {
+                  if (i.nft[0] === item.nft[0] && i.nft[1] === item.nft[1]) {
+                    return { ...i, checked }; // 更新 checked
+                  }
+                  return i; // 保持其他项不变
+                });
+                // console.log("newewewewe", newData);
+                return newData;
               });
               return checked;
             }}
