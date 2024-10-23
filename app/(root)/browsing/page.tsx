@@ -95,7 +95,7 @@ const Browsing = () => {
         const buyNFTs = entries.map(([key, value]) => ({
           nft: JSON.parse(JSON.stringify(key.args[0])),
           seller: JSON.parse(JSON.stringify(key.args[1])),
-          price: JSON.parse(JSON.stringify(value)).price,
+          price: Number(JSON.parse(JSON.stringify(value)).price) / 10 ** 12,
         }));
         // console.log("buy NFTs", buyNFTs);
         let newBuydatas: any = [];
