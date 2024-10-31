@@ -43,8 +43,10 @@ const UserCenter = () => {
   const [datas, setdatas] = useState([]);
   const [pubItem, setpubItem] = useState([] as any);
   const [offerCounts, setofferCounts] = useState(0);
-  const [offerList, setofferList] = useState([]);
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [offerList, setofferList] = useState([]); //receive offer list
+  const [offerList1, setofferList1] = useState([]); //check send offer list
+  const [isSheetOpen, setIsSheetOpen] = useState(false); // offer
+  const [isSheetOpen1, setIsSheetOpen1] = useState(false); //check offer
   const [shareMes, setshareMes] = useState(0); // share 默认值为 0
   const { toast } = useToast();
   const { api, allAccounts, injector, extensionEnabled, pending, setPending } =
@@ -114,13 +116,25 @@ const UserCenter = () => {
 
     // 收到的所有offer
     getOfferList();
+
+    //发送的所有offer
+    getSendedList();
   };
+  const getSendedList = async () => {
+    // console.log("[Query] all sent offers");
+    // 发送的所有offer
+    const connectedAccount = localStorage.getItem("connectedAccount");
+    const allSentOffers = await getAccountAllSentOffers(api, connectedAccount);
+    console.log(allSentOffers);
+    setofferList1(allSentOffers);
+  };
+
   const getOfferList = async () => {
     // console.log("[Query] alice offers");
     // 收到的所有offer
     const connectedAccount = localStorage.getItem("connectedAccount");
     const offersList = await getAccountAllOffers(api, connectedAccount);
-    // console.log("收到的所有offer", offersList);
+    console.log("收到的所有offer", offersList);
     setofferList(offersList);
     setofferCounts(offersList.length);
   };
@@ -153,7 +167,46 @@ const UserCenter = () => {
     }
     return status;
   };
+  const getAccountAllSentOffers = async (api, accountAddress) => {
+    const entries = await api.query.nftMarketModule.offers.entries();
+    const offersForAlice: any = [];
+    for (const [storageKeys, boundedVecOffers] of entries) {
+      const offers = boundedVecOffers.toHuman();
 
+      for (const offer of offers) {
+        if (offer.buyer === accountAddress) {
+          // offersForAlice.push(offer);
+          console.log("offer", offer);
+          //offer 目标
+          let offerInfo = {
+            nft: JSON.parse(JSON.stringify(storageKeys.args[0])),
+            offeredNfts: offer.offeredNfts,
+            tokenAmount: offer.tokenAmount,
+            seller: JSON.parse(JSON.stringify(storageKeys.args[1])),
+          };
+          console.log("first", offerInfo.nft[0]);
+          // 获取每一个集合的信息
+          const nftInfo = await api.query.nftModule.nftCollections(
+            JSON.parse(JSON.stringify(offerInfo.nft[0]))
+          );
+          const [maxItem, curIndex, metainfo] = JSON.parse(
+            JSON.stringify(nftInfo)
+          );
+          const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
+
+          offersForAlice.push({
+            ...offerInfo,
+            name: nftMetaInfo.name,
+            url: nftMetaInfo.url,
+            desc: nftMetaInfo.desc,
+          });
+        }
+      }
+    }
+    console.log("offersForAlice", offersForAlice);
+
+    return offersForAlice;
+  };
   const getAccountAllOffers = async (api, accountAddress) => {
     const entries = await api.query.nftMarketModule.offers.entries();
     const offersForAccount: any = [];
@@ -165,20 +218,37 @@ const UserCenter = () => {
       const [maxItem, curIndex, metainfo] = JSON.parse(JSON.stringify(nftInfo));
       const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
 
-      if (key.args[1].eq(accountAddress)) {
+      if (
+        key.args[1].eq(accountAddress) &&
+        JSON.parse(JSON.stringify(value)).length
+      ) {
+        let newOfferList = [];
+        const offersList = JSON.parse(JSON.stringify(value));
+        console.log(offersList);
+        // for (let i = 0; i < offerList.offers.length; i++) {
+        //   console.log(offerList[i])
+        //   debugger
+        //   // 获取每一个集合的信息
+        //   const nftInfo = await api.query.nftModule.nftCollections(
+        //     JSON.parse(JSON.stringify(key.args[0]))[0]
+        //   ); // 使用 key.args[0] 作为参数
+        //   const [maxItem, curIndex, metainfo] = JSON.parse(
+        //     JSON.stringify(nftInfo)
+        //   );
+        //   const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
+        //   // newOfferList.push({
+        //   //   offerList[i]
+        //   // })
+        // }
         offersForAccount.push({
           nft: JSON.parse(JSON.stringify(key.args[0])),
-          offers: JSON.parse(JSON.stringify(value)),
+          offers: offersList,
           url: nftMetaInfo.url,
           name: nftMetaInfo.name,
         });
       }
     }
 
-    // .map(([key, value]) => ({
-    //   nft: JSON.parse(JSON.stringify(key.args[0])),
-    //   offers: JSON.parse(JSON.stringify(value)),
-    // }));
     return offersForAccount;
   };
 
@@ -292,11 +362,126 @@ const UserCenter = () => {
       setIsSheetOpen(false);
     }
   };
+  const handleRejectOffer = async (target, idx) => {
+    console.log("[Call] rejectOffer");
+    let tx = api?.tx.nftMarketModule.rejectOffer(
+      target.nft, // 目标NFT
+      target.offers[idx].offeredNfts, // 用于报价的NFT数组
+      target.offers[idx].tokenAmount, // 用于报价的token
+      target.offers[idx].buyer // 买家
+    );
+    try {
+      setPending(true);
+      const currentAccount = allAccounts[0];
+      let hash: any = await sendAndWait(
+        api,
+        tx,
+        currentAccount,
+        extensionEnabled,
+        injector
+      );
+      // console.log(`accept hash: ${hash.toHex()}`);
+      toast({
+        title: (
+          <div className="flex items-center">
+            <FaRegCircleCheck
+              size={50}
+              style={{ fill: "white", marginRight: "2rem" }}
+            />
+            Reject Offer Successful!
+          </div>
+        ) as unknown as string,
+        description: hash.toHex(),
+        variant: "success",
+      });
+      setPending(false);
+      getOfferList();
+    } catch (error: any) {
+      // console.log(`accept error: ${error}`);
+      setPending(true);
+      toast({
+        title: (
+          <div className="flex items-center">{error}</div>
+        ) as unknown as string,
+        description: "Fail",
+        variant: "destructive",
+      });
+    } finally {
+      setPending(false);
+      setIsSheetOpen(false);
+    }
+  };
+
+  const handleCancelOffer = async (target) => {
+    console.log("[Call] cancelOffer");
+    console.log(target);
+    let tx = api?.tx.nftMarketModule.cancelOffer(
+      target.nft, // 目标NFT
+      target.offeredNfts, // 用于报价的NFT数组
+      target.tokenAmount, // 用于报价的token
+      target.seller // 卖家
+    );
+    try {
+      setPending(true);
+      const currentAccount = allAccounts[0];
+      let hash: any = await sendAndWait(
+        api,
+        tx,
+        currentAccount,
+        extensionEnabled,
+        injector
+      );
+      // console.log(`accept hash: ${hash.toHex()}`);
+      toast({
+        title: (
+          <div className="flex items-center">
+            <FaRegCircleCheck
+              size={50}
+              style={{ fill: "white", marginRight: "2rem" }}
+            />
+            Cancel Offer Successful!
+          </div>
+        ) as unknown as string,
+        description: hash.toHex(),
+        variant: "success",
+      });
+      setPending(false);
+      //刷新
+      getSendedList();
+    } catch (error: any) {
+      // console.log(`accept error: ${error}`);
+      setPending(true);
+      toast({
+        title: (
+          <div className="flex items-center">{error}</div>
+        ) as unknown as string,
+        description: "Fail",
+        variant: "destructive",
+      });
+    } finally {
+      setPending(false);
+      setIsSheetOpen1(false);
+    }
+  };
   return (
     <main className="relative bg-black-100 flex justify-center items-center flex-col overflow-hidden sm:px-10 px-5">
       <Header />
       <div className="max-w-[80%] w-full  relative  flex flex-col mt-40  items-start justify-start">
         <div className="absolute left-0 z-20 flex items-center space-x-2">
+          <Button
+            className="relative"
+            onClick={() => {
+              setIsSheetOpen1(true);
+            }}
+          >
+            Check Offer
+            {/* {offerCounts ? (
+              <div className="absolute inline-flex items-center justify-center w-3 h-3 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900"></div>
+            ) : (
+              ""
+            )} */}
+          </Button>
+
           <Button
             className="relative"
             onClick={() => {
@@ -322,7 +507,35 @@ const UserCenter = () => {
               >
                 <ul role="list" className="divide-y divide-gray-100">
                   {offerList.map((itm, idx) => (
-                    <ListBox item={itm} key={idx} handleOffer={handleOffer} />
+                    <ListBox
+                      item={itm}
+                      key={idx}
+                      handleOffer={handleOffer}
+                      handleRejectOffer={handleRejectOffer}
+                    />
+                  ))}
+                </ul>
+              </div>
+            </SheetContent>
+          </Sheet>
+          {/* send offer list */}
+          <Sheet open={isSheetOpen1} onOpenChange={setIsSheetOpen1}>
+            <SheetContent side="right" className="w-[80vw] bg-white">
+              <SheetHeader>
+                <SheetTitle>Send Offer List</SheetTitle>
+                <SheetDescription>confirm offer </SheetDescription>
+              </SheetHeader>
+              <div
+                className="overflow-y-scroll"
+                style={{ height: "calc(100vh + 80vh)" }}
+              >
+                <ul role="list" className="divide-y divide-gray-100">
+                  {offerList1.map((itm, idx) => (
+                    <ListBox1
+                      item={itm}
+                      key={idx}
+                      handleCancelOffer={handleCancelOffer}
+                    />
                   ))}
                 </ul>
               </div>
@@ -503,7 +716,8 @@ const DummyContent: React.FC<DummyContentProps> = ({
     </div>
   );
 };
-const ListBox = ({ item, handleOffer }) => {
+// accept offer
+const ListBox = ({ item, handleOffer, handleRejectOffer }) => {
   return (
     <li>
       <div className="flex justify-between gap-x-6 py-5">
@@ -577,7 +791,7 @@ const ListBox = ({ item, handleOffer }) => {
                   <Button
                     className="ml-2"
                     onClick={() => {
-                      // console.log("reject");
+                      handleRejectOffer(item, idx);
                     }}
                   >
                     Reject
@@ -612,6 +826,111 @@ const ListBox = ({ item, handleOffer }) => {
                   </p>
                 </div>
               ))}
+            </div>
+          );
+        })}
+      </div>
+    </li>
+  );
+};
+// send offer
+const ListBox1 = ({ item, handleCancelOffer }) => {
+  return (
+    <li>
+      <div className="flex justify-between gap-x-6 py-5">
+        <div className="flex gap-x-4 w-full">
+          <Image
+            className="h-12 w-12 flex-none rounded-full bg-gray-50"
+            src={item.url}
+            alt=""
+            width={48}
+            height={48}
+          />
+          <div className="w-full flex-auto">
+            <div className="flex w-full gap-8 border-b-2 border-white">
+              <p className="text-lg font-semibold leading-6 text-gray-200">
+                {item.name}
+              </p>
+              <p className="text-sm leading-6 text-gray-200">
+                Address:{" "}
+                <span className="text-sm pl-2 text-purple-300  font-semibold">
+                  {item.nft[0].slice(0, 6)}...
+                  {item.nft[0].slice(-4)}
+                </span>
+              </p>
+              <p className="text-sm  leading-6 text-gray-200">
+                IDX:{" "}
+                <span className="text-sm pl-2 text-purple-300  font-semibold">
+                  {item.nft[1]}
+                </span>
+              </p>
+              <p className="text-sm  leading-6 text-gray-200">
+                Share:{" "}
+                <span className="text-sm pl-2 text-purple-300  font-semibold">
+                  {item.nft[2]}
+                </span>
+              </p>
+            </div>
+            <div className="flex justify-between pt-2">
+              <div className="flex items-center">
+                <p className="truncate text-xs leading-5 text-gray-200">
+                  offeredNfts num :
+                  <span className="px-2 text-sm font-semibold  text-lg text-red-400">
+                    {item.offeredNfts.length}
+                  </span>
+                </p>
+                <p className="pl-3 truncate text-xs leading-5 text-gray-200">
+                  tokenAmount(SNS) :{" "}
+                  <span className="text-sm pl-2 text-purple-300  font-semibold">
+                    {item.tokenAmount}
+                  </span>
+                </p>
+              </div>
+              <Button
+                className="mr-2"
+                onClick={() => {
+                  // console.log("reject");
+                  handleCancelOffer(item);
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="pl-8">
+        {item.offeredNfts.map((itm, idx) => {
+          return (
+            <div key={`offer-send-${idx}`}>
+              <div className="min-w-0 flex-auto flex justify-between">
+                <p className="text-5 font-semibold leading-6 text-gray-200">
+                  {/* <span className="pr-2">{idx + 1}.</span> */}
+                </p>
+                <div className="pl-6 min-w-0 flex-auto flex gap-4 ">
+                  <BiSolidMessageSquareDetail size={30} />
+                  <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
+                    address:
+                    <span className="pl-2 text-purple-300  font-semibold">
+                      {itm[0].slice(0, 6)}...
+                      {itm[0].slice(-4)}
+                    </span>
+                  </p>
+
+                  <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
+                    id:
+                    <span className="pl-2 text-purple-300  font-semibold">
+                      {itm[1]}
+                    </span>
+                  </p>
+                  <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
+                    Share:
+                    <span className="pl-2 text-purple-300  font-semibold">
+                      {itm[2]}
+                    </span>
+                  </p>
+                </div>
+              </div>
             </div>
           );
         })}
