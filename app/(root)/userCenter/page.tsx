@@ -167,6 +167,14 @@ const UserCenter = () => {
     }
     return status;
   };
+
+  const getInfo = async (id) => {
+    // 获取每一个集合的信息
+    const nftInfo = await api?.query.nftModule.nftCollections(id); // 使用 key.args[0] 作为参数
+    const [maxItem, curIndex, metainfo] = JSON.parse(JSON.stringify(nftInfo));
+    const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
+    return nftMetaInfo;
+  };
   const getAccountAllSentOffers = async (api, accountAddress) => {
     const entries = await api.query.nftMarketModule.offers.entries();
     const offersForAlice: any = [];
@@ -178,21 +186,28 @@ const UserCenter = () => {
           // offersForAlice.push(offer);
           console.log("offer", offer);
           //offer 目标
+          let offeredNftsInfo: any = [];
+          const targetArr = offer.offeredNfts;
+          for (let j = 0; j < targetArr.length; j++) {
+            // 集合info
+            const eachOfferInfo = await getInfo(targetArr[j][0]);
+            // console.log("each offer info", eachOfferInfo);
+            offeredNftsInfo.push({
+              url: eachOfferInfo.url,
+              name: eachOfferInfo.name,
+              desc: eachOfferInfo.desc,
+            });
+          }
+          console.log("offeredNftsInfo", offeredNftsInfo);
           let offerInfo = {
             nft: JSON.parse(JSON.stringify(storageKeys.args[0])),
             offeredNfts: offer.offeredNfts,
+            offeredNftsInfo: offeredNftsInfo,
             tokenAmount: offer.tokenAmount,
             seller: JSON.parse(JSON.stringify(storageKeys.args[1])),
           };
           console.log("first", offerInfo.nft[0]);
-          // 获取每一个集合的信息
-          const nftInfo = await api.query.nftModule.nftCollections(
-            JSON.parse(JSON.stringify(offerInfo.nft[0]))
-          );
-          const [maxItem, curIndex, metainfo] = JSON.parse(
-            JSON.stringify(nftInfo)
-          );
-          const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
+          const nftMetaInfo = await getInfo(offerInfo.nft[0]);
 
           offersForAlice.push({
             ...offerInfo,
@@ -211,38 +226,45 @@ const UserCenter = () => {
     const entries = await api.query.nftMarketModule.offers.entries();
     const offersForAccount: any = [];
     for (const [key, value] of entries) {
-      // 获取每一个集合的信息
-      const nftInfo = await api.query.nftModule.nftCollections(
-        JSON.parse(JSON.stringify(key.args[0]))[0]
-      ); // 使用 key.args[0] 作为参数
-      const [maxItem, curIndex, metainfo] = JSON.parse(JSON.stringify(nftInfo));
-      const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
-
       if (
         key.args[1].eq(accountAddress) &&
         JSON.parse(JSON.stringify(value)).length
       ) {
-        let newOfferList = [];
-        const offersList = JSON.parse(JSON.stringify(value));
-        console.log(offersList);
-        // for (let i = 0; i < offerList.offers.length; i++) {
-        //   console.log(offerList[i])
-        //   debugger
-        //   // 获取每一个集合的信息
-        //   const nftInfo = await api.query.nftModule.nftCollections(
-        //     JSON.parse(JSON.stringify(key.args[0]))[0]
-        //   ); // 使用 key.args[0] 作为参数
-        //   const [maxItem, curIndex, metainfo] = JSON.parse(
-        //     JSON.stringify(nftInfo)
-        //   );
-        //   const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
-        //   // newOfferList.push({
-        //   //   offerList[i]
-        //   // })
-        // }
+        // 集合info
+        const nftMetaInfo = await getInfo(
+          JSON.parse(JSON.stringify(key.args[0]))[0]
+        );
+        const offersNFT = JSON.parse(JSON.stringify(value));
+        // console.log("getAccountAllOffers", offersNFT);
+        let newoffersNFT: any = [];
+
+        for (let i = 0; i < offersNFT.length; i++) {
+          let offeredNftsInfo: any = [];
+
+          const targetArr = offersNFT[i].offeredNfts;
+
+          // console.log(targetArr[i]);
+          for (let j = 0; j < targetArr.length; j++) {
+            // console.log("targetArr[j]", targetArr[j]);
+            // console.log("targetArr[j][0]", targetArr[j][0]);
+            // 集合info
+            const eachOfferInfo = await getInfo(targetArr[j][0]);
+            // console.log("each offer info", eachOfferInfo);
+            offeredNftsInfo.push({
+              url: eachOfferInfo.url,
+              name: eachOfferInfo.name,
+              desc: eachOfferInfo.desc,
+            });
+          }
+          newoffersNFT.push({
+            ...offersNFT[i],
+            offeredNftsInfo,
+          });
+        }
+        console.log("newoffersNFT", newoffersNFT);
         offersForAccount.push({
           nft: JSON.parse(JSON.stringify(key.args[0])),
-          offers: offersList,
+          offers: newoffersNFT,
           url: nftMetaInfo.url,
           name: nftMetaInfo.name,
         });
@@ -766,7 +788,7 @@ const ListBox = ({ item, handleOffer, handleRejectOffer }) => {
         {item.offers.map((itm, idx) => {
           return (
             <div key={`offer-${itm.buyer}`}>
-              <div className="min-w-0 flex-auto flex justify-between">
+              <div className="min-w-0 flex-auto flex justify-between items-center mb-4">
                 <p className="text-5 font-semibold leading-6 text-gray-200">
                   <span className="pr-2">{idx + 1}.</span> Buyer:{" "}
                   <span className="text-purple-300">
@@ -804,6 +826,12 @@ const ListBox = ({ item, handleOffer, handleRejectOffer }) => {
                   key={`offer-${idx}`}
                 >
                   <BiSolidMessageSquareDetail size={30} />
+                  <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
+                    name:
+                    <span className="pl-2 text-purple-300  font-semibold">
+                      {itm.offeredNftsInfo[idx].name}
+                    </span>
+                  </p>
                   <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
                     address:
                     <span className="pl-2 text-purple-300  font-semibold">
@@ -909,6 +937,12 @@ const ListBox1 = ({ item, handleCancelOffer }) => {
                 </p>
                 <div className="pl-6 min-w-0 flex-auto flex gap-4 ">
                   <BiSolidMessageSquareDetail size={30} />
+                  <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
+                    name:
+                    <span className="pl-2 text-purple-300  font-semibold">
+                      {item.offeredNftsInfo[idx].name}
+                    </span>
+                  </p>
                   <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
                     address:
                     <span className="pl-2 text-purple-300  font-semibold">
