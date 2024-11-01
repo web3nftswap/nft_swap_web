@@ -114,7 +114,7 @@ const Browsing = () => {
           const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
           //// console.log("nftMetaInfo", nftMetaInfo);
 
-          const nft: NFTBuyType = {
+          const nft: any = {
             ...buyNFTs[i],
             url: nftMetaInfo.url,
             name: nftMetaInfo.name,
