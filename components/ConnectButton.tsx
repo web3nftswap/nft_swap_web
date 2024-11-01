@@ -14,6 +14,8 @@ import { TbReload } from "react-icons/tb";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
+import { useToast } from "@/hooks/use-toast";
+import { FaRegCircleCheck } from "react-icons/fa6";
 
 const RPC_URL = "ws://127.0.0.1:9944";
 
@@ -24,6 +26,7 @@ const ConnectButton = () => {
   const [accountAddr, setAccountAddr] = useState<string>("");
   const [buttonText, setButtonText] = useState<string>("Connect");
   const [isConnect, setIsConnect] = useState<boolean>(false);
+  const [faucet, setfaucet] = useState<boolean>(false);
   const [dropdownVisible, setDropdownVisible] = useState<boolean>(false);
   const {
     api,
@@ -35,6 +38,7 @@ const ConnectButton = () => {
     initConnection,
     pending,
   } = useSubstrateContext();
+  const { toast } = useToast();
 
   // 在组件加载时检查
   useEffect(() => {
@@ -69,7 +73,7 @@ const ConnectButton = () => {
       }
     };
     updateBalance();
-  }, [api,allAccounts,setAllAccounts]);
+  }, [api, allAccounts, setAllAccounts, setfaucet, faucet]);
   // Handle account retrieval
   const fetchAccounts = async (
     extensions: any[]
@@ -143,7 +147,36 @@ const ConnectButton = () => {
       ""
     );
   };
-  useEffect(() => {}, [pending]);
+  const handleFaucet = async () => {
+    // alice给账号转账
+    if (allAccounts.length > 0 && api) {
+      const keyring = new Keyring({ type: "sr25519" });
+      const alice = keyring.addFromUri("//Alice");
+      const tx = api.tx.balances.transferKeepAlive(
+        allAccounts[0].address,
+        10 ** 12
+      );
+      const hash = await tx.signAndSend(alice);
+      console.log(`transfer hash ${hash.toHex()}`);
+      toast({
+        title: (
+          <div className="flex items-center">
+            <FaRegCircleCheck
+              size={50}
+              style={{ fill: "white", marginRight: "2rem" }}
+            />
+            Fauset 1 SNS !
+          </div>
+        ) as unknown as string,
+        // description: hash.toHex(),
+        variant: "success",
+      });
+      // 重新获取余额
+      const bal = await fetchBalance(allAccounts[0].address);
+      setAccountBal(Number(bal) / 10 ** 12); // 更新余额
+      setfaucet(!faucet);
+    }
+  };
 
   return (
     <div>
@@ -169,14 +202,15 @@ const ConnectButton = () => {
               alt="faucet"
               width="30"
               height="30"
+              onClick={handleFaucet}
             />
-            <div className="absolute left-1/2 transform -translate-x-1/2 mt-2  text-white text-center text-sm rounded p-2 bg-black/80 shadow-inner opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+            <div className="absolute left-1/2 transform -translate-x-1/2 mt-2  text-white text-center text-sm rounded p-2 bg-black/50 shadow-inner opacity-0 transition-opacity duration-200 group-hover:opacity-100">
               faucet
             </div>
           </div>
           {accountBal != 0 && (
             <div className="px-2 text-sm text-purple-200">
-              {accountBal.toFixed(4)} Unit
+              {accountBal.toFixed(4)} SNS
             </div>
           )}
           <Menu setActive={setActive} setDropdownVisible={setDropdownVisible}>
