@@ -206,7 +206,7 @@ const UserCenter = () => {
             tokenAmount: offer.tokenAmount,
             seller: JSON.parse(JSON.stringify(storageKeys.args[1])),
           };
-          console.log("first", offerInfo.nft[0]);
+          // console.log("offerInfo", offerInfo.nft[0]);
           const nftMetaInfo = await getInfo(offerInfo.nft[0]);
 
           offersForAlice.push({

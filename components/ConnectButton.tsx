@@ -20,8 +20,7 @@ const RPC_URL = "ws://127.0.0.1:9944";
 const ConnectButton = () => {
   // State management
   const [active, setActive] = useState<string | null>(null);
-  const [accountBal, setAccountBal] = useState<string>("");
-  const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
+  const [accountBal, setAccountBal] = useState<any>(0);
   const [accountAddr, setAccountAddr] = useState<string>("");
   const [buttonText, setButtonText] = useState<string>("Connect");
   const [isConnect, setIsConnect] = useState<boolean>(false);
@@ -41,6 +40,7 @@ const ConnectButton = () => {
   useEffect(() => {
     const init = async () => {
       const savedAccount = localStorage.getItem("connectedAccount");
+
       if (savedAccount) {
         setAccountAddr(savedAccount);
         setButtonText("Disconnect");
@@ -51,12 +51,25 @@ const ConnectButton = () => {
         const _injector = await web3FromAddress(savedAccount);
         setInjector(_injector);
         setExtensionEnabled(true);
-        console.log("injector!!!");
+        // console.log("injector!!!");
+
+        // 获取alice的余额
+        const bal = await fetchBalance(savedAccount);
+        setAccountBal(Number(bal) / 10 ** 12);
       }
     };
     init();
   }, []);
-
+  useEffect(() => {
+    const updateBalance = async () => {
+      if (allAccounts.length > 0 && api) {
+        const bal = await fetchBalance(allAccounts[0].address);
+        console.log(bal);
+        setAccountBal(Number(bal) / 10 ** 12);
+      }
+    };
+    updateBalance();
+  }, [api,allAccounts,setAllAccounts]);
   // Handle account retrieval
   const fetchAccounts = async (
     extensions: any[]
@@ -88,15 +101,14 @@ const ConnectButton = () => {
         alert("请安装 Polkadot.js 扩展！");
         return;
       }
-
       const curAllAccounts = await fetchAccounts(extensions);
-      const bal = await fetchBalance(curAllAccounts[0].address);
 
-      setAllAccounts(curAllAccounts);
+      const bal = await fetchBalance(curAllAccounts[0].address);
       setApi(_api);
+      setAllAccounts(curAllAccounts);
       setButtonText("Disconnect");
       setIsConnect(true);
-      setAccountBal(bal.toString());
+      setAccountBal(Number(bal) / 10 ** 12);
       setAccountAddr(curAllAccounts[0].address);
       setDropdownVisible(true);
 
@@ -113,7 +125,7 @@ const ConnectButton = () => {
     setApi(undefined);
     setButtonText("Connect");
     setIsConnect(false);
-    setAccountBal("");
+    setAccountBal(0);
     setAccountAddr("");
     setDropdownVisible(false);
     // 删除连接的账户信息
@@ -162,6 +174,11 @@ const ConnectButton = () => {
               faucet
             </div>
           </div>
+          {accountBal != 0 && (
+            <div className="px-2 text-sm text-purple-200">
+              {accountBal} Unit
+            </div>
+          )}
           <Menu setActive={setActive} setDropdownVisible={setDropdownVisible}>
             <MenuItem
               setActive={setActive}
