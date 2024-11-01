@@ -176,7 +176,7 @@ const ConnectButton = () => {
           </div>
           {accountBal != 0 && (
             <div className="px-2 text-sm text-purple-200">
-              {accountBal} Unit
+              {accountBal.toFixed(4)} Unit
             </div>
           )}
           <Menu setActive={setActive} setDropdownVisible={setDropdownVisible}>
