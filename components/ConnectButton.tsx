@@ -93,7 +93,6 @@ const ConnectButton = () => {
     const accountInfo: any = await api.query.system.account(account);
     let bal = accountInfo.data.free.toString();
     console.log("accountInfo,", Number(bal) / 10 ** 12);
-    setfaucet(!faucet);
     return Number(bal) / 10 ** 12;
   };
 
@@ -166,29 +165,25 @@ const ConnectButton = () => {
 
           // 交易完成后再获取余额
           fetchBalance(allAccounts[0].address);
-
+          setfaucet(!faucet);
+          toast({
+            title: (
+              <div className="flex items-center">
+                <FaRegCircleCheck
+                  size={50}
+                  style={{ fill: "white", marginRight: "2rem" }}
+                />
+                Fauset 0.1 SNS !
+              </div>
+            ) as unknown as string,
+            // description: hash.toHex(),
+            variant: "success",
+          });
           // 停止监听交易
           unsubscribe();
         }
       });
-      toast({
-        title: (
-          <div className="flex items-center">
-            <FaRegCircleCheck
-              size={50}
-              style={{ fill: "white", marginRight: "2rem" }}
-            />
-            Fauset 0.1 SNS !
-          </div>
-        ) as unknown as string,
-        // description: hash.toHex(),
-        variant: "success",
-      });
-      // 重新获取余额
-      // const bal = await fetchBalance(allAccounts[0].address);
-      // console.log("点击之后的： ", bal);
-      // setAccountBal(Number(bal) / 10 ** 12); // 更新余额
-      // setfaucet(!faucet);
+
     }
   };
 
