@@ -169,7 +169,7 @@ const Consolidate = () => {
   };
   // handleSplit
   const handleSplit = async () => {
-    // console.log("拆分"); 
+    // console.log("拆分");
     let dd: any = [];
 
     datas.filter((i: any) => {
@@ -378,6 +378,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
           alt=""
           width={100}
           height={100}
+          layout="responsive"
           className="h-full w-full object-cover rounded-t-lg"
         />
       </div>

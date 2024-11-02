@@ -59,7 +59,7 @@ const ConnectButton = () => {
 
         // 获取alice的余额
         const bal = await fetchBalance(savedAccount);
-        setAccountBal(Number(bal) / 10 ** 12);
+        setAccountBal(bal);
       }
     };
     init();
@@ -68,12 +68,11 @@ const ConnectButton = () => {
     const updateBalance = async () => {
       if (allAccounts.length > 0 && api) {
         const bal = await fetchBalance(allAccounts[0].address);
-        console.log(bal);
-        setAccountBal(Number(bal) / 10 ** 12);
+        setAccountBal(bal);
       }
     };
     updateBalance();
-  }, [api, allAccounts, setAllAccounts, setfaucet, faucet]);
+  }, [allAccounts, faucet]);
   // Handle account retrieval
   const fetchAccounts = async (
     extensions: any[]
@@ -89,10 +88,13 @@ const ConnectButton = () => {
   };
 
   // Handle account balance retrieval
-  const fetchBalance = async (account: string): Promise<string> => {
+  const fetchBalance = async (account: string): Promise<any> => {
     if (!api) return "";
     const accountInfo: any = await api.query.system.account(account);
-    return accountInfo.data.free.toString();
+    let bal = accountInfo.data.free.toString();
+    console.log("accountInfo,", Number(bal) / 10 ** 12);
+    setfaucet(!faucet);
+    return Number(bal) / 10 ** 12;
   };
 
   // Main connection logic
@@ -112,7 +114,7 @@ const ConnectButton = () => {
       setAllAccounts(curAllAccounts);
       setButtonText("Disconnect");
       setIsConnect(true);
-      setAccountBal(Number(bal) / 10 ** 12);
+      setAccountBal(bal);
       setAccountAddr(curAllAccounts[0].address);
       setDropdownVisible(true);
 
@@ -154,10 +156,21 @@ const ConnectButton = () => {
       const alice = keyring.addFromUri("//Alice");
       const tx = api.tx.balances.transferKeepAlive(
         allAccounts[0].address,
-        10 ** 12
+        0.1 * 10 ** 12
       );
-      const hash = await tx.signAndSend(alice);
-      console.log(`transfer hash ${hash.toHex()}`);
+      // const hash = await tx.signAndSend(alice);
+      // console.log(`transfer hash ${hash.toHex()}`);
+      const unsubscribe = await tx.signAndSend(alice, ({ status }) => {
+        if (status.isInBlock || status.isFinalized) {
+          console.log(`Transaction included at blockHash ${status.asInBlock}`);
+
+          // 交易完成后再获取余额
+          fetchBalance(allAccounts[0].address);
+
+          // 停止监听交易
+          unsubscribe();
+        }
+      });
       toast({
         title: (
           <div className="flex items-center">
@@ -165,16 +178,17 @@ const ConnectButton = () => {
               size={50}
               style={{ fill: "white", marginRight: "2rem" }}
             />
-            Fauset 1 SNS !
+            Fauset 0.1 SNS !
           </div>
         ) as unknown as string,
         // description: hash.toHex(),
         variant: "success",
       });
       // 重新获取余额
-      const bal = await fetchBalance(allAccounts[0].address);
-      setAccountBal(Number(bal) / 10 ** 12); // 更新余额
-      setfaucet(!faucet);
+      // const bal = await fetchBalance(allAccounts[0].address);
+      // console.log("点击之后的： ", bal);
+      // setAccountBal(Number(bal) / 10 ** 12); // 更新余额
+      // setfaucet(!faucet);
     }
   };
 
@@ -189,6 +203,7 @@ const ConnectButton = () => {
             className="rotating"
             src={`/images/loading.png`}
             alt=""
+            layout="responsive"
             width="28"
             height="28"
           />{" "}
@@ -200,8 +215,9 @@ const ConnectButton = () => {
             <Image
               src={`/images/faucet.png`}
               alt="faucet"
-              width="30"
-              height="30"
+              width={30}
+              height={30}
+              // style={{ width: '30px', height: '30px' }}
               onClick={handleFaucet}
             />
             <div className="absolute left-1/2 transform -translate-x-1/2 mt-2  text-white text-center text-sm rounded p-2 bg-black/50 shadow-inner opacity-0 transition-opacity duration-200 group-hover:opacity-100">

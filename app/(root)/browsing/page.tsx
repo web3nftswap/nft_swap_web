@@ -234,7 +234,9 @@ const Browsing = () => {
     } catch (error: any) {
       // console.log(`create error: ${error}`);
       toast({
-        title: (<div className="flex items-center">{error}</div>) as unknown as string,
+        title: (
+          <div className="flex items-center">{error}</div>
+        ) as unknown as string,
         // description: "Fail",
         variant: "destructive",
       });
@@ -375,7 +377,9 @@ const Browsing = () => {
     } catch (error: any) {
       // console.log(`offer error: ${error}`);
       toast({
-        title:( <div className="flex items-center">{error}</div>) as unknown as string,
+        title: (
+          <div className="flex items-center">{error}</div>
+        ) as unknown as string,
         description: "Fail",
         variant: "destructive",
       });
@@ -499,6 +503,7 @@ const DummyContent: React.FC<NFTDataProp> = ({
           alt="dummy image"
           width={100}
           height={100}
+          layout="responsive"
           className="h-full w-full object-cover rounded-t-lg"
         />
       </div>
@@ -511,7 +516,11 @@ const DummyContent: React.FC<NFTDataProp> = ({
         <p className="text-sm text-gray-500">idx：{idx}</p>
         {/* <p className="text-lg font-bold text-pink-500 mt-2">{desc}</p> */}
       </div>
-      <Link href={`/browsing/${id}/${idx}?data=${data}`}>
+      <Link
+        href={`/browsing/${id}/${idx}?data=${encodeURIComponent(
+          JSON.stringify(data)
+        )}`}
+      >
         <p className="mt-2 text-right cursor-pointer text-sm text-gray-400 ">
           详情
         </p>
@@ -538,7 +547,7 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
           alt="dummy image"
           width={100}
           height={100}
-          className="h-full w-full object-cover rounded-t-lg"
+          layout="responsive"  className="h-full w-full object-cover rounded-t-lg"
         />
       </div>
       {/* NFT Info */}

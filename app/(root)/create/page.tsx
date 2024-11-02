@@ -343,8 +343,9 @@ const ListBox = ({ item, handleMint }: { item: any; handleMint: any }) => {
         <Image
           className="h-12 w-12 flex-none rounded-full bg-gray-50"
           src={item.url}
+          layout="responsive"
           alt=""
-          width={48}
+          width={100}
           height={48}
         />
         <div className="min-w-0 flex-auto">

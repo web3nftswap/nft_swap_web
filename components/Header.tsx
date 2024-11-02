@@ -4,7 +4,7 @@
  * @Author: Hesin
  * @Date: 2024-10-11 17:01:06
  * @LastEditors: Hesin
- * @LastEditTime: 2024-10-23 00:34:21
+ * @LastEditTime: 2024-11-02 13:47:52
  */
 "use client";
 import MobilNav from "@/components/MobilNav";
@@ -44,7 +44,13 @@ const Header = () => {
       {/* logo */}
       <Link href="/">
         <h1 className="text-4xl font-semibold ">
-          <Image src={`/images/logo.png`} alt="" width="300" height="30" />
+          <Image
+            src={`/images/logo.png`}
+            alt=""
+            width="300"
+            height="30"
+            // layout="responsive"
+          />
           {/* NFT-Swap <span className="text-white">.</span> */}
         </h1>
       </Link>

@@ -625,6 +625,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
           alt=""
           width={100}
           height={100}
+          layout="responsive"
           className="h-full w-full object-cover rounded-t-lg"
         />
       </div>
@@ -747,6 +748,7 @@ const ListBox = ({ item, handleOffer, handleRejectOffer }) => {
           <Image
             className="h-12 w-12 flex-none rounded-full bg-gray-50"
             src={item.url}
+            layout="responsive"
             alt=""
             width={48}
             height={48}
@@ -871,6 +873,7 @@ const ListBox1 = ({ item, handleCancelOffer }) => {
             className="h-12 w-12 flex-none rounded-full bg-gray-50"
             src={item.url}
             alt=""
+            layout="responsive"
             width={48}
             height={48}
           />
