@@ -28,10 +28,6 @@ const Consolidate = () => {
     useSubstrateContext();
 
   useEffect(() => {
-    // console.log("mergeBtn", mergeBtn);
-    // console.log("splitBtn", splitBtn);
-  }, [mergeBtn, setmergeBtn, splitBtn, setsplitBtn]);
-  useEffect(() => {
     fetchCollectionIds();
   }, [api]);
   const fetchCollectionIds = async () => {
@@ -110,6 +106,7 @@ const Consolidate = () => {
       }
     });
     // console.log("合并datas", dd);
+
     if (dd.length < 2 || dd.length > 10) {
       toast({
         title: (
@@ -129,7 +126,7 @@ const Consolidate = () => {
       try {
         setPending(true);
         const currentAccount = allAccounts[0];
-        console.log("currentAccount", currentAccount);
+        // console.log("currentAccount", currentAccount);
         let hash = await sendAndWait(
           api,
           tx,
@@ -318,7 +315,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
   return (
     <div className="cursor-pointer relative bg-white shadow-md rounded-t-lg rounded-b-md p-4 w-full max-w-sm mx-auto">
       {/*Merge Checkbox */}
-      {mergeBtn && status !== "merged" && (
+      {mergeBtn && status !== "merged" && item.nft[2] == 100 && (
         <div className="absolute -top-3 -left-3 w-10 h-10 rounded-full shadow-lg overflow-hidden bg-purple-200 flex justify-center items-center">
           <Checkbox
             className="border-black-100 border-2"
