@@ -183,7 +183,6 @@ const ConnectButton = () => {
           unsubscribe();
         }
       });
-
     }
   };
 
@@ -219,7 +218,9 @@ const ConnectButton = () => {
               faucet
             </div>
           </div>
-          {accountBal != 0 && (
+          {accountBal == 0 ? (
+            <div className="px-2 text-sm text-purple-200">0.00 SNS</div>
+          ) : (
             <div className="px-2 text-sm text-purple-200">
               {accountBal.toFixed(4)} SNS
             </div>

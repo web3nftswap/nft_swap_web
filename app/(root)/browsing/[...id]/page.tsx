@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Boxes } from "@/components/ui/background-boxes";
+import { BackgroundGradient } from "@/components/ui/background-gradient";
 // 定义 NFT 数据的类型
 interface NftData {
   id: string;
@@ -31,13 +32,39 @@ const NftDetailPage = () => {
   }, []);
 
   return (
-    <div className="flex justify-center  items-center h-[100vh]">
-      {/* <div className="absolute inset-0 w-full h-full bg-slate-900 z-20 [mask-image:radial-gradient(transparent,white)] pointer-events-none" /> */}
-      {/* <Boxes /> */}
-      {nftData && (
-        <GlareCard className="z-30">
-          <div className="w-full h-[60%]">
-            {/* <Image
+    <div className="relative  h-[100vh] w-[100%]">
+      <button
+        className="absolute top-[50px] left-[50px] bg-white text-center w-32 rounded-2xl h-10 relative text-black text-sm font-semibold group"
+        type="button"
+        onClick={()=>{
+          router.push('/browsing')
+        }}
+      >
+        <div className="bg-purple-200 rounded-xl h-8 w-1/4 flex items-center justify-center absolute left-1 top-[4px] group-hover:w-[120px] z-10 duration-500">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 1024 1024"
+            height="25px"
+            width="25px"
+          >
+            <path
+              d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"
+              fill="#000000"
+            ></path>
+            <path
+              d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"
+              fill="#000000"
+            ></path>
+          </svg>
+        </div>
+        <p className="translate-x-2">Go Back</p>
+      </button>{" "}
+      <div className="flex justify-center  items-center h-full w-full">
+        <BackgroundGradient className="rounded-[30px] max-w-sm p-1 sm:p-2 bg-white dark:bg-zinc-900">
+          {nftData && (
+            <GlareCard className="z-30">
+              <div className="w-full h-[60%]">
+                {/* <Image
               src={nftData.url}
               alt="image"
               width={0}
@@ -45,20 +72,27 @@ const NftDetailPage = () => {
               layout="responsive"
               style={{ width: "100%", height: "100%" }}
             /> */}
-            <img src={nftData.url} style={{ width: "100%", height: "100%" }} />
-          </div>
-          <p className="pl-3 text-purple-200 font-bold text-xl mt-4 align-middle">
-            {nftData.name}
-          </p>
-          <p className="pl-3 text-white  font-bold text-sm mt-3">
-            {nftData.id.slice(0, 6)}...{nftData.id.slice(-4)}
-          </p>
-          <p className="pl-3 text-red-300  font-bold text-sm mt-2">IDX : {nftData.idx}</p>
-          <p className="pl-3 text-white text-sm mt-2 overflow-hidden whitespace-nowrap overflow-ellipsis">
-            Desc: {nftData.desc}
-          </p>
-        </GlareCard>
-      )}
+                <img
+                  src={nftData.url}
+                  style={{ width: "100%", height: "100%" }}
+                />
+              </div>
+              <p className="pl-3 text-purple-200 font-bold text-xl mt-4 align-middle">
+                {nftData.name}
+              </p>
+              <p className="pl-3 text-white  font-bold text-sm mt-3">
+                {nftData.id.slice(0, 6)}...{nftData.id.slice(-4)}
+              </p>
+              <p className="pl-3 text-red-300  font-bold text-sm mt-2">
+                IDX : {nftData.idx}
+              </p>
+              <p className="pl-3 text-white text-sm mt-2 overflow-hidden whitespace-nowrap overflow-ellipsis">
+                Desc: {nftData.desc}
+              </p>
+            </GlareCard>
+          )}
+        </BackgroundGradient>{" "}
+      </div>
     </div>
   );
 };

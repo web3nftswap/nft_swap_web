@@ -304,6 +304,7 @@ const UserCenter = () => {
         extensionEnabled,
         injector
       );
+      setOpen(false);
       // console.log(`publish hash: ${hash.toHex()}`);
       toast({
         title: (
@@ -329,7 +330,6 @@ const UserCenter = () => {
         variant: "destructive",
       });
     } finally {
-      setOpen(false);
       setPending(false);
     }
   };
@@ -622,10 +622,9 @@ const DummyContent: React.FC<DummyContentProps> = ({
       <div className="w-full h-48 bg-gray-200 rounded-t-lg flex items-center justify-center">
         <Image
           src={item.url}
-          alt=""
+          alt={item.name}
           width={100}
           height={100}
-          layout="responsive"
           className="h-full w-full object-cover rounded-t-lg"
         />
       </div>
@@ -651,7 +650,15 @@ const DummyContent: React.FC<DummyContentProps> = ({
                   Unlist
                 </Button>
                 <DialogTrigger asChild>
-                  <Button variant="secondary" size="sm">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => {
+                      setpubItem(item);
+                      setshareMes(item.nft[2]);
+                      // console.log("publish", item);
+                    }}
+                  >
                     Update
                   </Button>
                 </DialogTrigger>
@@ -748,7 +755,6 @@ const ListBox = ({ item, handleOffer, handleRejectOffer }) => {
           <Image
             className="h-12 w-12 flex-none rounded-full bg-gray-50"
             src={item.url}
-            layout="responsive"
             alt=""
             width={48}
             height={48}
@@ -873,7 +879,6 @@ const ListBox1 = ({ item, handleCancelOffer }) => {
             className="h-12 w-12 flex-none rounded-full bg-gray-50"
             src={item.url}
             alt=""
-            layout="responsive"
             width={48}
             height={48}
           />

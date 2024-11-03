@@ -500,10 +500,9 @@ const DummyContent: React.FC<NFTDataProp> = ({
       <div className="w-full h-48 bg-gray-200 rounded-t-lg flex items-center justify-center">
         <Image
           src={url}
-          alt="dummy image"
+          alt={name}
           width={100}
           height={100}
-          layout="responsive"
           className="h-full w-full object-cover rounded-t-lg"
         />
       </div>
@@ -542,12 +541,12 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
     <div className="cursor-pointer bg-white shadow-md rounded-t-lg rounded-b-md p-4 pb-2  w-full max-w-sm mx-auto">
       {/* Image Placeholder */}
       <div className="w-full h-48 bg-gray-200 rounded-t-lg flex items-center justify-center">
-        <Image
+      <Image
           src={data.url}
-          alt="dummy image"
+          alt={data.name}
           width={100}
           height={100}
-          layout="responsive"  className="h-full w-full object-cover rounded-t-lg"
+          className="h-full w-full object-cover rounded-t-lg"
         />
       </div>
       {/* NFT Info */}
