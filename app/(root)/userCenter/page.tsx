@@ -324,7 +324,7 @@ const UserCenter = () => {
       // console.log(`create error: ${error}`);
       toast({
         title: (
-          <div className="flex items-center">{error}</div>
+          <div className="flex items-center">{error.message}</div>
         ) as unknown as string,
         // description: "Fail",
         variant: "destructive",

@@ -338,7 +338,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
         </div>
       )}
       {/* Split Checkbox */}
-      {splitBtn && status == "merged" && (
+      {splitBtn && status == "merged" && item.nft[2] == 100 && (
         <div className="absolute -top-3 -right-3 w-10 h-10 rounded-full shadow-lg overflow-hidden bg-yellow-200 flex justify-center items-center">
           <Checkbox
             className="border-black-100 border-2"
