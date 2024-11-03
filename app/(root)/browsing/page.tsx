@@ -231,7 +231,7 @@ const Browsing = () => {
         variant: "success",
       });
 
-      // fetchBuyNfts();
+      fetchBuyNfts();
     } catch (error: any) {
       console.log(`create error: ${error}`);
       toast({
