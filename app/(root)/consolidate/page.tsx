@@ -375,10 +375,9 @@ const DummyContent: React.FC<DummyContentProps> = ({
       <div className="w-full h-48 bg-gray-200 rounded-t-lg flex items-center justify-center">
         <Image
           src={item.url}
-          alt=""
+          alt={item.name}
           width={100}
           height={100}
-          layout="responsive"
           className="h-full w-full object-cover rounded-t-lg"
         />
       </div>
