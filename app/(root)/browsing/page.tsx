@@ -41,6 +41,7 @@ interface NFTDataProp {
 
 interface BuyNFTDataProp {
   nft: string[]; // 可能是 string 或 number 类型
+  name: string; // 名称，string 类型
   price: number; // 索引，number 类型
   seller: string; // 名称，string 类型
   data: any;
@@ -181,7 +182,7 @@ const Browsing = () => {
         }
       }
     }
-    // console.log("all", datas);
+    console.log("all", datas);
     setAllDatas(datas);
     setVisibleDatas(datas.slice(0, PAGE_SIZE)); // 初始化可见数据
     getOwnedNFTArray();
@@ -200,23 +201,26 @@ const Browsing = () => {
     );
     setVisibleDatas((prev) => [...prev, ...nextData]);
   };
-  const handleBuy = async (info: any) => {
-    // console.log("买了买了", info);
+  const handleBuy = async (data: any) => {
+    // console.log("[Call] buyNft");
     try {
-      // console.log("pending", pending);
       setPending(true);
-      // console.log(info.nft, info.seller);
-      const tx = api?.tx.nftMarketModule.buyNft(info.nft, info.seller);
-      // const connectedAccount = localStorage.getItem("connectedAccount");
+      const share = Number(data.price) * 10 ** 12;
+      console.log(data, share);
+      // debugger;
+      let tx = api?.tx.nftMarketModule.buyNft(
+        [...data.nft, share],
+        data.seller
+      );
       const connectedAccount = allAccounts[0];
-      const hash = await sendAndWait(
+      const hash: any = await sendAndWait(
         api,
         tx,
         connectedAccount,
         extensionEnabled,
         injector
       );
-      // console.log(`buy hash: ${hash.toHex()}`);
+      console.log(`buy hash: ${hash.toHex()}`);
       toast({
         title: (
           <div className="flex items-center">
@@ -224,18 +228,18 @@ const Browsing = () => {
               size={50}
               style={{ fill: "white", marginRight: "2rem" }}
             />
-            Buy Successful !!
+            BUY Successfully !!
           </div>
         ) as unknown as string,
         variant: "success",
       });
 
-      fetchBuyNfts();
+      // fetchBuyNfts();
     } catch (error: any) {
-      // console.log(`create error: ${error}`);
+      console.log(`create error: ${error}`);
       toast({
         title: (
-          <div className="flex items-center">{error}</div>
+          <div className="flex items-center">{error.message}</div>
         ) as unknown as string,
         // description: "Fail",
         variant: "destructive",
@@ -291,7 +295,11 @@ const Browsing = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {/* 遍历所有类别下的 NFT */}
             {visibleDatas.map((itm) => (
-              <DummyContent key={`${itm.id}-${itm.idx}`} {...itm} data={itm} />
+              <DummyContent
+                key={`${itm.name}-${itm.id}-${itm.idx}`}
+                {...itm}
+                data={itm}
+              />
             ))}
           </div>
         ),
@@ -304,7 +312,7 @@ const Browsing = () => {
             {/* 遍历 Art 类别下的 NFT */}
             {visibleBuyDatas.map((itm) => (
               <DummyContenBuy
-                key={`${itm.nft[0]}-${itm.nft[1]}`}
+                key={`${itm.name}-${itm.nft[0]}-${itm.nft[1]}`}
                 {...itm}
                 data={itm}
                 handleBuy={handleBuy}
@@ -336,7 +344,8 @@ const Browsing = () => {
     const formDataObject = Object.fromEntries(formData.entries());
     // console.log("表单数据对象:", formDataObject);
     //报价
-    const swapToken = formDataObject.price;
+    const swapToken = Number(formDataObject.price) * 10 ** 12;
+
     // console.log(targetNFT);
     // console.log("[Call] placeOffer");
     const swapLists = offerNfts.map((row: any) => row.nft);
@@ -541,7 +550,7 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
     <div className="cursor-pointer bg-white shadow-md rounded-t-lg rounded-b-md p-4 pb-2  w-full max-w-sm mx-auto">
       {/* Image Placeholder */}
       <div className="w-full h-48 bg-gray-200 rounded-t-lg flex items-center justify-center">
-      <Image
+        <Image
           src={data.url}
           alt={data.name}
           width={100}
@@ -583,7 +592,7 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
           <Button
             variant="secondary"
             onClick={() => {
-              handleBuy({ nft: nft, seller });
+              handleBuy({ nft: [nft[0], nft[1]], price, seller });
             }}
           >
             Buy
