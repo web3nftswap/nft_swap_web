@@ -205,13 +205,10 @@ const Browsing = () => {
     // console.log("[Call] buyNft");
     try {
       setPending(true);
-      const share = Number(data.price) * 10 ** 12;
-      console.log(data, share);
+      const price = Number(data.price) * 10 ** 12;
+      console.log(data);
       // debugger;
-      let tx = api?.tx.nftMarketModule.buyNft(
-        [...data.nft, share],
-        data.seller
-      );
+      let tx = api?.tx.nftMarketModule.buyNft(data.nft, data.seller);
       const connectedAccount = allAccounts[0];
       const hash: any = await sendAndWait(
         api,
@@ -592,7 +589,7 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
           <Button
             variant="secondary"
             onClick={() => {
-              handleBuy({ nft: [nft[0], nft[1]], price, seller });
+              handleBuy({ nft, price, seller });
             }}
           >
             Buy
