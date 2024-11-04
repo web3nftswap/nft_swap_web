@@ -507,7 +507,7 @@ const UserCenter = () => {
               setIsSheetOpen1(true);
             }}
           >
-            Check Offer
+            Sent Offers
             {/* {offerCounts ? (
               <div className="absolute inline-flex items-center justify-center w-3 h-3 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900"></div>
             ) : (
@@ -521,7 +521,7 @@ const UserCenter = () => {
               setIsSheetOpen(true);
             }}
           >
-            Offer
+            Received Offers
             {offerCounts ? (
               <div className="absolute inline-flex items-center justify-center w-3 h-3 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900"></div>
             ) : (
@@ -677,7 +677,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
             </span>
           </p>
           <p className="text-md font-bold text-pink-500">
-            {Number(item.price)/(10**12)} SNS
+            {Number(item.price) / 10 ** 12} SNS
           </p>
         </div>
 
