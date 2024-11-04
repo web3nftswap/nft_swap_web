@@ -45,6 +45,7 @@ const UserCenter = () => {
   const [isSheetOpen1, setIsSheetOpen1] = useState(false); //check offer
   const [shareMes, setshareMes] = useState(0);
   const [shareVal, setshareVal] = useState(0);
+  const [priceVal, setpriceVal] = useState(0);
   const { toast } = useToast();
   const { api, allAccounts, injector, extensionEnabled, pending, setPending } =
     useSubstrateContext();
@@ -282,11 +283,22 @@ const UserCenter = () => {
     const formDataObject = Object.fromEntries(formData.entries());
     // console.log("表单数据对象:", formDataObject);
 
-    const shareRate = Number(formDataObject.share);
-    const price = Number(formDataObject.price) * 10 ** 12;
-    const param1 = [pubItem.nft[0], Number(pubItem.nft[1]), shareRate];
-    // console.log(param1);
-    // console.log(price);
+    let params: any;
+    if (isUpdate) {
+      params = {
+        nft: pubItem.nft,
+        price: Number(priceVal) * 10 ** 12,
+      };
+    } else {
+      const shareRate = Number(formDataObject.share);
+      const price = Number(formDataObject.price) * 10 ** 12;
+      params = {
+        nft: [pubItem.nft[0], Number(pubItem.nft[1]), shareRate],
+        price,
+      };
+    }
+    console.log(params);
+    // debugger;
     // 上架
     try {
       // console.log("pending", pending);
@@ -295,7 +307,7 @@ const UserCenter = () => {
       //当前账户
       const currentAccount = allAccounts[0];
       //tx
-      const tx = api?.tx.nftMarketModule.listNft(param1, price);
+      const tx = api?.tx.nftMarketModule.listNft(params.nft, params.price);
       //hash
       const hash = await sendAndWait(
         api,
@@ -577,6 +589,7 @@ const UserCenter = () => {
                 handlePublish={handlePublish}
                 open={open}
                 setOpen={setOpen}
+                pubItem={pubItem}
                 setpubItem={setpubItem}
                 shareMes={shareMes}
                 setshareMes={setshareMes}
@@ -584,6 +597,8 @@ const UserCenter = () => {
                 setshareVal={setshareVal}
                 isUpdate={isUpdate}
                 setIsUpdate={setIsUpdate}
+                priceVal={priceVal}
+                setpriceVal={setpriceVal}
               />
             ))}
         </div>
@@ -603,11 +618,14 @@ type DummyContentProps = {
   handlePublish: (event: FormEvent<HTMLFormElement>) => void;
   open: boolean;
   setOpen: (open: boolean) => void;
+  pubItem: any;
   setpubItem: (open: boolean) => void;
   shareMes: any;
   setshareMes: (open: number) => void;
   shareVal: any;
   setshareVal: (open: number) => void;
+  priceVal: any;
+  setpriceVal: (open: number) => void;
   isUpdate: any;
   setIsUpdate: (open: boolean) => void;
 };
@@ -618,6 +636,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
   handlePublish,
   open,
   setOpen,
+  pubItem,
   setpubItem,
   shareMes,
   setshareMes,
@@ -625,6 +644,8 @@ const DummyContent: React.FC<DummyContentProps> = ({
   setshareVal,
   isUpdate,
   setIsUpdate,
+  priceVal,
+  setpriceVal,
 }) => {
   const { toast } = useToast();
   return (
@@ -648,12 +669,18 @@ const DummyContent: React.FC<DummyContentProps> = ({
           {nftInfo[0].slice(0, 6)}...{nftInfo[0].slice(-4)}
         </p>
         <p className="text-sm text-gray-500">idx：{nftInfo[1]}</p>
-        <p className="text-lg font-bold text-pink-500 mt-2">
-          {nftInfo[2]}%
-          <span className="text-sm font-normal text-pink-300 ml-2">
-            {item.share ? `(${item.share}%)` : ""}
-          </span>
-        </p>
+        <div className="flex justify-between items-center  my-2">
+          <p className="text-md font-bold text-pink-500">
+            {nftInfo[2]}%
+            <span className="text-sm font-normal text-pink-300 ml-2">
+              {item.share ? `(${item.share}%)` : ""}
+            </span>
+          </p>
+          <p className="text-md font-bold text-pink-500">
+            {Number(item.price)/(10**12)} SNS
+          </p>
+        </div>
+
         <div className="flex justify-between items-center  -mx-2">
           <Dialog open={open} onOpenChange={setOpen}>
             {item.share ? (
@@ -670,6 +697,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
                       setIsUpdate(true);
                       setshareMes(item.nft[2]);
                       setshareVal(item.nft[2]);
+                      setpriceVal(Number(item.price / 10 ** 12));
                       // console.log("publish", item);
                     }}
                   >
@@ -698,7 +726,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle> List of sale Form</DialogTitle>
-                <DialogDescription>Enter share and price.</DialogDescription>
+                {/* <DialogDescription>Enter share and price.</DialogDescription> */}
               </DialogHeader>
               <form onSubmit={handlePublish}>
                 <div className="grid gap-4 py-4">
@@ -747,8 +775,31 @@ const DummyContent: React.FC<DummyContentProps> = ({
                       id="price"
                       name="price"
                       type="number"
+                      value={priceVal}
                       className="col-span-3 w-[150px]"
                       step="0.01"
+                      onChange={(e) => {
+                        const value = Number(e.target.value);
+                        if (value >= 0) {
+                          // 检查范围
+                          setpriceVal(value);
+                        } else {
+                          toast({
+                            title: (
+                              <div className="flex items-center">
+                                <RiErrorWarningLine
+                                  size={50}
+                                  style={{ fill: "white", marginRight: "2rem" }}
+                                />
+                                Value must be more than 0
+                              </div>
+                            ) as unknown as string,
+                            variant: "warning",
+                          });
+                          // 如果不在范围内，可以选择不更新状态或给出提示
+                          console.warn("Value must be between 0 and 100");
+                        }
+                      }}
                     />
                   </div>
                 </div>
