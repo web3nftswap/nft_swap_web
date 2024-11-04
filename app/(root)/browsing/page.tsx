@@ -26,6 +26,7 @@ import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
 import { sendAndWait } from "@/utils/sendAndWait";
 import { DataTableDemo } from "@/components/ui/data-table";
 import ReactDOMServer from "react-dom/server";
+import { Divide } from "lucide-react";
 
 const PAGE_SIZE = 15; // 每次加载的数据量
 
@@ -45,6 +46,7 @@ interface BuyNFTDataProp {
   price: number; // 索引，number 类型
   seller: string; // 名称，string 类型
   data: any;
+  owners: string[]; // owners 是一个字符串数组
   handleBuy: (info: any) => Promise<void>;
   settargetNFT: any;
   setopen: any;
@@ -125,7 +127,7 @@ const Browsing = () => {
           // // console.log(nft);
           newBuydatas.push(nft);
         }
-        // console.log("newBuydatas", newBuydatas);
+        console.log("newBuydatas", newBuydatas);
         // 可买bft list
         setbuyAllDatas(newBuydatas);
         setVisibleBuyDatas(newBuydatas.slice(0, PAGE_SIZE)); // 初始化可见数据
@@ -456,6 +458,7 @@ const Browsing = () => {
                     name="price"
                     type="number"
                     defaultValue="@peduarte"
+                    step="0.01"
                     className="col-span-3"
                   />
                 </div>
@@ -537,6 +540,7 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
   data,
   nft,
   price,
+  owners,
   seller,
   handleBuy,
   settargetNFT,
@@ -576,7 +580,16 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
               {
                 id: 1,
                 name: "See Owners",
-                designation: seller,
+                designation: (
+                  <div>
+                    {owners.map((i) => (
+                      <p>
+                        {/* {i} */}
+                        {i.slice(0, 6)}...{i.slice(-4)}
+                      </p>
+                    ))}
+                  </div>
+                ),
               },
             ]}
           />
@@ -605,6 +618,15 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
           </Button>
         </div>
       )}
+      <Link
+        href={`/browsing/${nft[0]}/${nft[1]}?data=${encodeURIComponent(
+          JSON.stringify(data)
+        )}`}
+      >
+        <p className="mt-2 text-right cursor-pointer text-sm text-gray-400 ">
+          详情
+        </p>
+      </Link>
     </div>
   );
 };

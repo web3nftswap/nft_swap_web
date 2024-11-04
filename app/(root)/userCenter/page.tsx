@@ -48,6 +48,7 @@ const UserCenter = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false); // offer
   const [isSheetOpen1, setIsSheetOpen1] = useState(false); //check offer
   const [shareMes, setshareMes] = useState(0); // share 默认值为 0
+  const [shareVal, setshareVal] = useState(0); // share 默认值为 0
   const { toast } = useToast();
   const { api, allAccounts, injector, extensionEnabled, pending, setPending } =
     useSubstrateContext();
@@ -579,8 +580,10 @@ const UserCenter = () => {
                 open={open}
                 setOpen={setOpen}
                 setpubItem={setpubItem}
-                setshareMes={setshareMes}
                 shareMes={shareMes}
+                setshareMes={setshareMes}
+                shareVal={shareVal}
+                setshareVal={setshareVal}
               />
             ))}
         </div>
@@ -603,6 +606,8 @@ type DummyContentProps = {
   setpubItem: (open: boolean) => void;
   shareMes: any;
   setshareMes: (open: number) => void;
+  shareVal: any;
+  setshareVal: (open: number) => void;
 };
 const DummyContent: React.FC<DummyContentProps> = ({
   item,
@@ -613,6 +618,8 @@ const DummyContent: React.FC<DummyContentProps> = ({
   setpubItem,
   shareMes,
   setshareMes,
+  shareVal,
+  setshareVal,
 }) => {
   const { toast } = useToast();
   return (
@@ -656,6 +663,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
                     onClick={() => {
                       setpubItem(item);
                       setshareMes(item.nft[2]);
+                      setshareVal(item.nft[2]);
                       // console.log("publish", item);
                     }}
                   >
@@ -671,6 +679,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
                   onClick={() => {
                     setpubItem(item);
                     setshareMes(item.nft[2]);
+                    setshareVal(item.nft[2]);
                     // console.log("publish", item);
                   }}
                 >
@@ -696,10 +705,12 @@ const DummyContent: React.FC<DummyContentProps> = ({
                       type="number"
                       value={shareMes}
                       onChange={(e) => {
+                        const max = shareVal;
                         const value = Number(e.target.value);
-                        if (value >= 0 && value <= 100) {
+                        if (value >= 0 && value <= max) {
                           // 检查范围
                           setshareMes(value);
+                          console.log(max);
                         } else {
                           toast({
                             title: (
@@ -708,7 +719,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
                                   size={50}
                                   style={{ fill: "white", marginRight: "2rem" }}
                                 />
-                                Value must be between 0 and 100
+                                Value must be between 0 and {max}
                               </div>
                             ) as unknown as string,
                             variant: "warning",
@@ -779,7 +790,7 @@ const ListBox = ({ item, handleOffer, handleRejectOffer }) => {
               <p className="text-sm  leading-6 text-gray-200">
                 Share:{" "}
                 <span className="text-sm pl-2 text-purple-300  font-semibold">
-                  {item.nft[2]}
+                  {item.nft[2]}%
                 </span>
               </p>
             </div>
@@ -835,13 +846,13 @@ const ListBox = ({ item, handleOffer, handleRejectOffer }) => {
                 >
                   <BiSolidMessageSquareDetail size={30} />
                   <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
-                    name:
+                    Name:
                     <span className="pl-2 text-purple-300  font-semibold">
                       {itm.offeredNftsInfo[idx].name}
                     </span>
                   </p>
                   <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
-                    address:
+                    Address:
                     <span className="pl-2 text-purple-300  font-semibold">
                       {offItm[0].slice(0, 6)}...
                       {offItm[0].slice(-4)}
@@ -849,7 +860,7 @@ const ListBox = ({ item, handleOffer, handleRejectOffer }) => {
                   </p>
 
                   <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
-                    id:
+                    IDX:
                     <span className="pl-2 text-purple-300  font-semibold">
                       {offItm[1]}
                     </span>
@@ -857,7 +868,7 @@ const ListBox = ({ item, handleOffer, handleRejectOffer }) => {
                   <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
                     Share:
                     <span className="pl-2 text-purple-300  font-semibold">
-                      {offItm[2]}
+                      {offItm[2]}%
                     </span>
                   </p>
                 </div>

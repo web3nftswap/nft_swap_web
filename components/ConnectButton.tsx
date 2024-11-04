@@ -155,7 +155,7 @@ const ConnectButton = () => {
       const alice = keyring.addFromUri("//Alice");
       const tx = api.tx.balances.transferKeepAlive(
         allAccounts[0].address,
-        0.1 * 10 ** 12
+        0.5 * 10 ** 12
       );
       // const hash = await tx.signAndSend(alice);
       // console.log(`transfer hash ${hash.toHex()}`);
@@ -173,7 +173,7 @@ const ConnectButton = () => {
                   size={50}
                   style={{ fill: "white", marginRight: "2rem" }}
                 />
-                Fauset 0.1 SNS !
+                Fauset 0.5 SNS !
               </div>
             ) as unknown as string,
             // description: hash.toHex(),

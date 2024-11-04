@@ -1,3 +1,11 @@
+/*
+ * @Descripttion: 
+ * @version: 1.0
+ * @Author: Hesin
+ * @Date: 2024-10-18 07:57:11
+ * @LastEditors: Hesin
+ * @LastEditTime: 2024-11-04 11:03:46
+ */
 "use client";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -15,7 +23,7 @@ export const AnimatedTooltip = ({
   items: {
     id: number;
     name: string | React.ReactNode;
-    designation: string;
+    designation: string | React.ReactNode;
     // image: string;
   }[];
 }) => {
@@ -42,7 +50,7 @@ export const AnimatedTooltip = ({
       {items.map((item, idx) => (
         <div
           key={item.name as string}
-          className="-mr-4  relative group"
+          className="-mr-4 relative group"
           onMouseEnter={() => setHoveredIndex(item.id)}
           onMouseLeave={() => setHoveredIndex(null)}
         >
@@ -66,7 +74,7 @@ export const AnimatedTooltip = ({
                   rotate: rotate,
                   whiteSpace: "nowrap",
                 }}
-                className="absolute -top-16 -left-1/2 translate-x-1/2 flex text-xs  flex-col items-center justify-center rounded-md bg-black z-50 shadow-xl px-4 py-2"
+                className="absolute -top-20 flex text-xs  flex-col items-center justify-center rounded-md bg-black z-50 shadow-xl px-4 py-2"
               >
                 <div className="absolute inset-x-10 z-30 w-[20%] -bottom-px bg-gradient-to-r from-transparent via-emerald-500 to-transparent h-px " />
                 <div className="absolute left-10 w-[40%] z-30 -bottom-px bg-gradient-to-r from-transparent via-sky-500 to-transparent h-px " />

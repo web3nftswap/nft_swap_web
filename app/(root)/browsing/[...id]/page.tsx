@@ -8,17 +8,10 @@ import { useEffect, useState } from "react";
 import { Boxes } from "@/components/ui/background-boxes";
 import { BackgroundGradient } from "@/components/ui/background-gradient";
 // 定义 NFT 数据的类型
-interface NftData {
-  id: string;
-  name: string;
-  idx: string;
-  url: string;
-  desc: string;
-}
 
 const NftDetailPage = () => {
   const router = useRouter();
-  const [nftData, setNftData] = useState<NftData>();
+  const [nftData, setNftData] = useState<any>();
   useEffect(() => {
     const queryString = window.location.search;
     const params = new URLSearchParams(queryString);
@@ -36,8 +29,8 @@ const NftDetailPage = () => {
       <button
         className="absolute top-[50px] left-[50px] bg-white text-center w-32 rounded-2xl h-10 relative text-black text-sm font-semibold group"
         type="button"
-        onClick={()=>{
-          router.push('/browsing')
+        onClick={() => {
+          router.push("/browsing");
         }}
       >
         <div className="bg-purple-200 rounded-xl h-8 w-1/4 flex items-center justify-center absolute left-1 top-[4px] group-hover:w-[120px] z-10 duration-500">
@@ -64,14 +57,6 @@ const NftDetailPage = () => {
           {nftData && (
             <GlareCard className="z-30">
               <div className="w-full h-[60%]">
-                {/* <Image
-              src={nftData.url}
-              alt="image"
-              width={0}
-              height={0}
-              layout="responsive"
-              style={{ width: "100%", height: "100%" }}
-            /> */}
                 <img
                   src={nftData.url}
                   style={{ width: "100%", height: "100%" }}
@@ -80,12 +65,25 @@ const NftDetailPage = () => {
               <p className="pl-3 text-purple-200 font-bold text-xl mt-4 align-middle">
                 {nftData.name}
               </p>
-              <p className="pl-3 text-white  font-bold text-sm mt-3">
-                {nftData.id.slice(0, 6)}...{nftData.id.slice(-4)}
-              </p>
-              <p className="pl-3 text-red-300  font-bold text-sm mt-2">
-                IDX : {nftData.idx}
-              </p>
+              {nftData.id ? (
+                <p className="pl-3 text-white  font-bold text-sm mt-3">
+                  {nftData.id.slice(0, 6)}...{nftData.id.slice(-4)}
+                </p>
+              ) : (
+                <p className="pl-3 text-white  font-bold text-sm mt-3">
+                  {nftData.nft[0].slice(0, 6)}...{nftData.nft[0].slice(-4)}
+                </p>
+              )}
+              {nftData.id ? (
+                <p className="pl-3 text-red-300  font-bold text-sm mt-2">
+                  IDX : {nftData.idx}
+                </p>
+              ) : (
+                <p className="pl-3 text-red-300  font-bold text-sm mt-2">
+                  IDX : {nftData.nft[1]}
+                </p>
+              )}
+
               <p className="pl-3 text-white text-sm mt-2 overflow-hidden whitespace-nowrap overflow-ellipsis">
                 Desc: {nftData.desc}
               </p>
