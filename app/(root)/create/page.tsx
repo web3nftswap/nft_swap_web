@@ -1,36 +1,30 @@
 "use client";
-import React, { useState, FormEvent, useEffect } from "react";
-import { Textarea } from "@/components/ui/textarea";
-import { useSubstrateContext } from "@/app/SubstrateProvider";
-import {
-  web3Enable,
-  web3Accounts,
-  web3FromAddress,
-} from "@polkadot/extension-dapp";
-import { sendAndWait } from "@/utils/sendAndWait";
-
-import Header from "@/components/Header";
 import Image from "next/image";
+import React, { useState, FormEvent, useEffect } from "react";
+import { useSubstrateContext } from "@/app/SubstrateProvider";
+import { sendAndWait } from "@/utils/sendAndWait";
+//UTIL
+import { useToast } from "@/hooks/use-toast";
+import { hexCodeToString } from "@/utils/util";
+//COMPONENTS
+import Header from "@/components/Header";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet-box";
 import { Input } from "@/components/ui/input";
 
-import { useToast } from "@/hooks/use-toast";
+// ICON
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { RiErrorWarningLine } from "react-icons/ri";
-import { hexCodeToString } from "@/utils/util";
 import Footer from "@/components/Footer";
-import ReactDOMServer from "react-dom/server";
 
 interface CollectionData {
+  id: string;
   maxItem: number;
   curIndex: number;
   name: string;
@@ -40,12 +34,14 @@ interface CollectionData {
 const Create = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [allDatas, setAllDatas] = useState<CollectionData[]>([]);
+
   const { api, allAccounts, injector, extensionEnabled, pending, setPending } =
     useSubstrateContext();
 
   const { toast } = useToast();
+
   useEffect(() => {
-    const fetchCollectionIds = async () => {
+    const fetchCollectionDatas = async () => {
       if (!api) return; // 如果 api 尚未初始化，直接返回
       try {
         // console.log(api);
@@ -57,17 +53,19 @@ const Create = () => {
       }
     };
 
-    fetchCollectionIds();
-  }, [api]); // 添加 api 作为依赖项
+    fetchCollectionDatas();
+  }, [api]);
 
   // 处理获取集合列表
   const getInfo = async (collectionIds: any) => {
-    const collectionIdsArray = JSON.parse(JSON.stringify(collectionIds));
-    if (collectionIdsArray) {
+    const collectionArr = JSON.parse(JSON.stringify(collectionIds));
+    
+    if (collectionArr) {
       // console.log("[Query] nftCollections");
       const fetchedDatas = await Promise.all(
-        collectionIdsArray.map(async (id: any) => {
+        collectionArr.map(async (id: any) => {
           const collectionInfo = await api?.query.nftModule.nftCollections(id);
+         
           const [maxItem, curIndex, metainfo] = JSON.parse(
             JSON.stringify(collectionInfo)
           );

@@ -1,13 +1,8 @@
 "use client";
 import { GlareCard } from "@/components/ui/glare-card";
-import { LampContainer } from "@/components/ui/lamp";
-import Image from "next/image";
-import { motion } from "framer-motion";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Boxes } from "@/components/ui/background-boxes";
 import { BackgroundGradient } from "@/components/ui/background-gradient";
-// 定义 NFT 数据的类型
 
 const NftDetailPage = () => {
   const router = useRouter();

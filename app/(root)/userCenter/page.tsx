@@ -1,18 +1,16 @@
 "use client";
-import Image from "next/image";
-import { Tabs } from "@/components/ui/tabs";
-import Header from "@/components/Header";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/check-box";
 import { FormEvent, useEffect, useState } from "react";
+import Image from "next/image";
 import { useSubstrateContext } from "@/app/SubstrateProvider";
-import { FiEdit } from "react-icons/fi";
 import { useToast } from "@/hooks/use-toast";
 import { sendAndWait } from "@/utils/sendAndWait";
+import { hexCodeToString } from "@/utils/util";
+
+//COMPONENTS
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { BiSolidMessageSquareDetail } from "react-icons/bi";
-import { RiErrorWarningLine } from "react-icons/ri";
-import ReactDOMServer from "react-dom/server";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -22,34 +20,31 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { FaRegCircleCheck } from "react-icons/fa6";
-import { LuFileStack } from "react-icons/lu";
-import { hexCodeToString } from "@/utils/util";
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet-box";
 
-import Footer from "@/components/Footer";
+//ICON
+import { BiSolidMessageSquareDetail } from "react-icons/bi";
+import { RiErrorWarningLine } from "react-icons/ri";
+import { FaRegCircleCheck } from "react-icons/fa6";
 
 const UserCenter = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false); //sheet open
   const [datas, setdatas] = useState([]);
   const [isUpdate, setIsUpdate] = useState(false);
   const [pubItem, setpubItem] = useState([] as any); //Publish ITEM
   const [offerCounts, setofferCounts] = useState(0);
   const [offerList, setofferList] = useState([]); //receive offer list
-  const [offerList1, setofferList1] = useState([]); //check send offer list
+  const [sentOfferList, setsentOfferList] = useState([]); //check send offer list
   const [isSheetOpen, setIsSheetOpen] = useState(false); // offer
   const [isSheetOpen1, setIsSheetOpen1] = useState(false); //check offer
-  const [shareMes, setshareMes] = useState(0); // share 默认值为 0
-  const [shareVal, setshareVal] = useState(0); // share 默认值为 0
+  const [shareMes, setshareMes] = useState(0);
+  const [shareVal, setshareVal] = useState(0);
   const { toast } = useToast();
   const { api, allAccounts, injector, extensionEnabled, pending, setPending } =
     useSubstrateContext();
@@ -116,115 +111,34 @@ const UserCenter = () => {
       console.error("Error fetching collection IDs:", error);
     }
 
-    // 收到的所有offer
-    getOfferList();
+    // get All offer
+    fetchAllOfferList();
 
-    //发送的所有offer
-    getSendedList();
+    //get Sent offer
+    fetchSentList();
   };
-  const getSendedList = async () => {
+  const fetchSentList = async () => {
     // console.log("[Query] all sent offers");
     // 发送的所有offer
     const connectedAccount = localStorage.getItem("connectedAccount");
-    const allSentOffers = await getAccountAllSentOffers(api, connectedAccount);
-    console.log(allSentOffers);
-    setofferList1(allSentOffers);
+    const offerList = await getAccountAllSentOffers(api, connectedAccount);
+    setsentOfferList(offerList);
+
+    // console.log(allSentOffers);
   };
 
-  const getOfferList = async () => {
+  const fetchAllOfferList = async () => {
     // console.log("[Query] alice offers");
     // 收到的所有offer
     const connectedAccount = localStorage.getItem("connectedAccount");
-    const offersList = await getAccountAllOffers(api, connectedAccount);
-    console.log("收到的所有offer", offersList);
-    setofferList(offersList);
-    setofferCounts(offersList.length);
-  };
-  const getNftConsolidateStatus = async (
-    collectionId,
-    itemIndex
-  ): Promise<string> => {
-    // console.log("[Query] nftDetails");
-    const nftDetails = await api?.query.nftModule.nftDetails([
-      collectionId,
-      itemIndex,
-    ]);
-    //// console.log(`nftDetails: ${nftDetails}`);
-    const { mergedNft, subNfts, metadata } = JSON.parse(
-      JSON.stringify(nftDetails)
-    );
-    //// console.log(
-    //  `mergedNft: ${mergedNft}, subNfts: ${subNfts}, metadata: ${metadata}`
-    //);
-    let status: string = "";
-    if (subNfts.length > 0) {
-      status = "merged"; // merge的nft
-      // console.log("merged nft");
-    } else if (mergedNft == null) {
-      status = "general"; // 普通没有merge的nft
-      // // console.log("general nft");
-    } else {
-      status = "sub"; // 该nft已被merge，当前不可用
-      // // console.log("sub(frozen) nft");
-    }
-    return status;
+
+    const allOffersList = await getAccountAllOffers(api, connectedAccount);
+    // console.log("收到的所有offer", offersList);
+    setofferList(allOffersList);
+    setofferCounts(allOffersList.length);
   };
 
-  const getInfo = async (id) => {
-    // 获取每一个集合的信息
-    const nftInfo = await api?.query.nftModule.nftCollections(id); // 使用 key.args[0] 作为参数
-    const [maxItem, curIndex, metainfo] = JSON.parse(JSON.stringify(nftInfo));
-    const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
-    return nftMetaInfo;
-  };
-  const getAccountAllSentOffers = async (api, accountAddress) => {
-    const entries = await api.query.nftMarketModule.offers.entries();
-    const offersForAlice: any = [];
-    for (const [storageKeys, boundedVecOffers] of entries) {
-      const offers = boundedVecOffers.toHuman();
-
-      for (const offer of offers) {
-        if (offer.buyer === accountAddress) {
-          // offersForAlice.push(offer);
-          console.log("offer", offer);
-          //offer 目标
-          let offeredNftsInfo: any = [];
-          const targetArr = offer.offeredNfts;
-          for (let j = 0; j < targetArr.length; j++) {
-            // 集合info
-            const eachOfferInfo = await getInfo(targetArr[j][0]);
-            // console.log("each offer info", eachOfferInfo);
-            offeredNftsInfo.push({
-              url: eachOfferInfo.url,
-              name: eachOfferInfo.name,
-              desc: eachOfferInfo.desc,
-            });
-          }
-          console.log("offeredNftsInfo", offeredNftsInfo);
-          let offerInfo = {
-            nft: JSON.parse(JSON.stringify(storageKeys.args[0])),
-            offeredNfts: offer.offeredNfts,
-            offeredNftsInfo: offeredNftsInfo,
-            tokenAmount: offer.tokenAmount,
-            seller: JSON.parse(JSON.stringify(storageKeys.args[1])),
-          };
-          // console.log("offerInfo", offerInfo.nft[0]);
-          const nftMetaInfo = await getInfo(offerInfo.nft[0]);
-
-          offersForAlice.push({
-            ...offerInfo,
-            name: nftMetaInfo.name,
-            url: nftMetaInfo.url,
-            desc: nftMetaInfo.desc,
-          });
-        }
-      }
-    }
-    console.log("offersForAlice", offersForAlice);
-
-    return offersForAlice;
-  };
-  const getAccountAllOffers = async (api, accountAddress) => {
+  const getAccountAllOffers = async (api: any, accountAddress: any) => {
     const entries = await api.query.nftMarketModule.offers.entries();
     const offersForAccount: any = [];
     for (const [key, value] of entries) {
@@ -274,6 +188,89 @@ const UserCenter = () => {
     }
 
     return offersForAccount;
+  };
+  const getInfo = async (id) => {
+    // 获取每一个集合的信息
+    const nftInfo = await api?.query.nftModule.nftCollections(id); // 使用 key.args[0] 作为参数
+    const [maxItem, curIndex, metainfo] = JSON.parse(JSON.stringify(nftInfo));
+    const nftMetaInfo = JSON.parse(hexCodeToString(metainfo).slice(1));
+    return nftMetaInfo;
+  };
+  const getAccountAllSentOffers = async (api: any, accountAddress: any) => {
+    const entries = await api.query.nftMarketModule.offers.entries();
+    const offersForAlice: any = [];
+    for (const [storageKeys, boundedVecOffers] of entries) {
+      const offers = boundedVecOffers.toHuman();
+
+      for (const offer of offers) {
+        if (offer.buyer === accountAddress) {
+          // offersForAlice.push(offer);
+          console.log("offer", offer);
+          //offer target
+          let offeredNftsInfo: any = [];
+          const targetArr = offer.offeredNfts;
+          for (let j = 0; j < targetArr.length; j++) {
+            // info
+            const eachOfferInfo = await getInfo(targetArr[j][0]);
+            // console.log("each offer info", eachOfferInfo);
+            offeredNftsInfo.push({
+              url: eachOfferInfo.url,
+              name: eachOfferInfo.name,
+              desc: eachOfferInfo.desc,
+            });
+          }
+          // console.log("offeredNftsInfo", offeredNftsInfo);
+          let offerInfo = {
+            nft: JSON.parse(JSON.stringify(storageKeys.args[0])),
+            offeredNfts: offer.offeredNfts,
+            offeredNftsInfo: offeredNftsInfo,
+            tokenAmount: offer.tokenAmount,
+            seller: JSON.parse(JSON.stringify(storageKeys.args[1])),
+          };
+          // console.log("offerInfo", offerInfo.nft[0]);
+          const nftMetaInfo = await getInfo(offerInfo.nft[0]);
+
+          offersForAlice.push({
+            ...offerInfo,
+            name: nftMetaInfo.name,
+            url: nftMetaInfo.url,
+            desc: nftMetaInfo.desc,
+          });
+        }
+      }
+    }
+    // console.log("offersForAlice", offersForAlice);
+
+    return offersForAlice;
+  };
+  const getNftConsolidateStatus = async (
+    collectionId: any,
+    itemIndex: any
+  ): Promise<string> => {
+    // console.log("[Query] nftDetails");
+    const nftDetails = await api?.query.nftModule.nftDetails([
+      collectionId,
+      itemIndex,
+    ]);
+    //// console.log(`nftDetails: ${nftDetails}`);
+    const { mergedNft, subNfts, metadata } = JSON.parse(
+      JSON.stringify(nftDetails)
+    );
+    //// console.log(
+    //  `mergedNft: ${mergedNft}, subNfts: ${subNfts}, metadata: ${metadata}`
+    //);
+    let status: string = "";
+    if (subNfts.length > 0) {
+      status = "merged"; // merge的nft
+      // console.log("merged nft");
+    } else if (mergedNft == null) {
+      status = "general"; // 普通没有merge的nft
+      // // console.log("general nft");
+    } else {
+      status = "sub"; // 该nft已被merge，当前不可用
+      // // console.log("sub(frozen) nft");
+    }
+    return status;
   };
 
   const handlePublish = async (event: FormEvent<HTMLFormElement>) => {
@@ -419,7 +416,7 @@ const UserCenter = () => {
         variant: "success",
       });
       setPending(false);
-      getOfferList();
+      fetchAllOfferList();
     } catch (error: any) {
       // console.log(`accept error: ${error}`);
       setPending(true);
@@ -471,7 +468,7 @@ const UserCenter = () => {
       });
       setPending(false);
       //刷新
-      getSendedList();
+      fetchSentList();
     } catch (error: any) {
       // console.log(`accept error: ${error}`);
       setPending(true);
@@ -554,7 +551,7 @@ const UserCenter = () => {
                 style={{ height: "calc(100vh + 80vh)" }}
               >
                 <ul role="list" className="divide-y divide-gray-100">
-                  {offerList1.map((itm, idx) => (
+                  {sentOfferList.map((itm, idx) => (
                     <ListBox1
                       item={itm}
                       key={idx}
@@ -614,6 +611,7 @@ type DummyContentProps = {
   isUpdate: any;
   setIsUpdate: (open: boolean) => void;
 };
+
 const DummyContent: React.FC<DummyContentProps> = ({
   item,
   nftInfo,

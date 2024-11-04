@@ -1,36 +1,37 @@
 "use client";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Tabs } from "@/components/ui/tabs";
+
+import { useToast } from "@/hooks/use-toast";
+import { hexCodeToString } from "@/utils/util";
+//COMPONENTS
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/check-box";
-import { useEffect, useState } from "react";
 import { useSubstrateContext } from "@/app/SubstrateProvider";
-import { FiEdit } from "react-icons/fi";
-import { useToast } from "@/hooks/use-toast";
 import { sendAndWait } from "@/utils/sendAndWait";
 import { Button } from "@/components/ui/button";
-
+// ICON
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { LuFileStack } from "react-icons/lu";
 import { RiErrorWarningLine } from "react-icons/ri";
-import Footer from "@/components/Footer";
-import { hexCodeToString } from "@/utils/util";
-import ReactDOMServer from "react-dom/server";
+import { FiEdit } from "react-icons/fi";
 
 const Consolidate = () => {
   const [mergeBtn, setmergeBtn] = useState(false);
   const [splitBtn, setsplitBtn] = useState(false);
   const [datas, setdatas] = useState([]);
 
-  const { toast } = useToast();
   const { api, allAccounts, injector, extensionEnabled, pending, setPending } =
-    useSubstrateContext();
+  useSubstrateContext();
+
+  const { toast } = useToast();
 
   useEffect(() => {
-    fetchCollectionIds();
+     fetchCollectionDatas();
   }, [api]);
-  const fetchCollectionIds = async () => {
+  const  fetchCollectionDatas = async () => {
     if (!api) return; // 如果 api 尚未初始化，直接返回
 
     try {
@@ -135,7 +136,7 @@ const Consolidate = () => {
           injector
         );
         // console.log(`mint hash: ${hash.toHex()}`);
-        fetchCollectionIds();
+         fetchCollectionDatas();
         toast({
           title: (
             <div className="flex items-center">
@@ -203,7 +204,7 @@ const Consolidate = () => {
           injector
         );
         // console.log(`split hash: ${hash.toHex()}`);
-        fetchCollectionIds();
+         fetchCollectionDatas();
         toast({
           title: (
             <div className="flex items-center">
