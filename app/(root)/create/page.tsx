@@ -59,13 +59,13 @@ const Create = () => {
   // 处理获取集合列表
   const getInfo = async (collectionIds: any) => {
     const collectionArr = JSON.parse(JSON.stringify(collectionIds));
-    
+
     if (collectionArr) {
       // console.log("[Query] nftCollections");
       const fetchedDatas = await Promise.all(
         collectionArr.map(async (id: any) => {
           const collectionInfo = await api?.query.nftModule.nftCollections(id);
-         
+
           const [maxItem, curIndex, metainfo] = JSON.parse(
             JSON.stringify(collectionInfo)
           );
@@ -100,6 +100,7 @@ const Create = () => {
     }
 
     setPending(true);
+    setIsSheetOpen(false);
     // console.log(event);
     const formData = new FormData(event.currentTarget);
     // console.log("formData", formData);

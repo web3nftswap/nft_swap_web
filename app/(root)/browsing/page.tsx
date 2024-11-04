@@ -295,7 +295,7 @@ const Browsing = () => {
             {/* 遍历所有类别下的 NFT */}
             {visibleDatas.map((itm) => (
               <DummyContent
-                key={`${itm.name}-${itm.id}-${itm.idx}`}
+                key={`a-${itm.name}-${itm.id}-${itm.idx}`}
                 {...itm}
                 data={itm}
               />
@@ -311,7 +311,7 @@ const Browsing = () => {
             {/* 遍历 Art 类别下的 NFT */}
             {visibleBuyDatas.map((itm) => (
               <DummyContenBuy
-                key={`${itm.name}-${itm.nft[0]}-${itm.nft[1]}`}
+                key={`b-${itm.name}-${itm.nft[0]}-${itm.nft[1]}`}
                 {...itm}
                 data={itm}
                 handleBuy={handleBuy}
@@ -457,7 +457,6 @@ const Browsing = () => {
                     id="price"
                     name="price"
                     type="number"
-                    defaultValue="@peduarte"
                     step="0.01"
                     className="col-span-3"
                   />
@@ -582,8 +581,8 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
                 name: "See Owners",
                 designation: (
                   <div>
-                    {owners.map((i) => (
-                      <p>
+                    {owners.map((i,idx) => (
+                      <p key={`owners-${idx}`}>
                         {/* {i} */}
                         {i.slice(0, 6)}...{i.slice(-4)}
                       </p>
