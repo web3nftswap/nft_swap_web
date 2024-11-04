@@ -27,6 +27,7 @@ const ConnectButton = () => {
   const [buttonText, setButtonText] = useState<string>("Connect");
   const [isConnect, setIsConnect] = useState<boolean>(false);
   const [faucet, setfaucet] = useState<boolean>(false);
+  const [faucetControl, setfaucetControl] = useState<boolean>(false);
   const [dropdownVisible, setDropdownVisible] = useState<boolean>(false);
   const {
     api,
@@ -149,6 +150,8 @@ const ConnectButton = () => {
     );
   };
   const handleFaucet = async () => {
+    // 禁止重复点击
+    setfaucetControl(true);
     // alice给账号转账
     if (allAccounts.length > 0 && api) {
       const keyring = new Keyring({ type: "sr25519" });
@@ -179,6 +182,7 @@ const ConnectButton = () => {
             // description: hash.toHex(),
             variant: "success",
           });
+          setfaucetControl(false);
           // 停止监听交易
           unsubscribe();
         }
@@ -212,7 +216,14 @@ const ConnectButton = () => {
               width={30}
               height={30}
               // style={{ width: '30px', height: '30px' }}
-              onClick={handleFaucet}
+              onClick={() => {
+                if (faucetControl) {
+                  // console.log("等着等着");
+                } else {
+                  // console.log('点了')
+                  handleFaucet();
+                }
+              }}
             />
             <div className="absolute left-1/2 transform -translate-x-1/2 mt-2  text-white text-center text-sm rounded p-2 bg-black/50 shadow-inner opacity-0 transition-opacity duration-200 group-hover:opacity-100">
               faucet
