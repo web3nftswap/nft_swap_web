@@ -337,7 +337,7 @@ const Browsing = () => {
 
     // console.log("SWAP ----------");
     setPending(true);
-
+    setopen(false);
     // FormData to Object
     const formData = new FormData(event.currentTarget);
     const formDataObject = Object.fromEntries(formData.entries());

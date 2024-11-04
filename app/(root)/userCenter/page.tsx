@@ -41,7 +41,8 @@ import Footer from "@/components/Footer";
 const UserCenter = () => {
   const [open, setOpen] = useState(false);
   const [datas, setdatas] = useState([]);
-  const [pubItem, setpubItem] = useState([] as any);
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [pubItem, setpubItem] = useState([] as any); //Publish ITEM
   const [offerCounts, setofferCounts] = useState(0);
   const [offerList, setofferList] = useState([]); //receive offer list
   const [offerList1, setofferList1] = useState([]); //check send offer list
@@ -293,6 +294,7 @@ const UserCenter = () => {
     try {
       // console.log("pending", pending);
       setPending(true);
+      setOpen(false);
       //当前账户
       const currentAccount = allAccounts[0];
       //tx
@@ -305,7 +307,6 @@ const UserCenter = () => {
         extensionEnabled,
         injector
       );
-      setOpen(false);
       // console.log(`publish hash: ${hash.toHex()}`);
       toast({
         title: (
@@ -584,6 +585,8 @@ const UserCenter = () => {
                 setshareMes={setshareMes}
                 shareVal={shareVal}
                 setshareVal={setshareVal}
+                isUpdate={isUpdate}
+                setIsUpdate={setIsUpdate}
               />
             ))}
         </div>
@@ -608,6 +611,8 @@ type DummyContentProps = {
   setshareMes: (open: number) => void;
   shareVal: any;
   setshareVal: (open: number) => void;
+  isUpdate: any;
+  setIsUpdate: (open: boolean) => void;
 };
 const DummyContent: React.FC<DummyContentProps> = ({
   item,
@@ -620,6 +625,8 @@ const DummyContent: React.FC<DummyContentProps> = ({
   setshareMes,
   shareVal,
   setshareVal,
+  isUpdate,
+  setIsUpdate,
 }) => {
   const { toast } = useToast();
   return (
@@ -662,6 +669,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
                     size="sm"
                     onClick={() => {
                       setpubItem(item);
+                      setIsUpdate(true);
                       setshareMes(item.nft[2]);
                       setshareVal(item.nft[2]);
                       // console.log("publish", item);
@@ -677,6 +685,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
                   variant="secondary"
                   className="w-full"
                   onClick={() => {
+                    setIsUpdate(false);
                     setpubItem(item);
                     setshareMes(item.nft[2]);
                     setshareVal(item.nft[2]);
@@ -704,6 +713,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
                       name="share"
                       type="number"
                       value={shareMes}
+                      disabled={isUpdate}
                       onChange={(e) => {
                         const max = shareVal;
                         const value = Number(e.target.value);
