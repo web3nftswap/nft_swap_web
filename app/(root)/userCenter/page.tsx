@@ -39,6 +39,7 @@ const UserCenter = () => {
   const [isUpdate, setIsUpdate] = useState(false);
   const [pubItem, setpubItem] = useState([] as any); //Publish ITEM
   const [offerCounts, setofferCounts] = useState(0);
+  const [sentofferCounts, setsentofferCounts] = useState(0);
   const [offerList, setofferList] = useState([]); //receive offer list
   const [sentOfferList, setsentOfferList] = useState([]); //check send offer list
   const [isSheetOpen, setIsSheetOpen] = useState(false); // offer
@@ -123,6 +124,7 @@ const UserCenter = () => {
     // 发送的所有offer
     const connectedAccount = localStorage.getItem("connectedAccount");
     const offerList = await getAccountAllSentOffers(api, connectedAccount);
+    setsentofferCounts(offerList.length);
     setsentOfferList(offerList);
 
     // console.log(allSentOffers);
@@ -393,7 +395,6 @@ const UserCenter = () => {
   const handleOffer = async (target, idx) => {
     // console.log("[Call] acceptOffer");
     // console.log(target, idx);
-
     let tx = api?.tx.nftMarketModule.acceptOffer(
       target.nft, // 目标NFT
       target.offers[idx].offeredNfts, // 用于报价的NFT数组
@@ -493,10 +494,14 @@ const UserCenter = () => {
   const handleCancelOffer = async (target) => {
     console.log("[Call] cancelOffer");
     console.log(target);
+    console.log(
+      target.tokenAmount,
+      Number(target.tokenAmount.replace(/,/g, ""))
+    );
     let tx = api?.tx.nftMarketModule.cancelOffer(
       target.nft, // 目标NFT
       target.offeredNfts, // 用于报价的NFT数组
-      target.tokenAmount, // 用于报价的token
+      Number(target.tokenAmount.replace(/,/g, "")), // 用于报价的token
       target.seller // 卖家
     );
     try {
@@ -553,11 +558,11 @@ const UserCenter = () => {
             }}
           >
             Sent Offers
-            {/* {offerCounts ? (
+            {sentofferCounts ? (
               <div className="absolute inline-flex items-center justify-center w-3 h-3 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900"></div>
             ) : (
               ""
-            )} */}
+            )}
           </Button>
 
           <Button
@@ -930,7 +935,7 @@ const ListBox = ({ item, handleOffer, handleRejectOffer }) => {
                 <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
                   tokenAmount:{" "}
                   <span className="text-purple-300  font-semibold">
-                    {itm.tokenAmount}
+                    {Number(itm.tokenAmount) / 10 ** 12}
                   </span>
                 </p>
                 <div className="flex justify-between">
@@ -1042,7 +1047,7 @@ const ListBox1 = ({ item, handleCancelOffer }) => {
                 <p className="pl-3 truncate text-xs leading-5 text-gray-200">
                   tokenAmount(SNS) :{" "}
                   <span className="text-sm pl-2 text-purple-300  font-semibold">
-                    {item.tokenAmount}
+                    {Number(item.tokenAmount.replace(/,/g, '')) / 10 ** 12}
                   </span>
                 </p>
               </div>
