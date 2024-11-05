@@ -506,6 +506,7 @@ const UserCenter = () => {
     );
     try {
       setPending(true);
+      setIsSheetOpen1(false);
       const currentAccount = allAccounts[0];
       let hash: any = await sendAndWait(
         api,
