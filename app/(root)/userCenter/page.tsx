@@ -373,6 +373,8 @@ const UserCenter = () => {
         variant: "success",
       });
       setPending(false);
+      //update 
+      fetchUserNFTs();
     } catch (error: any) {
       // console.log(`accept error: ${error}`);
       setPending(true);
