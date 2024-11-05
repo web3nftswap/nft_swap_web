@@ -344,7 +344,50 @@ const UserCenter = () => {
       setPending(false);
     }
   };
+  const handleUnlist = async (obj: any) => {
+    console.log("unlist", obj);
+    try {
+      setPending(true);
 
+      let tx = api?.tx.nftMarketModule.unlistNft(obj.nft);
+      const currentAccount = allAccounts[0];
+      let hash: any = await sendAndWait(
+        api,
+        tx,
+        currentAccount,
+        extensionEnabled,
+        injector
+      );
+      // console.log(`accept hash: ${hash.toHex()}`);
+      toast({
+        title: (
+          <div className="flex items-center">
+            <FaRegCircleCheck
+              size={50}
+              style={{ fill: "white", marginRight: "2rem" }}
+            />
+            Unlist Successful!
+          </div>
+        ) as unknown as string,
+        description: hash.toHex(),
+        variant: "success",
+      });
+      setPending(false);
+    } catch (error: any) {
+      // console.log(`accept error: ${error}`);
+      setPending(true);
+      toast({
+        title: (
+          <div className="flex items-center">{error}</div>
+        ) as unknown as string,
+        description: "Fail",
+        variant: "destructive",
+      });
+    } finally {
+      setPending(false);
+      setIsSheetOpen(false);
+    }
+  };
   const handleOffer = async (target, idx) => {
     // console.log("[Call] acceptOffer");
     // console.log(target, idx);
@@ -590,6 +633,7 @@ const UserCenter = () => {
                 open={open}
                 setOpen={setOpen}
                 pubItem={pubItem}
+                handleUnlist={handleUnlist}
                 setpubItem={setpubItem}
                 shareMes={shareMes}
                 setshareMes={setshareMes}
@@ -616,6 +660,7 @@ type DummyContentProps = {
   nftInfo: string[];
   status: string;
   handlePublish: (event: FormEvent<HTMLFormElement>) => void;
+  handleUnlist: (nft: any) => void;
   open: boolean;
   setOpen: (open: boolean) => void;
   pubItem: any;
@@ -646,6 +691,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
   setIsUpdate,
   priceVal,
   setpriceVal,
+  handleUnlist,
 }) => {
   const { toast } = useToast();
   return (
@@ -685,7 +731,13 @@ const DummyContent: React.FC<DummyContentProps> = ({
           <Dialog open={open} onOpenChange={setOpen}>
             {item.share ? (
               <div className="w-full flex justify-between pt-2">
-                <Button variant="outline" size="sm">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    handleUnlist(item);
+                  }}
+                >
                   Unlist
                 </Button>
                 <DialogTrigger asChild>
