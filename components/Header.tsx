@@ -4,7 +4,7 @@
  * @Author: Hesin
  * @Date: 2024-10-11 17:01:06
  * @LastEditors: Hesin
- * @LastEditTime: 2024-11-02 13:47:52
+ * @LastEditTime: 2024-11-05 09:41:44
  */
 "use client";
 import MobilNav from "@/components/MobilNav";
@@ -77,7 +77,8 @@ const Header = () => {
       </div>
 
       {/* mobile nav */}
-      <div className="lg:hidden ">
+      <div className="flex items-center lg:hidden ">
+        <ConnectButton />
         <MobilNav />
       </div>
     </div>
