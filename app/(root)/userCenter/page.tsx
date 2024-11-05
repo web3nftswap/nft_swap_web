@@ -345,11 +345,11 @@ const UserCenter = () => {
     }
   };
   const handleUnlist = async (obj: any) => {
-    console.log("unlist", obj);
+    // console.log("unlist", obj);
     try {
       setPending(true);
-
-      let tx = api?.tx.nftMarketModule.unlistNft(obj.nft);
+      const params = [obj.nft[0], obj.nft[1], obj.share];
+      let tx = api?.tx.nftMarketModule.unlistNft(params);
       const currentAccount = allAccounts[0];
       let hash: any = await sendAndWait(
         api,
@@ -373,7 +373,7 @@ const UserCenter = () => {
         variant: "success",
       });
       setPending(false);
-      //update 
+      //update
       fetchUserNFTs();
     } catch (error: any) {
       // console.log(`accept error: ${error}`);
