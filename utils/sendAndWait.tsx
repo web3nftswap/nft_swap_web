@@ -4,15 +4,15 @@
  * @Author: Hesin
  * @Date: 2024-10-15 00:02:40
  * @LastEditors: Hesin
- * @LastEditTime: 2024-10-22 12:48:09
+ * @LastEditTime: 2024-11-05 23:55:55
  */
 import { toast } from "@/hooks/use-toast";
 
 export async function sendAndWait(api, tx, signer, extensionEnabled, injector) {
-  console.log("sendAndWait", tx);
-  console.log("sendAndWait", signer);
-  console.log("sendAndWait", extensionEnabled);
-  console.log("sendAndWait", injector);
+  // console.log("sendAndWait", tx);
+  // console.log("sendAndWait", signer);
+  // console.log("sendAndWait", extensionEnabled);
+  // console.log("sendAndWait", injector);
 
   return new Promise((resolve, reject) => {
     const process = ({ status, events, dispatchError }) => {

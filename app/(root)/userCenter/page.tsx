@@ -493,11 +493,11 @@ const UserCenter = () => {
 
   const handleCancelOffer = async (target) => {
     console.log("[Call] cancelOffer");
-    console.log(target);
-    console.log(
-      target.tokenAmount,
-      Number(target.tokenAmount.replace(/,/g, ""))
-    );
+    // console.log(target);
+    // console.log(
+    //   target.tokenAmount,
+    //   Number(target.tokenAmount.replace(/,/g, ""))
+    // );
     let tx = api?.tx.nftMarketModule.cancelOffer(
       target.nft, // 目标NFT
       target.offeredNfts, // 用于报价的NFT数组
@@ -533,14 +533,15 @@ const UserCenter = () => {
       fetchSentList();
     } catch (error: any) {
       // console.log(`accept error: ${error}`);
-      setPending(true);
-      toast({
-        title: (
-          <div className="flex items-center">{error}</div>
-        ) as unknown as string,
-        description: "Fail",
-        variant: "destructive",
-      });
+      setPending(false);
+      if (error != "Cancelled")
+        toast({
+          title: (
+            <div className="flex items-center">{error}</div>
+          ) as unknown as string,
+          description: "Fail",
+          variant: "destructive",
+        });
     } finally {
       setPending(false);
       setIsSheetOpen1(false);
@@ -1047,7 +1048,7 @@ const ListBox1 = ({ item, handleCancelOffer }) => {
                 <p className="pl-3 truncate text-xs leading-5 text-gray-200">
                   tokenAmount(SNS) :{" "}
                   <span className="text-sm pl-2 text-purple-300  font-semibold">
-                    {Number(item.tokenAmount.replace(/,/g, '')) / 10 ** 12}
+                    {Number(item.tokenAmount.replace(/,/g, "")) / 10 ** 12}
                   </span>
                 </p>
               </div>
