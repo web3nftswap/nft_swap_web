@@ -702,6 +702,7 @@ const DummyContent: React.FC<DummyContentProps> = ({
   handleUnlist,
 }) => {
   const { toast } = useToast();
+  console.log("first", item);
   return (
     <div className=" cursor-pointer relative bg-white shadow-md rounded-t-lg rounded-b-md p-4 pb-2 w-full max-w-sm mx-auto">
       {/* Image Placeholder */}
@@ -725,14 +726,16 @@ const DummyContent: React.FC<DummyContentProps> = ({
         <p className="text-sm text-gray-500">idx：{nftInfo[1]}</p>
         <div className="flex justify-between items-center  my-2">
           <p className="text-md font-bold text-pink-500">
-            {nftInfo[2]}%
+            {item.price ? `${nftInfo[2]}%` : `Share: ${nftInfo[2]}%`}
             <span className="text-sm font-normal text-pink-300 ml-2">
               {item.share ? `(${item.share}%)` : ""}
             </span>
           </p>
-          <p className="text-md font-bold text-pink-500">
-            {Number(item.price) / 10 ** 12} SNS
-          </p>
+          {item.price && (
+            <p className="text-md font-bold text-pink-500">
+              {Number(item.price) / 10 ** 12} SNS
+            </p>
+          )}
         </div>
 
         <div className="flex justify-between items-center  -mx-2">
@@ -1046,7 +1049,7 @@ const ListBox1 = ({ item, handleCancelOffer }) => {
                   </span>
                 </p>
                 <p className="pl-3 truncate text-xs leading-5 text-gray-200">
-                  tokenAmount(SNS) :{" "}
+                  tokenAmount(SNS) :
                   <span className="text-sm pl-2 text-purple-300  font-semibold">
                     {Number(item.tokenAmount.replace(/,/g, "")) / 10 ** 12}
                   </span>
