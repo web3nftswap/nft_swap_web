@@ -403,6 +403,7 @@ const UserCenter = () => {
     );
     try {
       setPending(true);
+      setIsSheetOpen(false);
       const currentAccount = allAccounts[0];
       let hash: any = await sendAndWait(
         api,
@@ -425,10 +426,10 @@ const UserCenter = () => {
         description: hash.toHex(),
         variant: "success",
       });
-      setPending(false);
+      // get All offer
+      fetchAllOfferList();
     } catch (error: any) {
       // console.log(`accept error: ${error}`);
-      setPending(true);
       toast({
         title: (
           <div className="flex items-center">{error}</div>
@@ -438,7 +439,6 @@ const UserCenter = () => {
       });
     } finally {
       setPending(false);
-      setIsSheetOpen(false);
     }
   };
   const handleRejectOffer = async (target, idx) => {
@@ -451,6 +451,8 @@ const UserCenter = () => {
     );
     try {
       setPending(true);
+      setIsSheetOpen(false);
+
       const currentAccount = allAccounts[0];
       let hash: any = await sendAndWait(
         api,
@@ -474,6 +476,7 @@ const UserCenter = () => {
         variant: "success",
       });
       setPending(false);
+      // get All offer
       fetchAllOfferList();
     } catch (error: any) {
       // console.log(`accept error: ${error}`);
@@ -487,7 +490,6 @@ const UserCenter = () => {
       });
     } finally {
       setPending(false);
-      setIsSheetOpen(false);
     }
   };
 
@@ -530,7 +532,8 @@ const UserCenter = () => {
         variant: "success",
       });
       setPending(false);
-      //刷新
+
+      //get Sent offer
       fetchSentList();
     } catch (error: any) {
       // console.log(`accept error: ${error}`);
