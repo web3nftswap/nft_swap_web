@@ -915,7 +915,7 @@ const ListBox = ({ item, handleOffer, handleRejectOffer }) => {
               </p> */}
               <p className="text-sm  leading-6 text-white">
                 Share (%) :{" "}
-                <span className="text-sm pl-2 text-purple-300  font-semibold">
+                <span className="pl-2 text-purple-300  font-semibold">
                   {item.nft[2]}
                 </span>
               </p>
@@ -978,8 +978,8 @@ const ListBox = ({ item, handleOffer, handleRejectOffer }) => {
                       <a className="text-purple-300">#{offItm[1]}</a>
                     </span>
                   </p>
-                  <p className="mt-1 truncate leading-5 text-white">
-                    address :
+                  <p className="text-sm mt-1 truncate leading-5 text-white">
+                    Address :
                     <span className="pl-2 text-purple-300  font-semibold">
                       {offItm[0].slice(0, 6)}...
                       {offItm[0].slice(-4)}
@@ -992,10 +992,10 @@ const ListBox = ({ item, handleOffer, handleRejectOffer }) => {
                       {offItm[1]}
                     </span>
                   </p> */}
-                  <p className="mt-1 truncate leading-5 text-white">
-                    share (%) :
+                  <p className="text-sm mt-1 truncate leading-5 text-white">
+                    Share (%) :
                     <span className="pl-2 text-purple-300  font-semibold">
-                      {offItm[2]}%
+                      {offItm[2]}
                     </span>
                   </p>
                 </div>
@@ -1027,7 +1027,7 @@ const ListBox1 = ({ item, handleCancelOffer }) => {
               </p>
               <p className="text-sm leading-6 text-white">
                 Address:{" "}
-                <span className="text-sm pl-2 text-purple-300  font-semibold">
+                <span className="pl-2 text-purple-300  font-semibold">
                   {item.nft[0].slice(0, 6)}...
                   {item.nft[0].slice(-4)}
                 </span>
@@ -1038,9 +1038,9 @@ const ListBox1 = ({ item, handleCancelOffer }) => {
                   {item.nft[1]}
                 </span>
               </p> */}
-              <p className="text-sm  leading-6 text-white">
-                Share:{" "}
-                <span className="text-sm pl-2 text-purple-300  font-semibold">
+              <p className="text-sm leading-6 text-white">
+                Share (%):{" "}
+                <span className=" pl-2 text-purple-300 font-semibold">
                   {item.nft[2]}
                 </span>
               </p>
@@ -1090,8 +1090,8 @@ const ListBox1 = ({ item, handleCancelOffer }) => {
                       <a className="text-purple-300"> #{itm[1]}</a>
                     </span>
                   </p>
-                  <p className="mt-1 truncate  leading-5 text-white">
-                    address:
+                  <p className="text-sm mt-1 truncate leading-5 text-white">
+                    Address:
                     <span className="pl-2 text-purple-300  font-semibold">
                       {itm[0].slice(0, 6)}...
                       {itm[0].slice(-4)}
@@ -1104,7 +1104,7 @@ const ListBox1 = ({ item, handleCancelOffer }) => {
                       {itm[1]}
                     </span>
                   </p> */}
-                  <p className="mt-1 truncate leading-5 text-white">
+                  <p className="text-sm mt-1 truncate leading-5 text-white">
                     Share (%):
                     <span className="pl-2 text-purple-300  font-semibold">
                       {itm[2]}

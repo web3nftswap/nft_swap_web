@@ -573,7 +573,7 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
           <p className="text-md text-pink-500 mt-2">share: {nft[2]}%</p>
           <p className="text-md font-bold text-pink-500 mt-2">{price} SNS</p>
         </div>{" "}
-        <div className="flex justify-between items-center mt-2  mb-8 ">
+        <div className="flex justify-between items-center my-2">
           <p className="text-md text-black-100">
             {nft[0].slice(0, 6)}...{nft[0].slice(-4)}
           </p>
@@ -604,7 +604,7 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
       {seller === currentAddress ? (
         ""
       ) : (
-        <div className="flex justify-between pt-2 mb-8 -mx-2">
+        <div className="flex justify-between pt-2 -mx-2">
           <Button
             variant="secondary"
             onClick={() => {
@@ -624,6 +624,7 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
           </Button>
         </div>
       )}
+      <div className="my-8"></div>
       <p className="absolute bottom-2 right-3">
         <Link
           href={`/browsing/${nft[0]}/${nft[1]}?data=${encodeURIComponent(
