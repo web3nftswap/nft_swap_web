@@ -4,7 +4,7 @@
  * @Author: Hesin
  * @Date: 2024-10-18 07:57:11
  * @LastEditors: Hesin
- * @LastEditTime: 2024-11-04 11:03:46
+ * @LastEditTime: 2024-11-09 11:13:52
  */
 "use client";
 import Image from "next/image";
@@ -50,7 +50,7 @@ export const AnimatedTooltip = ({
       {items.map((item, idx) => (
         <div
           key={item.name as string}
-          className="-mr-4 relative group"
+          className="relative group"
           onMouseEnter={() => setHoveredIndex(item.id)}
           onMouseLeave={() => setHoveredIndex(null)}
         >
@@ -74,7 +74,7 @@ export const AnimatedTooltip = ({
                   rotate: rotate,
                   whiteSpace: "nowrap",
                 }}
-                className="absolute -top-20 flex text-xs  flex-col items-center justify-center rounded-md bg-black z-50 shadow-xl px-4 py-2"
+                className="absolute -top-20 flex text-xs  flex-col items-center justify-center rounded-md bg-slate-800 z-50 shadow-xl px-4 py-2"
               >
                 <div className="absolute inset-x-10 z-30 w-[20%] -bottom-px bg-gradient-to-r from-transparent via-emerald-500 to-transparent h-px " />
                 <div className="absolute left-10 w-[40%] z-30 -bottom-px bg-gradient-to-r from-transparent via-sky-500 to-transparent h-px " />
@@ -85,7 +85,7 @@ export const AnimatedTooltip = ({
               </motion.div>
             )}
           </AnimatePresence>
-          <p className="text-sm text-gray-500 "> {item.name}</p>
+          <p className="text-sm text-gray-500 underline hover:text-black"> {item.name}</p>
           {/* <Image
             onMouseMove={handleMouseMove}
             height={100}

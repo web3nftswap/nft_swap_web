@@ -608,7 +608,7 @@ const UserCenter = () => {
             <SheetContent side="right" className="w-[80vw] bg-white">
               <SheetHeader>
                 <SheetTitle>Send Offer List</SheetTitle>
-                <SheetDescription>confirm offer </SheetDescription>
+                {/* <SheetDescription>confirm offer </SheetDescription> */}
               </SheetHeader>
               <div
                 className="overflow-y-scroll"
@@ -895,31 +895,31 @@ const ListBox = ({ item, handleOffer, handleRejectOffer }) => {
           />
           <div className="w-full flex-auto">
             <div className="flex w-full gap-8 border-b-2 border-white">
-              <p className="text-lg font-semibold leading-6 text-gray-200">
-                {item.name}
+              <p className="text-lg font-semibold leading-6 text-white">
+                {item.name} <a className="text-purple-300"> #{item.nft[1]}</a>
               </p>
-              <p className="text-sm leading-6 text-gray-200">
-                Address:{" "}
+              <p className="text-sm leading-6 text-white">
+                Address :{" "}
                 <span className="text-sm pl-2 text-purple-300  font-semibold">
                   {item.nft[0].slice(0, 6)}...{item.nft[0].slice(-4)}
                 </span>
               </p>
-              <p className="text-sm  leading-6 text-gray-200">
+              {/* <p className="text-sm  leading-6 text-white">
                 IDX:{" "}
                 <span className="text-sm pl-2 text-purple-300  font-semibold">
                   {item.nft[1]}
                 </span>
-              </p>
-              <p className="text-sm  leading-6 text-gray-200">
-                Share:{" "}
+              </p> */}
+              <p className="text-sm  leading-6 text-white">
+                Share (%) :{" "}
                 <span className="text-sm pl-2 text-purple-300  font-semibold">
-                  {item.nft[2]}%
+                  {item.nft[2]}
                 </span>
               </p>
             </div>
-            <p className="mt-1 truncate text-xs leading-5 text-gray-200">
-              offers num:
-              <span className="px-2  font-semibold  text-lg text-red-400">
+            <p className="mt-2 truncate text-xs leading-5 text-white">
+              Offer NFT Num :
+              <span className="px-2 font-semibold text-sm text-red-400">
                 {item.offers.length}
               </span>
             </p>
@@ -931,14 +931,14 @@ const ListBox = ({ item, handleOffer, handleRejectOffer }) => {
           return (
             <div key={`offer-${itm.buyer}`}>
               <div className="min-w-0 flex-auto flex justify-between items-center mb-4">
-                <p className="text-5 font-semibold leading-6 text-gray-200">
-                  <span className="pr-2">{idx + 1}.</span> Buyer:{" "}
-                  <span className="text-purple-300">
+                <p className="text-5 leading-6 text-white">
+                  <span className="pr-2">{idx + 1}.</span> Buyer :{" "}
+                  <span className="text-purple-300 font-semibold ">
                     {itm.buyer.slice(0, 6)}...{itm.buyer.slice(-4)}
                   </span>
                 </p>
-                <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
-                  tokenAmount:{" "}
+                <p className="mt-1 truncate leading-5 text-white">
+                  Offer price (SNS) :{" "}
                   <span className="text-purple-300  font-semibold">
                     {Number(itm.tokenAmount) / 10 ** 12}
                   </span>
@@ -967,29 +967,30 @@ const ListBox = ({ item, handleOffer, handleRejectOffer }) => {
                   className="pl-6 min-w-0 flex-auto flex gap-4 "
                   key={`offer-${idx}`}
                 >
-                  <BiSolidMessageSquareDetail size={30} />
-                  <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
-                    Name:
-                    <span className="pl-2 text-purple-300  font-semibold">
-                      {itm.offeredNftsInfo[idx].name}
+                  <p className="flex justify-center items-center truncate text-md font-semibold  leading-5 text-white">
+                    <BiSolidMessageSquareDetail size={30} color="#c3a6e9" />
+                    {/* Name: */}
+                    <span className="pl-2 font-semibold">
+                      {itm.offeredNftsInfo[idx].name}{" "}
+                      <a className="text-purple-300">#{offItm[1]}</a>
                     </span>
                   </p>
-                  <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
-                    Address:
+                  <p className="mt-1 truncate leading-5 text-white">
+                    address :
                     <span className="pl-2 text-purple-300  font-semibold">
                       {offItm[0].slice(0, 6)}...
                       {offItm[0].slice(-4)}
                     </span>
                   </p>
 
-                  <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
+                  {/* <p className="mt-1 truncate  font-semibold  leading-5 text-white">
                     IDX:
                     <span className="pl-2 text-purple-300  font-semibold">
                       {offItm[1]}
                     </span>
-                  </p>
-                  <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
-                    Share:
+                  </p> */}
+                  <p className="mt-1 truncate leading-5 text-white">
+                    share (%) :
                     <span className="pl-2 text-purple-300  font-semibold">
                       {offItm[2]}%
                     </span>
@@ -1018,23 +1019,23 @@ const ListBox1 = ({ item, handleCancelOffer }) => {
           />
           <div className="w-full flex-auto">
             <div className="flex w-full gap-8 border-b-2 border-white">
-              <p className="text-lg font-semibold leading-6 text-gray-200">
-                {item.name}
+              <p className="text-lg font-semibold leading-6 text-white">
+                {item.name} <a className="text-purple-300">#{item.nft[1]}</a>
               </p>
-              <p className="text-sm leading-6 text-gray-200">
+              <p className="text-sm leading-6 text-white">
                 Address:{" "}
                 <span className="text-sm pl-2 text-purple-300  font-semibold">
                   {item.nft[0].slice(0, 6)}...
                   {item.nft[0].slice(-4)}
                 </span>
               </p>
-              <p className="text-sm  leading-6 text-gray-200">
+              {/* <p className="text-sm  leading-6 text-white">
                 IDX:{" "}
                 <span className="text-sm pl-2 text-purple-300  font-semibold">
                   {item.nft[1]}
                 </span>
-              </p>
-              <p className="text-sm  leading-6 text-gray-200">
+              </p> */}
+              <p className="text-sm  leading-6 text-white">
                 Share:{" "}
                 <span className="text-sm pl-2 text-purple-300  font-semibold">
                   {item.nft[2]}
@@ -1043,14 +1044,14 @@ const ListBox1 = ({ item, handleCancelOffer }) => {
             </div>
             <div className="flex justify-between pt-2">
               <div className="flex items-center">
-                <p className="truncate text-xs leading-5 text-gray-200">
-                  offeredNfts num :
-                  <span className="px-2 text-sm font-semibold  text-lg text-red-400">
+                <p className="truncate text-xs leading-5 text-white">
+                  Offered NFT Num :
+                  <span className="px-2 font-semibold text-sm text-red-400">
                     {item.offeredNfts.length}
                   </span>
                 </p>
-                <p className="pl-3 truncate text-xs leading-5 text-gray-200">
-                  tokenAmount(SNS) :
+                <p className="pl-3 truncate text-xs leading-5 text-white">
+                  Offer price (SNS) :
                   <span className="text-sm pl-2 text-purple-300  font-semibold">
                     {Number(item.tokenAmount.replace(/,/g, "")) / 10 ** 12}
                   </span>
@@ -1074,18 +1075,19 @@ const ListBox1 = ({ item, handleCancelOffer }) => {
           return (
             <div key={`offer-send-${idx}`}>
               <div className="min-w-0 flex-auto flex justify-between">
-                <p className="text-5 font-semibold leading-6 text-gray-200">
+                <p className="text-5 font-semibold leading-6 text-white">
                   {/* <span className="pr-2">{idx + 1}.</span> */}
                 </p>
                 <div className="pl-6 min-w-0 flex-auto flex gap-4 ">
-                  <BiSolidMessageSquareDetail size={30} />
-                  <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
-                    name:
-                    <span className="pl-2 text-purple-300  font-semibold">
-                      {item.offeredNftsInfo[idx].name}
+                  <p className="flex justify-center items-center truncate text-md font-semibold  leading-5 text-white">
+                    <BiSolidMessageSquareDetail size={30} color="#c3a6e9" />
+                    {/* name: */}
+                    <span className="pl-2 font-semibold">
+                      {item.offeredNftsInfo[idx].name}{" "}
+                      <a className="text-purple-300"> #{itm[1]}</a>
                     </span>
                   </p>
-                  <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
+                  <p className="mt-1 truncate  leading-5 text-white">
                     address:
                     <span className="pl-2 text-purple-300  font-semibold">
                       {itm[0].slice(0, 6)}...
@@ -1093,14 +1095,14 @@ const ListBox1 = ({ item, handleCancelOffer }) => {
                     </span>
                   </p>
 
-                  <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
+                  {/* <p className="mt-1 truncate  font-semibold  leading-5 text-white">
                     id:
                     <span className="pl-2 text-purple-300  font-semibold">
                       {itm[1]}
                     </span>
-                  </p>
-                  <p className="mt-1 truncate  font-semibold  leading-5 text-gray-200">
-                    Share:
+                  </p> */}
+                  <p className="mt-1 truncate leading-5 text-white">
+                    Share (%):
                     <span className="pl-2 text-purple-300  font-semibold">
                       {itm[2]}
                     </span>

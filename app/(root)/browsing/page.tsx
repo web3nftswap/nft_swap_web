@@ -25,8 +25,9 @@ import {
 import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
 import { sendAndWait } from "@/utils/sendAndWait";
 import { DataTableDemo } from "@/components/ui/data-table";
-import ReactDOMServer from "react-dom/server";
-import { Divide } from "lucide-react";
+
+//ICON
+import { FaArrowRightToBracket } from "react-icons/fa6";
 
 const PAGE_SIZE = 15; // 每次加载的数据量
 
@@ -411,7 +412,7 @@ const Browsing = () => {
               </label>
             </div>
             <Input />
-            <button className="px-4 py-2 rounded-md border border-white-300 uppercase bg-white text-black text- hover:-translate-y-1 transform transition duration-200 hover:shadow-md">
+            <button className="px-4 py-2 rounded-md border border-white-300 uppercase bg-white text-black hover:-translate-y-1 transform transition duration-200 hover:shadow-md">
               Search
             </button>
           </div>
@@ -503,7 +504,7 @@ const DummyContent: React.FC<NFTDataProp> = ({
   desc,
 }) => {
   return (
-    <div className="cursor-pointer bg-white shadow-md rounded-t-lg rounded-b-md p-4 w-full max-w-sm mx-auto">
+    <div className="relative cursor-pointer bg-white shadow-md rounded-t-lg rounded-b-md p-4 w-full ">
       {/* Image Placeholder */}
       <div className="w-full h-48 bg-gray-200 rounded-t-lg flex items-center justify-center">
         <Image
@@ -515,23 +516,28 @@ const DummyContent: React.FC<NFTDataProp> = ({
         />
       </div>
       {/* NFT Info */}
-      <div className="mt-4 text-center">
-        <h3 className="text-xl text-black-100 font-semibold mb-2">{name}</h3>
+      <div className="mt-4 mb-8 text-center">
+        <h3 className="text-xl text-black-100 font-semibold mb-2">
+          {name} <a className="text-purple-300">#{idx}</a>
+        </h3>
         <p className="text-md text-black-100">
           {id.slice(0, 6)}...{id.slice(-4)}
         </p>
-        <p className="text-sm text-gray-500">idx：{idx}</p>
+        {/* <p className="text-sm text-gray-500">idx：{idx}</p> */}
         {/* <p className="text-lg font-bold text-pink-500 mt-2">{desc}</p> */}
       </div>
-      <Link
-        href={`/browsing/${id}/${idx}?data=${encodeURIComponent(
-          JSON.stringify(data)
-        )}`}
-      >
-        <p className="mt-2 text-right cursor-pointer text-sm text-gray-400 ">
-          详情
-        </p>
-      </Link>
+      <p className="absolute bottom-2 right-3">
+        <Link
+          href={`/browsing/${id}/${idx}?data=${encodeURIComponent(
+            JSON.stringify(data)
+          )}`}
+        >
+          <span className="flex justify-end items-center mt-4 text-right cursor-pointer text-sm text-gray-400 hover:text-black">
+            More &nbsp;
+            <FaArrowRightToBracket />
+          </span>
+        </Link>
+      </p>
     </div>
   );
 };
@@ -547,7 +553,7 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
 }) => {
   const currentAddress = localStorage.getItem("connectedAccount");
   return (
-    <div className="cursor-pointer bg-white shadow-md rounded-t-lg rounded-b-md p-4 pb-2  w-full max-w-sm mx-auto">
+    <div className="relative cursor-pointer bg-white shadow-md rounded-t-lg rounded-b-md p-4  w-full max-w-sm mx-auto">
       {/* Image Placeholder */}
       <div className="w-full h-48 bg-gray-200 rounded-t-lg flex items-center justify-center">
         <Image
@@ -561,43 +567,44 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
       {/* NFT Info */}
       <div className="mt-4 text-center">
         <h3 className="text-xl text-black-100 font-semibold mb-2">
-          {data.name}
+          {data.name} <a className="text-purple-300">#{nft[1]}</a>
         </h3>
-        <div className="flex justify-between">
-          <p className="text-md text-black-100">
-            {nft[0].slice(0, 6)}...{nft[0].slice(-4)}
-          </p>
-          <p className="text-sm text-gray-500">idx：{nft[1]}</p>
-        </div>
         <div className="flex justify-between">
           <p className="text-md text-pink-500 mt-2">share: {nft[2]}%</p>
           <p className="text-md font-bold text-pink-500 mt-2">{price} SNS</p>
-        </div>
-        <div className="text-sm text-gray-500 py-2 ">
-          <AnimatedTooltip
-            items={[
-              {
-                id: 1,
-                name: "See Owners",
-                designation: (
-                  <div>
-                    {owners.map((i,idx) => (
-                      <p key={`owners-${idx}`}>
-                        {/* {i} */}
-                        {i.slice(0, 6)}...{i.slice(-4)}
-                      </p>
-                    ))}
-                  </div>
-                ),
-              },
-            ]}
-          />
+        </div>{" "}
+        <div className="flex justify-between items-center my-2">
+          <p className="text-md text-black-100">
+            {nft[0].slice(0, 6)}...{nft[0].slice(-4)}
+          </p>
+          <div className="text-sm text-gray-500 py-2 ">
+            <AnimatedTooltip
+              items={[
+                {
+                  id: 1,
+                  name: "Owners",
+                  designation: (
+                    <div>
+                      {owners.map((i, idx) => (
+                        <p key={`owners-${idx}`}>
+                          {/* {i} */}
+                          {i.slice(0, 6)}...{i.slice(-4)}
+                        </p>
+                      ))}
+                    </div>
+                  ),
+                },
+              ]}
+            />
+          </div>
+          {/* <p className="text-sm text-gray-500">idx：{nft[1]}</p> */}
         </div>
       </div>
+
       {seller === currentAddress ? (
         ""
       ) : (
-        <div className="flex justify-between pt-2 -mx-2">
+        <div className="flex justify-between pt-2 mb-8 -mx-2">
           <Button
             variant="secondary"
             onClick={() => {
@@ -617,15 +624,18 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
           </Button>
         </div>
       )}
-      <Link
-        href={`/browsing/${nft[0]}/${nft[1]}?data=${encodeURIComponent(
-          JSON.stringify(data)
-        )}`}
-      >
-        <p className="mt-2 text-right cursor-pointer text-sm text-gray-400 ">
-          详情
-        </p>
-      </Link>
+      <p className="absolute bottom-2 right-3">
+        <Link
+          href={`/browsing/${nft[0]}/${nft[1]}?data=${encodeURIComponent(
+            JSON.stringify(data)
+          )}`}
+        >
+          <span className=" flex justify-end items-center mt-4 text-right cursor-pointer text-sm text-gray-400 hover:text-black">
+            More &nbsp;
+            <FaArrowRightToBracket />
+          </span>
+        </Link>
+      </p>
     </div>
   );
 };

@@ -382,12 +382,12 @@ const DummyContent: React.FC<DummyContentProps> = ({
 
       {/* NFT Info */}
       <div className="mt-4 text-center">
-        <h3 className="text-xl text-black-100 font-semibold">{item.name}</h3>
-        <p className="text-md text-black-100">
+        <h3 className="text-xl text-black-100 font-semibold">{item.name} <a className="text-purple-300">#{item.nft[1]}</a></h3>
+        <p className="text-md text-black-100 my-2"> 
           {item.nft[0].slice(0, 6)}...{item.nft[0].slice(-4)}
         </p>
-        <p className="text-sm text-gray-500">idx：{item.nft[1]}</p>
-        <p className="text-lg font-bold text-pink-500 mt-2">{item.nft[2]}%</p>
+        {/* <p className="text-sm text-gray-500">idx：{item.nft[1]}</p> */}
+        <p className="text-lg font-bold text-pink-500">{item.nft[2]}%</p>
       </div>
     </div>
   );

@@ -58,7 +58,8 @@ const NftDetailPage = () => {
                 />
               </div>
               <p className="pl-3 text-purple-200 font-bold text-xl mt-4 align-middle">
-                {nftData.name}
+                {nftData.name}{" "}
+                <a  className="text-purple-300"> #{nftData.id ? nftData.idx : nftData.nft[1]}</a>
               </p>
               {nftData.id ? (
                 <p className="pl-3 text-white  font-bold text-sm mt-3">
@@ -69,7 +70,7 @@ const NftDetailPage = () => {
                   {nftData.nft[0].slice(0, 6)}...{nftData.nft[0].slice(-4)}
                 </p>
               )}
-              {nftData.id ? (
+              {/* {nftData.id ? (
                 <p className="pl-3 text-red-300  font-bold text-sm mt-2">
                   IDX : {nftData.idx}
                 </p>
@@ -77,7 +78,7 @@ const NftDetailPage = () => {
                 <p className="pl-3 text-red-300  font-bold text-sm mt-2">
                   IDX : {nftData.nft[1]}
                 </p>
-              )}
+              )} */}
 
               <p className="pl-3 text-white text-sm mt-2 overflow-hidden whitespace-nowrap overflow-ellipsis">
                 Desc: {nftData.desc}
