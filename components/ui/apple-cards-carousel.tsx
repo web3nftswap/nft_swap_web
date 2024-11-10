@@ -276,7 +276,7 @@ export const Card = ({
       <div className="px-4 py-8 bg-black w-full rounded-b-xl ">
         <div>{card.info.a}</div>
         <div className="text-xl pt-2 pb-2">{card.info.b}</div>
-        <div> {card.info.c}</div>
+        {/* <div> {card.info.c}</div> */}
       </div>
     </>
   );

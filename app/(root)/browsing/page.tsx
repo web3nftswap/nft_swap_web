@@ -452,7 +452,7 @@ const Browsing = () => {
               <div className="grid gap-4 py-4 mt-2">
                 <div className="grid grid-cols-4 items-center gap-4">
                   <label htmlFor="price" className="text-right">
-                    Price
+                    Price(SNS)
                   </label>
                   <Input
                     id="price"
@@ -569,10 +569,6 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
         <h3 className="text-xl text-black-100 font-semibold mb-2">
           {data.name} <a className="text-purple-300">#{nft[1]}</a>
         </h3>
-        <div className="flex justify-between">
-          <p className="text-md text-pink-500 mt-2">share: {nft[2]}%</p>
-          <p className="text-md font-bold text-pink-500 mt-2">{price} SNS</p>
-        </div>{" "}
         <div className="flex justify-between items-center my-2">
           <p className="text-md text-black-100">
             {nft[0].slice(0, 6)}...{nft[0].slice(-4)}
@@ -599,6 +595,10 @@ const DummyContenBuy: React.FC<BuyNFTDataProp> = ({
           </div>
           {/* <p className="text-sm text-gray-500">idx：{nft[1]}</p> */}
         </div>
+        <div className="flex justify-between">
+          <p className="text-md text-pink-500 mt-2">share: {nft[2]}%</p>
+          <p className="text-md font-bold text-pink-500 mt-2">{price} SNS</p>
+        </div>{" "}
       </div>
 
       {seller === currentAddress ? (

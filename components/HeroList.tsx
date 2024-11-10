@@ -4,7 +4,7 @@
  * @Author: Hesin
  * @Date: 2024-10-11 17:01:06
  * @LastEditors: Hesin
- * @LastEditTime: 2024-10-22 10:53:42
+ * @LastEditTime: 2024-11-11 00:03:20
  */
 "use client";
 import Image from "next/image";
@@ -61,18 +61,8 @@ const data = [
     title: "Enhance your productivity.",
     src: "/images/13cd1b7b.png",
     info: {
-      a: "ABC",
-      b: "10000 SNS",
-      c: "Account2",
-    },
-  },
-  {
-    category: "Productivity",
-    title: "Enhance your productivity.",
-    src: "/images/2a151c7e.png",
-    info: {
-      a: "ABC",
-      b: "10000 SNS",
+      a: "Monster",
+      b: "5 SNS",
       c: "Account2",
     },
   },
@@ -81,8 +71,8 @@ const data = [
     title: "Enhance your productivity.",
     src: "/images/2a403b20.png",
     info: {
-      a: "ABC",
-      b: "10000 SNS",
+      a: "Dance",
+      b: "25 SNS",
       c: "Account3",
     },
   },
@@ -91,9 +81,19 @@ const data = [
     title: "Enhance your productivity.",
     src: "/images/23d34011.png",
     info: {
-      a: "ABC",
-      b: "10000 SNS",
+      a: "Abstract Plants",
+      b: "100 SNS",
       c: "Account4",
+    },
+  },
+  {
+    category: "Productivity",
+    title: "Enhance your productivity.",
+    src: "/images/2a151c7e.png",
+    info: {
+      a: "Clothing",
+      b: "1.5 SNS",
+      c: "Account2",
     },
   },
 ];

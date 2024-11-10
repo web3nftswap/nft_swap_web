@@ -176,7 +176,7 @@ const ConnectButton = () => {
                   size={50}
                   style={{ fill: "white", marginRight: "2rem" }}
                 />
-                Fauset 0.5 SNS !
+                0.5 SNS Received!
               </div>
             ) as unknown as string,
             // description: hash.toHex(),
