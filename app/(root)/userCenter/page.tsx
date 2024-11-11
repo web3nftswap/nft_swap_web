@@ -428,6 +428,8 @@ const UserCenter = () => {
       });
       // get All offer
       fetchAllOfferList();
+      // get all nfts
+      fetchUserNFTs()
     } catch (error: any) {
       // console.log(`accept error: ${error}`);
       toast({
