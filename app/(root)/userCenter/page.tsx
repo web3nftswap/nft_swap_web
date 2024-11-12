@@ -326,7 +326,7 @@ const UserCenter = () => {
               size={50}
               style={{ fill: "white", marginRight: "2rem" }}
             />
-            List of sale Successful !!
+            List for sale Successful !!
           </div>
         ) as unknown as string,
         variant: "success",
@@ -787,14 +787,14 @@ const DummyContent: React.FC<DummyContentProps> = ({
                     // console.log("publish", item);
                   }}
                 >
-                  List of sale
+                  List for sale
                 </Button>
               </DialogTrigger>
             )}
 
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle> List of sale Form</DialogTitle>
+                <DialogTitle> List for sale Form</DialogTitle>
                 {/* <DialogDescription>Enter share and price.</DialogDescription> */}
               </DialogHeader>
               <form onSubmit={handlePublish}>
