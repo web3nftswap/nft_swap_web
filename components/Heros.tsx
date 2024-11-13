@@ -68,4 +68,5 @@ const Heros = () => {
     </TracingBeam>
   );
 };
+
 export default Heros;

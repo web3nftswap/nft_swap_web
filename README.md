@@ -1,40 +1,28 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# nft_swap
 
-## Getting Started
+## Background
 
-First, run the development server:
+With the thriving development of blockchain technology and the widespread popularity of digital art, NFTs, as an emerging form of digital asset, are profoundly transforming the trading landscape of art, gaming, collectibles, and other sectors. However, traditional NFT trading markets are limited by a single buy-and-sell model, making it difficult to fully unleash the vitality and potential of the NFT market.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Introduction
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+NFT Swap is a revolutionary NFT asset trading platform aimed at igniting the vibrancy of the NFT market and delivering an unprecedented trading experience. Beyond standard NFT buying and selling, it innovatively allows users to exchange NFTs for other NFTs, merge multiple NFTs for trading, and trade partial ownership shares of NFTs. NFT Swap is dedicated to maximizing the liquidity and composability of NFT assets, unlocking novel possibilities for NFT trading and fostering the continued prosperity of the NFT ecosystem.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Core Features
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+- NFT-to-NFT Trading:
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+  While traditional NFT markets often limit transactions to NFTs and cryptocurrencies, NFT Swap enables direct swaps between NFTs. Users can exchange their held NFTs for other desired NFTs, or even combine NFTs with cryptocurrencies for flexible trading, significantly broadening trading channels and promoting circulation and interaction within the NFT ecosystem.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- NFT Merging & Splitting:
 
-## Learn More
+  We introduce the innovative NFT merging feature, allowing users to combine multiple NFTs with similar or different attributes into a new, higher-value NFT. This not only expands the creative boundaries for NFT creators but also provides investors and collectors with more diversified investment options. Furthermore, users can split the merged NFT back into its original NFTs for trading, further activating the trading activity within the NFT market.
 
-To learn more about Next.js, take a look at the following resources:
+- NFT Fractional Ownership Trading:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+  To lower the barrier to NFT investment and enhance market liquidity, NFT Swap introduces the revolutionary fractional ownership trading feature. Users can participate in the value growth of an NFT without purchasing the entire asset, simply by acquiring a fractional share. This feature not only opens up opportunities for investors with limited funds but also facilitates asset liquidity and diversified investment for NFT holders. The introduction of fractional ownership trading will undoubtedly significantly boost the activity and appeal of the NFT market.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Contribution
 
-## Deploy on Vercel
+Contributions are welcome! Please fork the repository and submit a pull request with your changes.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
